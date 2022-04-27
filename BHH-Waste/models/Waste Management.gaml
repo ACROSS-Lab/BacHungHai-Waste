@@ -7,7 +7,7 @@
 
 model WasteManagement
 
-global {
+global { //
 	
 	shape_file Limites_commune_shape_file <- shape_file("../includes/Shp_fictifs/Limites_commune.shp");
 
