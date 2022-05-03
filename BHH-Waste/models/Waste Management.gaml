@@ -19,18 +19,51 @@ global {
 
 	geometry shape <- envelope(Limites_commune_shape_file);
 	
+	shape_file Territoires_villages_shape_file <- shape_file("../includes/Shp_fictifs/Territoires_villages.shp");
+
 	float step <- 1#day;
 	int num_collection_team <- 1;
 	float treatment_factory_capacity <- 2.0;
 	
-	float house_size <- 100.0 #m;
-	float plot_size <- 300.0 #m;
+	float house_size <- 200.0 #m;
+	float plot_size <- 500.0 #m;
 	float min_display_waste_value <- 0.2;
 	
 	float factor_time_collect_cell <- 3.0;
 	
 	float distance_max_bin <- 50 #m;
+	
+	string PLAYER_TURN <- "player turn";
+	string COMPUTE_INDICATORS <-  "compute indicators";
+	string ACT_BUILD_BINS <- "build bins";
+	string ACT_BUILD_TREATMENT_FACTORY <- "build treatment factory";
+	string ACT_END_OF_TURN <- "end of turn";
+	
+	string stage <-COMPUTE_INDICATORS;
+	
+	float distance_bins <- 300.0 #m;
+	
+	int index_player <- 0;
+	date computation_end;
+	
+	//current action type
+	int action_type <- -1;	
+	
+	float global_budget <- 0.0;
+	float budget_per_year <- 100.0;
+	float bin_price_unity <- 0.5;
+	float treatment_factory_price <- 20.0;
+	
+	//images used for the buttons
+	list<string> actions_name <- [
+		ACT_BUILD_BINS,
+		ACT_BUILD_TREATMENT_FACTORY,
+		ACT_END_OF_TURN		
+	]; 
+	
+	
 	init {
+		create territory from: Territoires_villages_shape_file;
 		create road from: split_lines(Routes_shape_file);
 		create canal from: split_lines(Hydrologie_shape_file);
 		geometry free_space <- copy(shape);
@@ -68,20 +101,82 @@ global {
 			location <- any_location_in(one_of(roads_outside).shape - first(district).shape);
 		}
 		
-		create treatment_factory with:( capacity_per_day: treatment_factory_capacity) {
+		/*create treatment_factory with:( capacity_per_day: treatment_factory_capacity) {
 			location <- any_location_in(one_of(roads_outside).shape - first(district).shape);
 	
-		}
+		}*/
 		
 		
 		create collection_team number: num_collection_team;
 		ask cell {do update_color;}
+		computation_end <- current_date add_years 1;
 	}
 	
-	action create_bin {
-		create bin with: (location: #user_location);
+	action activate_act {
+		if stage = PLAYER_TURN {
+			button selected_but <- first(button overlapping (circle(1) at_location #user_location));
+			if(selected_but != nil) {
+				ask selected_but {
+					ask button {bord_col<-#black;}
+					if (action_type != id) {
+						action_type<-id;
+						bord_col<-#red;
+						ask myself {do act_management();}
+					} else {
+						action_type<- -1;
+					}
+					
+				}
+			}
+		}
+	}
+	
+	action act_management {
+		switch action_type {
+			match 0 {ask territory[index_player] {do build_bins;}}
+			match 1 {ask territory[index_player] {do build_treatment_factory;}}
+			match 2 {ask territory[index_player] {do end_of_turn;}}
+		}
+	}
+	
+	reflex indicators_computation when: stage = COMPUTE_INDICATORS {
+		if (current_date >= computation_end) {
+			stage <- PLAYER_TURN;
+			index_player <- 0;
+			step <- 0.0001;
+			global_budget <- global_budget + budget_per_year;
+			ask territory {
+				actions_done <- [];
+			}
+			do tell("PLAYER TURN");
+			do tell("PLAYER 1 TURN");
+		}
+	}
+	
+	reflex playerturn when: stage = PLAYER_TURN{
+		if index_player >= length(territory) {
+			stage <- COMPUTE_INDICATORS;
+			current_date <- computation_end;
+			computation_end <- computation_end add_years 1;
+			step <- #day;
+			
+			do tell("INDICATOR COMPUTATION");
+		}
+	}
+	
+}
+
+
+grid button width:2 height:2 
+{
+	int id <- int(self);
+	rgb bord_col<-#black;
+	aspect normal {
+		draw rectangle(shape.width * 0.8,shape.height * 0.8).contour + (shape.height * 0.01) color: bord_col;
+		draw actions_name[id] font: font("Helvetica", 30 , #bold) color: #white;
 	}
 }
+
 
 
 grid cell height: 50 width: 50 {
@@ -91,16 +186,74 @@ grid cell height: 50 width: 50 {
 		color <- rgb(255 * waste_level, 255 * (1.0 - waste_level),  0);
 	} 
 	
-	reflex updating_color {
-		do update_color;
-	}
+
 	
 	aspect default {
 		if waste_level > min_display_waste_value {
+			do update_color;
 			draw shape color: color;
 		}
 	}
 	
+}
+
+species territory {
+	rgb color <- rnd_color(255);
+	list<string> actions_done;
+	
+	action end_of_turn {
+		bool  is_ok <- user_confirm("End of turn","Do you confirm that you want to end the turn?");
+		if is_ok {
+			
+			index_player <- index_player + 1;
+			if index_player < length(territory) {
+				
+				do tell("PLAYER " + (index_player + 1) + " TURN");
+			}
+		}
+	}
+	action build_bins {
+		
+		list<point> bin_locations <- (shape to_squares(distance_bins)) collect each.location;
+		bool  is_ok <- user_confirm("Action Build Bins","Do you confirm that you want to build bins for " + (length(bin_locations) * bin_price_unity)+ "$?");
+		int cpt <- 0;
+		if is_ok {
+			loop pt over: shuffle(bin_locations) {
+				 if global_budget >= bin_price_unity {
+				 	create bin with: (location: pt);
+				 	global_budget <- global_budget -bin_price_unity;
+				 	cpt <- cpt + 1;
+				 }
+			}
+		}
+		if cpt < length(bin_locations) {
+			do tell("Due to financial constraint, only " + cpt + " bins were build whereas " + length(bin_locations) + " were planned");
+		}
+	}
+	
+	action build_treatment_factory {
+		 	bool  is_ok <- user_confirm("Action Build Treatùent factory","Do you confirm that you want to a treatment factory for " + treatment_factory_price+ "$?");
+			if is_ok {
+				if global_budget >= treatment_factory_price {
+				  	create treatment_factory with:( capacity_per_day: treatment_factory_capacity) {
+						location <- myself.location;
+					}
+					global_budget <- global_budget -treatment_factory_price;
+				} else {
+					do tell("Not enough money for that");
+				}
+		}
+	}
+	aspect default {
+		if (stage = PLAYER_TURN) {
+			if (index_player = int(self)) {
+				draw shape color: color;
+			}
+		} else {
+			
+			draw shape.contour + 20.0 color: color;
+		}
+	}
 }
 
 species plot {
@@ -283,13 +436,16 @@ species collection_team skills: [moving]{
 	
 }
 
-experiment WasteManagement type: gui {
+experiment WasteManagement type: gui autorun: true{
 	
 	init {
 		//create simulation with: (num_collection_team: 3,treatment_factory_capacity: 10.0);
 	}
 	output {
-		display map type: opengl{
+		display map type: opengl  background: #black axes: false{
+			graphics "legend" {
+				draw (stage +" " + (stage = PLAYER_TURN ? ("Player " + (index_player + 1) + " - Global budget: " + global_budget) : ""))  font: font("Helvetica", 50 , #bold) at: {world.location.x, 10} anchor:#center color: #white;
+			}
 			species district;
 			species urban_area;
 			species plot;
@@ -302,7 +458,14 @@ experiment WasteManagement type: gui {
 			species collection_team;
 			species dumpyard;
 			species treatment_factory;
-			event mouse_down action: create_bin; 
+			species territory transparency: 0.5 ;
+			
+			//event mouse_down action: create_bin; 
+		}
+		display action_buton background:#black name:"Tools panel"  	{
+			
+			species button aspect:normal ;
+			event mouse_down action:activate_act;    
 		}
 	}
 }
