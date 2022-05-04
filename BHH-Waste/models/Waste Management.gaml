@@ -62,6 +62,8 @@ global {
 	]; 
 	
 	
+	list<rgb> territory_color <- [#magenta, #gold, #violet,#orange];
+	
 	init {
 		create territory from: Territoires_villages_shape_file;
 		create road from: split_lines(Routes_shape_file);
@@ -198,11 +200,11 @@ grid cell height: 50 width: 50 {
 }
 
 species territory {
-	rgb color <- rnd_color(255);
+	rgb color <- territory_color[int(self)];
 	list<string> actions_done;
 	
 	action end_of_turn {
-		bool  is_ok <- user_confirm("End of turn","Do you confirm that you want to end the turn?");
+		bool  is_ok <- user_confirm("End of turn","PLAYER " + (index_player + 1) +", do you confirm that you want to end the turn?");
 		if is_ok {
 			
 			index_player <- index_player + 1;
@@ -215,7 +217,7 @@ species territory {
 	action build_bins {
 		
 		list<point> bin_locations <- (shape to_squares(distance_bins)) collect each.location;
-		bool  is_ok <- user_confirm("Action Build Bins","Do you confirm that you want to build bins for " + (length(bin_locations) * bin_price_unity)+ "$?");
+		bool  is_ok <- user_confirm("Action Build Bins","PLAYER " + (index_player + 1) +", do you confirm that you want to build bins for " + (length(bin_locations) * bin_price_unity)+ "$?");
 		int cpt <- 0;
 		if is_ok {
 			loop pt over: shuffle(bin_locations) {
@@ -232,7 +234,7 @@ species territory {
 	}
 	
 	action build_treatment_factory {
-		 	bool  is_ok <- user_confirm("Action Build Treatùent factory","Do you confirm that you want to a treatment factory for " + treatment_factory_price+ "$?");
+		 	bool  is_ok <- user_confirm("Action Build Treatùent factory","PLAYER " + (index_player + 1) +", do you confirm that you want to a treatment factory for " + treatment_factory_price+ "$?");
 			if is_ok {
 				if global_budget >= treatment_factory_price {
 				  	create treatment_factory with:( capacity_per_day: treatment_factory_capacity) {
