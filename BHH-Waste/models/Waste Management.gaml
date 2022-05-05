@@ -13,7 +13,7 @@ global {
 
 	shape_file Limites_villages_shape_file <- shape_file("../includes/Shp_fictifs/Limites_villages.shp");
 
-	shape_file Routes_shape_file <- shape_file("../includes/Shp_fictifs/Routes.shp");
+	//shape_file Routes_shape_file <- shape_file("../includes/Shp_fictifs/Routes.shp");
 
 	shape_file Hydrologie_shape_file <- shape_file("../includes/Shp_fictifs/Hydrologie.shp");
 
@@ -68,7 +68,7 @@ global {
 	
 	init {
 		create territory from: Territoires_villages_shape_file sort_by (location.x + location.y * 2);
-		create road from: split_lines(Routes_shape_file);
+		//create road from: split_lines(Routes_shape_file);
 		create canal from: split_lines(Hydrologie_shape_file) {
 			if (first(shape.points).x + (2 * first(shape.points).y)) > (last(shape.points).x + 2 * last(shape.points).y){
 				shape <- line(reverse(shape.points));
@@ -115,7 +115,7 @@ global {
 		list<road> roads_outside <- road where not(first(district) covers each);
 		create dumpyard {
 			shape <- square(200) ;
-			location <- any_location_in(one_of(roads_outside).shape - first(district).shape);
+			location <- any_location_in(first(district).shape.contour);
 		}
 		
 		/*create treatment_factory with:( capacity_per_day: treatment_factory_capacity) {
@@ -552,7 +552,7 @@ experiment WasteManagement type: gui {
 			species urban_area;
 			species plot;
 			species canal;
-			species road;
+			//species road;
 			species cell transparency: 0.5 ;
 			species inhabitant;
 			species farmer;
