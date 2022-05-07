@@ -28,23 +28,23 @@ global {
 		}
 		if result != latest_action {
 			//write sample(result);
-			if ((result in ["Action 1", "Action 2", "Action 9"]) and not(result in territory[index_player].actions_done)) {
+			if ((result in ["Action 1", "Action 2", "Action 9"]) and not(result in village[index_player].actions_done)) {
 				latest_action <- result;
 				last_action_time <- machine_time;
-				territory[index_player].actions_done <<result;
+				village[index_player].actions_done <<result;
 				if result = "Action 1" {
-					ask territory[index_player] {
-						do build_bins;
+					ask village[index_player] {
+						do bonus_agricultural_production;
 					}
 	
 				} else if result = "Action 2" {
-					ask territory[index_player] {
-						do build_treatment_factory;
+					ask village[index_player] {
+						do compute_indicators;
 					}
 	
 				} else if result = "Action 9" {
-					ask territory[index_player] {
-						do end_of_turn;
+					ask village[index_player] {
+						do collection_teams;
 					}
 	
 				} 
