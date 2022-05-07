@@ -178,6 +178,7 @@ global {
 		create plot from: ps {
 			closest_canal <- canal closest_to self;
 			my_cells <- cell overlapping self;
+			the_village <- village closest_to self;
 			create farmer {
 				myself.the_farmer <- self;
 				closest_canal <- myself.closest_canal;
@@ -298,6 +299,7 @@ global {
 			}
 			ask village {
 				actions_done <- [];
+				is_drained <- false;
 			}
 			turn <- turn + 1;
 			if turn >= end_of_game {
@@ -429,7 +431,7 @@ species village {
 	float bonus_agricultural_production;
 	list<plot> plots;
 	float population;
-	
+	bool is_drained <- false;
 	
 	
 	action compute_indicators {
@@ -444,11 +446,24 @@ species village {
 	}
 	
 	action trimestrial_collective_action {
+		if budget >= token_trimestrial_collective_action {
+			ask canals {
+				solid_waste_level <- solid_waste_level * (1 - impact_trimestrial_collective_action);
+			}
+			budget <- budget - token_trimestrial_collective_action;
+		}
 		
 	}
 	
 	action drain_dredge {
-		
+		if budget >= token_drain_dredge {
+			is_drained <- true;
+			ask canals {
+				solid_waste_level <- solid_waste_level * (1 - impact_drain_dredge_waste);
+				
+			}
+			budget <- budget - token_drain_dredge;
+		}
 	}
 	
 	action install_filter_for_homes {
@@ -503,6 +518,7 @@ species village {
 }
 
 species plot {
+	village the_village;
 	float base_productivity <- field_initial_productivity min: 0.0;
 	float current_productivity min: 0.0;
 	float pratice_water_pollution_level;
@@ -531,6 +547,9 @@ species plot {
 	
 	action compute_productivity {
 		current_productivity <- base_productivity;
+		if the_village.is_drained {
+			current_productivity <- current_productivity * (1 + impact_drain_dredge_agriculture);
+		}
 		if (the_local_landfill != nil) {
 			current_productivity <- current_productivity - the_local_landfill.waste_quantity * local_landfill_waste_pollution_impact_rate;
 		}
@@ -571,6 +590,7 @@ species canal {
 	float solid_waste_level_tmp;
 	float water_waste_level_tmp;
 	list<canal> downtream_canals;
+	
 	
 	action init_flow {
 		solid_waste_level_tmp <- 0.0;
