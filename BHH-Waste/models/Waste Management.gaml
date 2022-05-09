@@ -22,8 +22,8 @@ global {
 	/*************** GENERAL PARAMETERS ON TIME AND SPACE ****************************/
 	
 	float step <- 1#day;// one simulation step = 1 day 
-	float house_size <- 100.0 #m; // size of a house plot
-	float plot_size <- 200.0 #m; /// size of a field
+	float house_size <- 150.0 #m; // size of a house plot
+	float plot_size <- 250.0 #m; /// size of a field
 	
 	int end_of_game <- 8; // Number of turns of the game (1 turn = 1 year)
 	
@@ -40,6 +40,12 @@ global {
 	float min_display_waste_value <- 0.2; //just use for display all the pollution cell 
 	float coeff_cell_pollution_display <- 0.01;  //coeff used to define the color of the cell according to the pollution
 	float coeff_visu_canal <- 3.0;  //coeff used to define the color of the canal according to the pollution
+	
+	
+	/********* PARAMETERS RELATED TO WATER FLOW (WASTE DIFFUSION) IN THE CANAL *******/
+	
+	float rate_diffusion_liquid_waste <- 10.0; //rate of liquid waste per perimeter of canals passing to the the downstream canal
+	float rate_diffusion_solid_waste <- 1.0;//rate of solid waste per perimeter of canals passing to the the downstream canal
 	
 	
 	/******* PARAMETERS RELATED TO THE IMPACT OF POLLUTION ON FIELD YIELD *************/
@@ -65,33 +71,26 @@ global {
 	float ground_water_pollution_reducing_day <- 0.01; //quantity of the ground water pollution that disapear every day
 	float ground_solid_pollution_reducing_day <- 0.001; //quantity of the solid water pollution that disapear every day
 	
-	float water_waste_year_inhabitants <- 38500.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in the village per year 
-	float solid_waste_year_inhabitants <-  220.0;//kg/pers/year - quantity of solid waste produced per people living in the village per year  
+	float water_waste_year_inhabitants <- 38500.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
+	float solid_waste_year_inhabitants <-  220.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
-	float water_waste_year_farmers <- 30000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside the village (farmer) per year 
-	float solid_waste_year_farmers <-  220.0;//kg/pers/year - quantity of solid waste produced per people outside the village (farmer) per year
+	float water_waste_year_farmers <- 30000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
+	float solid_waste_year_farmers <-  220.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
 	
-	float part_solid_waste_canal_inhabitants <- 0.0; // proportion of solid waste throw in the canal per people living in the village; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
-	float part_water_waste_canal_inhabitants <- 1.0;// proportion of water waste throw in the canal per people living in the village; (1 - part_water_waste_canal_inhabitants) is throw on the ground
+	float part_solid_waste_canal_inhabitants <- 0.0; // proportion of solid waste throw in the canal per people living in urban area; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
+	float part_water_waste_canal_inhabitants <- 1.0;// proportion of water waste throw in the canal per people living in urban area; (1 - part_water_waste_canal_inhabitants) is throw on the ground
 	
-	float part_solid_waste_canal_farmers <- 0.5; // proportion of solid waste throw in the canal per people living outside the village; (1 - part_solid_waste_canal_farmers) is throw on the ground
-	float part_water_waste_canal_farmers <- 0.5;// proportion of water waste throw in the canal per people living outside the village; (1 - part_water_waste_canal_farmers) is throw on the ground
-	
-	
-
-	
-	float rate_diffusion_liquid_waste <- 10.0; //rate of liquid waste per perimeter of canals passing to the the downstream canal
-	float rate_diffusion_solid_waste <- 1.0;//rate of solid waste per perimeter of canals passing to the the downstream canal
-	
+	float part_solid_waste_canal_farmers <- 0.5; // proportion of solid waste throw in the canal per people living outside urban area; (1 - part_solid_waste_canal_farmers) is throw on the ground
+	float part_water_waste_canal_farmers <- 0.5;// proportion of water waste throw in the canal per people living outside urban area; (1 - part_water_waste_canal_farmers) is throw on the ground
 	
 	
 	/********************** PARAMETERS RELATED ACTIONS ****************************/
 	
 	
-	float token_weak_waste_collection <- 20.0; //tokens/year 
-	float token_strong_waste_collection <- 40.0; //tokens/year
-	int collect_per_week_weak <- 2;
-	int collect_per_week_strong <- 4;
+	float token_weak_waste_collection <- 20.0; //tokens/year - cost of "weak collection"
+	float token_strong_waste_collection <- 40.0; //tokens/year - cost of "strong collection"
+	int collect_per_week_weak <- 2; //number of collect per week for "weak collection"
+	int collect_per_week_strong <- 4; //number of collect per week for "string collection"
 	float collection_team_collection_capacity_day <- 100.0; //quantity of solid waste remove during 1 day of work
 	
 	
@@ -117,22 +116,25 @@ global {
 	float impact_support_manure_buying_production  <- 0.15; //improvment of the agricultural production
 	float impact_support_manure_buying_waste  <- 0.2; //increase wastewater production
 	
-	float token_farmer_training <- 10.0; //per year
-	float impact_farmer_training  <- 0.1; //improvment of the agricultural production
-	
-	float token_support_digital_tools <- 20.0; //per year
-	float impact_support_digital_tools <- 0.15; //improvment of the agricultural production
+	float token_installation_dumpholes <- 15.0; //per year
+	float impact_installation_dumpholes  <- 0.25; //decreasse
 	
 
-
-	
 	/********************** CONSTANTS ****************************/
 		
 	string PLAYER_TURN <- "player turn";
 	string COMPUTE_INDICATORS <-  "compute indicators";
-	string ACT_BUILD_BINS <- "build bins";
-	string ACT_BUILD_TREATMENT_FACTORY <- "build treatment factory";
+	
+	string ACT_DRAIN_DREDGE <- "Drain and dredge";
+	string ACT_FACILITY_TREATMENT <- "Install water treatment facilities for every home";
+	string ACT_SENSIBILIZATION <- "Organise sensibilization about waste sorting workshops in schools";
+	string ACTION_COLLECTIVE_ACTION <- "Trimestrial collective action";
+	string ACT_PESTICIDE_REDUCTION <- "Help farmers to reduce pesticides use";
+	string ACT_SUPPORT_MANURE <- "Help farmer buy manure";
+	string ACT_IMPLEMENT_FALLOW <- "Put part of the fields in fallow ";
+	string ACT_INSTALL_DUMPHOLES <- "Making farmers participate in the installation of dumpholes for agricultural products";
 	string ACT_END_OF_TURN <- "end of turn";
+	
 	
 	
 	/********************** INTERNAL VARIABLES ****************************/
@@ -150,9 +152,15 @@ global {
 	communal_landfill the_communal_landfill;
 	
 	list<string> actions_name <- [
-		ACT_BUILD_BINS,
-		ACT_BUILD_TREATMENT_FACTORY,
-		ACT_END_OF_TURN		
+		ACT_DRAIN_DREDGE,
+		ACT_FACILITY_TREATMENT,
+		ACT_SENSIBILIZATION,
+		ACTION_COLLECTIVE_ACTION,
+		ACT_PESTICIDE_REDUCTION,
+		ACT_SUPPORT_MANURE,
+		ACT_IMPLEMENT_FALLOW,
+		ACT_INSTALL_DUMPHOLES,
+		ACT_END_OF_TURN
 	]; 
 	
 	
@@ -255,7 +263,7 @@ global {
 			button selected_but <- first(button overlapping (circle(1) at_location #user_location));
 			if(selected_but != nil) {
 				ask selected_but {
-					ask button {bord_col<-#black;}
+					ask button {bord_col<-#white;}
 					if (action_type != id) {
 						action_type<-id;
 						bord_col<-#red;
@@ -334,7 +342,7 @@ global {
 			}
 			else if not without_player {
 				do tell("PLAYER TURN");
-				do tell("PLAYER 1 TURN");
+				ask village[0] {do start_turn;}
 			}
 		
 			
@@ -408,10 +416,30 @@ global {
 grid button width:3 height:3 
 {
 	int id <- int(self);
-	rgb bord_col<-#black;
+	rgb bord_col<-#white;
+	list<string> to_display_text;
+	int threshold_cut <- 15;
+	init {
+		string to_display <- actions_name[id];
+		int cpt <-0;
+		list<string> dd <- to_display split_with " ";
+		string current_line <- "";
+		loop d over: dd {
+			current_line <- current_line + " " + d;
+			if length(current_line) > threshold_cut {
+				to_display_text << copy(current_line);
+				current_line <- "";
+			}
+		}
+		to_display_text << copy(current_line);
+				
+	}
 	aspect normal {
 		draw rectangle(shape.width * 0.8,shape.height * 0.8).contour + (shape.height * 0.01) color: bord_col;
-		draw actions_name[id] font: font("Helvetica", 20 , #bold) color: #white;
+		loop i from: 0 to: length(to_display_text) -1 {
+			draw to_display_text[i] font: font("Helvetica", 13 , #bold) anchor:#center color: #white at: {location.x, location.y - 500 + 200 * i};
+		}
+	
 	}
 }
 
@@ -459,6 +487,7 @@ species village {
 	list<plot> plots;
 	float population;
 	bool is_drained <- false;
+	bool weak_collection_policy;
 	
 	
 	action compute_indicators {
@@ -467,70 +496,136 @@ species village {
 		plots <- plots where not dead(each);
 		productivity_level <- (plots sum_of each.current_productivity) / length(plots) / 100.0;
 	}
+
 	
-	action choice_on_waste_collection_team {
-		
-	}
 	
-	action trimestrial_collective_action {
-		if budget >= token_trimestrial_collective_action {
-			ask canals {
-				solid_waste_level <- solid_waste_level * (1 - impact_trimestrial_collective_action);
-			}
-			budget <- budget - token_trimestrial_collective_action;
-		}
-		
-	}
-	
+	//1:ACT_DRAIN_DREDGE
 	action drain_dredge {
 		if budget >= token_drain_dredge {
-			is_drained <- true;
-			ask canals {
-				solid_waste_level <- solid_waste_level * (1 - impact_drain_dredge_waste);
+			bool  is_ok <- user_confirm("Action Drain & Dredge","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_DRAIN_DREDGE + "?");
+			if is_ok {
+				is_drained <- true;
+				ask canals {
+					solid_waste_level <- solid_waste_level * (1 - impact_drain_dredge_waste);
+				}
+				budget <- budget - token_drain_dredge;
 			}
-			budget <- budget - token_drain_dredge;
+		} else {
+			do tell("Not enough budget for " +ACT_DRAIN_DREDGE );
 		}
 	}
 	
-	action install_filter_for_homes {
-		
+	//2:ACT_FACILITY_TREATMENT
+	action install_facility_treatment_for_homes {
+		if budget >= token_install_filter_for_homes_construction {
+			bool  is_ok <- user_confirm("Action Facility treatment","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_FACILITY_TREATMENT + "?");
+			if is_ok {
+				budget <- budget - token_install_filter_for_homes_construction;
+			}
+		}else {
+			do tell("Not enough budget for " +ACT_FACILITY_TREATMENT );
+		}
 	}
 	
+	//3:ACT_SENSIBILIZATION
 	action sensibilization {
+		if budget >= token_sensibilization {
+			bool  is_ok <- user_confirm("Action Sensibilization","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SENSIBILIZATION + "?");
+			if is_ok {
+				budget <- budget - token_sensibilization;
+			}
+		}else {
+			do tell("Not enough budget for " +ACT_SENSIBILIZATION );
+		}
+	}
+	
+	//4:ACTION_COLLECTIVE_ACTION
+	action trimestrial_collective_action {
+		if budget >= token_trimestrial_collective_action {
+			bool  is_ok <- user_confirm("Action trimestrial action","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACTION_COLLECTIVE_ACTION + "?");
+			if is_ok {
+				ask canals {
+					solid_waste_level <- solid_waste_level * (1 - impact_trimestrial_collective_action);
+				}
+				budget <- budget - token_trimestrial_collective_action;
+			}
+		} else {
+			do tell("Not enough budget for " +ACTION_COLLECTIVE_ACTION );
+		}
 		
 	}
 	
+	//5:ACT_PESTICIDE_REDUCTION
 	action pesticide_reducing {
-		
+		if budget >= token_pesticide_reducing {
+			bool  is_ok <- user_confirm("Action Pesticide reducing","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_PESTICIDE_REDUCTION + "?");
+			if is_ok {
+				budget <- budget - token_pesticide_reducing;
+			}
+		}else {
+			do tell("Not enough budget for " +ACT_PESTICIDE_REDUCTION );
+		}
 	}
 	
-	action implement_fallow {
-		
-	}
-	
+	//6:ACT_SUPPORT_MANURE
 	action support_manure_buying {
-		
+		if budget >= token_support_manure_buying {
+			bool  is_ok <- user_confirm("Action Support Mature","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SUPPORT_MANURE + "?");
+			if is_ok {
+				budget <- budget - token_support_manure_buying;
+			}
+		}else {
+			do tell("Not enough budget for " +ACT_SUPPORT_MANURE );
+		}
 	}
 	
-	action farmer_training {
-		
+	
+	//7:ACT_IMPLEMENT_FALLOW
+	action implement_fallow {
+		if budget >= token_implement_fallow {
+			bool  is_ok <- user_confirm("Action Implementation Follow","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_IMPLEMENT_FALLOW + "?");
+			if is_ok {
+				budget <- budget - token_implement_fallow;
+			}
+		}else {
+			do tell("Not enough budget for " +ACT_IMPLEMENT_FALLOW );
+		}
 	}
 	
-	action support_digital_tools {
-		
+	
+	//8:ACT_INSTALL_DUMPHOLES,
+	action install_gumpholes {
+		if budget >= token_installation_dumpholes {
+			bool  is_ok <- user_confirm("Action Installation Dumpholes","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_INSTALL_DUMPHOLES + "?");
+			if is_ok {
+				budget <- budget - token_installation_dumpholes;
+			}
+		}else {
+			do tell("Not enough budget for " +ACT_INSTALL_DUMPHOLES );
+		}
 	}
+	
+	//9:ACT_END_TURN,
 	action end_of_turn {
 		bool  is_ok <- user_confirm("End of turn","PLAYER " + (index_player + 1) +", do you confirm that you want to end the turn?");
 		if is_ok {
-			
 			index_player <- index_player + 1;
 			if index_player < length(village) {
-				
-				do tell("PLAYER " + (index_player + 1) + " TURN");
+				ask village[index_player] {
+					do start_turn;
+				}
 			}
 		}
 	}
 	
+	action start_turn {
+		do tell("PLAYER " + (index_player + 1) + " TURN");
+		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_weak) + " per week";
+		map result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Choose a waste collection team policy",[choose("frenquency",string,current_val, [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"])]);
+		weak_collection_policy <- result["frenquency"] = ""+collect_per_week_weak +" per week";
+		budget <- budget - (weak_collection_policy ? token_weak_waste_collection : token_strong_waste_collection);
+		
+	}
 	aspect default {
 		if (stage = PLAYER_TURN) {
 			if (index_player = int(self)) {
@@ -821,7 +916,7 @@ experiment base_display virtual: true {
 			
 			//event mouse_down action: create_bin; 
 		}
-		display "global indicators" background: #black{
+		display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS{
 			chart "Waste pollution " size:{1.0, 0.3} background: #black color: #white{
 				data "Water waste pollution" value: canal sum_of each.water_waste_level + cell sum_of each.water_waste_level  color: #red marker: false;
 			}
