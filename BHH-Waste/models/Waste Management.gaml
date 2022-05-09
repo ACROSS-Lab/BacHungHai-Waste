@@ -258,6 +258,33 @@ global {
 		computation_end <- current_date add_years 1;
 	}
 	
+	action activate_act1 {
+		ask village[index_player] {do drain_dredge;}
+	}
+	action activate_act2 {
+		ask village[index_player] {do install_facility_treatment_for_homes;}
+	}
+	action activate_act3 {
+		ask village[index_player] {do sensibilization;}
+	}
+	action activate_act4 {
+		ask village[index_player] {do trimestrial_collective_action;}
+	}
+	action activate_act5 {
+		ask village[index_player] {do pesticide_reducing;}
+	}
+	action activate_act6 {
+		ask village[index_player] {do support_manure_buying;}
+	}
+	action activate_act7 {
+		ask village[index_player] {do implement_fallow;}
+	}
+	action activate_act8 {
+		ask village[index_player] {do install_gumpholes;}
+	}
+	action activate_act9 {
+		ask village[index_player] {do end_of_turn;}
+	}
 	action activate_act {
 		if stage = PLAYER_TURN {
 			button selected_but <- first(button overlapping (circle(1) at_location #user_location));
@@ -938,12 +965,22 @@ experiment simulation_without_players parent: base_display type: gui {
 }
 
 experiment the_serious_game parent: base_display type: gui {
-	
+	float minimum_cycle_duration <- 0.01;
 	output {
 		display action_buton background:#black name:"Tools panel"  	{
 			
 			species button aspect:normal ;
-			event mouse_down action:activate_act;    
+			event mouse_down action:activate_act;   
+			event "1" action: activate_act1;
+			event "2" action: activate_act2;
+			event "3" action: activate_act3;
+			event "4" action: activate_act4;
+			event "5" action: activate_act5;
+			event "6" action: activate_act6;
+			event "7" action: activate_act7;
+			event "8" action: activate_act8;
+			event "9" action: activate_act9;
+	
 		}
 		
 	}
