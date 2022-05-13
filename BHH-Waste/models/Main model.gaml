@@ -940,28 +940,44 @@ species collection_team {
 
 experiment base_display virtual: true {
 	output {
+		
+		display "Player 1"  type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
+			rotation "rotation" angle: -180;
+			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
+				data "Water waste pollution" value: village[0].canals sum_of each.water_waste_level + village[0].cells sum_of each.water_waste_level  color: #red marker: false;
+			}
+			chart "Waste pollution " position:{0.5, 0.0} size:{0.5,1.0} background: #black color: #white{
+				data "Solid waste pollution" value: village[0].canals sum_of each.solid_waste_level + village[0].cells  sum_of each.solid_waste_level  color: #red marker: false;
+			}
+		}
+		display "Player 2"  type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
+			rotation "rotation" angle: -90;
+			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
+				data "Water waste pollution" value: village[1].canals sum_of each.water_waste_level + village[1].cells sum_of each.water_waste_level  color: #red marker: false;
+			}
+			chart "Waste pollution " position:{0.5, 0.0} size:{0.5,1.0} background: #black color: #white{
+				data "Solid waste pollution" value: village[1].canals sum_of each.solid_waste_level + village[1].cells  sum_of each.solid_waste_level  color: #red marker: false;
+			}
+		}
+		display "Player 3"  type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
+			rotation "rotation" angle: 0;
+			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
+				data "Water waste pollution" value: village[2].canals sum_of each.water_waste_level + village[2].cells sum_of each.water_waste_level  color: #red marker: false;
+			}
+			chart "Waste pollution " position:{0.5, 0.0} size:{0.5,1.0} background: #black color: #white{
+				data "Solid waste pollution" value: village[2].canals sum_of each.solid_waste_level + village[2].cells  sum_of each.solid_waste_level  color: #red marker: false;
+			}
+		}
+		display "Player 4" type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
+			rotation "rotation" angle: 90;
+			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
+				data "Water waste pollution" value: village[3].canals sum_of each.water_waste_level + village[3].cells sum_of each.water_waste_level  color: #red marker: false;
+			}
+			chart "Waste pollution " position:{0.5, 0.0} size:{0.5,1.0} background: #black color: #white{
+				data "Solid waste pollution" value: village[3].canals sum_of each.solid_waste_level + village[3].cells  sum_of each.solid_waste_level  color: #red marker: false;
+			}
+		}
 		display map type: opengl  background: #black axes: false refresh: stage = COMPUTE_INDICATORS{
-		/*	graphics "legend" {
-				draw (stage +" " + (stage = PLAYER_TURN ? ("Player " + (index_player + 1) + " - Global budget: " + global_budget) : ""))  font: font("Helvetica", 50 , #bold) at: {world.location.x, 10} anchor:#center color: #white;
-			} */
-			chart "Indicators Territory 1" type: radar background: #black size: {0.4, 0.4} position: {-0.3, 0.0}  x_serie_labels: ["solid waste", "water waste", "productivity"] color: #white series_label_position: xaxis{
-				data "Pollution level" value: [village[0].solid_pollution_level,village[0].water_pollution_level,village[0].productivity_level] color:village[0].color;
-				
-			}
-			
-			chart "Indicators Territory 2" type: radar background: #black size: {0.4, 0.4} position: {-0.3, 0.7} x_serie_labels: ["solid waste", "water waste", "productivity"] color: #white series_label_position: xaxis{
-				data "Pollution level" value: [village[1].solid_pollution_level,village[1].water_pollution_level,village[1].productivity_level] color:village[1].color;
-					
-			}
-			chart "Indicators Territory 3" type: radar background: #black size: {0.4, 0.4} position: {1.0, 0.0} x_serie_labels:  ["solid waste", "water waste", "productivity"] color: #white series_label_position: xaxis{
-				data "Pollution level" value: [village[2].solid_pollution_level,village[2].water_pollution_level,village[2].productivity_level] color:village[2].color;
-				
-			}
-			chart "Indicators Territory 4" type: radar background: #black size: {0.4, 0.4} position: {1.0, 0.7} x_serie_labels:  ["solid waste", "water waste", "productivity"] color: #white series_label_position: xaxis{
-				data "Pollution level" value: [village[3].solid_pollution_level,village[3].water_pollution_level,village[3].productivity_level] color:village[3].color;
-				
-			}
-			
 			species commune;
 			species house;
 			species plot;
