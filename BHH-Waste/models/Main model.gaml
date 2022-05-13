@@ -9,15 +9,15 @@ model WasteManagement
 
 global {
 	/******************* GEOGRAPHICAL DATA USED *************************************/
-	shape_file Limites_commune_shape_file <- shape_file("../includes/Shp_fictifs/Limites_commune.shp");
+	shape_file Limites_commune_shape_file <- shape_file("../includes/Definitive_versions/Limites_communesV2.shp");
 
-	shape_file Limites_urban_areas_shape_file <- shape_file("../includes/Shp_fictifs/Limites_villages.shp");
+	shape_file Limites_urban_areas_shape_file <- shape_file("../includes/Definitive_versions/Limites_villagesV2.shp");
 
-	shape_file Hydrologie_shape_file <- shape_file("../includes/Shp_fictifs/Hydrologie.shp");
-
+	shape_file Hydrologie_shape_file <- shape_file("../includes/Definitive_versions/HydrologieV3.shp");
+	
 	geometry shape <- envelope(Limites_commune_shape_file);
 	
-	shape_file villages_shape_file <- shape_file("../includes/Shp_fictifs/Territoires_villages.shp");
+	shape_file villages_shape_file <- shape_file("../includes/Definitive_versions/Territoires_villagesV2.shp");
 
 	/*************** GENERAL PARAMETERS ON TIME AND SPACE ****************************/
 	
@@ -140,8 +140,7 @@ global {
 	/********************** INTERNAL VARIABLES ****************************/
 	
 	bool without_player <- false; //for testing
-	
-	
+	 
 	string stage <-COMPUTE_INDICATORS;
 	
 	int index_player <- 0;
@@ -171,12 +170,8 @@ global {
 	
 	init {
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
-		create canal from: split_lines(Hydrologie_shape_file) {
-			if (first(shape.points).x + (2 * first(shape.points).y)) > (last(shape.points).x + 2 * last(shape.points).y){
-				shape <- line(reverse(shape.points));
-			} 
-		}
-	
+		create canal from: Hydrologie_shape_file with: (width:float(get("WIDTH")));	 
+		
 		graph canal_network <- directed(as_edge_graph(canal));
 		ask canal {
 			downtream_canals<- list<canal>(canal_network out_edges_of (canal_network target_of self));	
@@ -254,7 +249,7 @@ global {
 				location <- any_location_in(myself);
 				myself.my_local_landfill <- self;
 			}
-		}
+		} 
 		computation_end <- current_date add_years 1;
 	}
 	
@@ -436,6 +431,10 @@ global {
 			if not without_player {do tell("INDICATOR COMPUTATION");}
 			do increase_urban_area;
 		}
+	}
+	
+	user_command save_canal {
+		save canal to: "../includes/HydrologieV3.shp" type: shp attributes:["WIDTH"::width];
 	}
 }
 
@@ -626,7 +625,11 @@ species village {
 			bool  is_ok <- user_confirm("Action Installation Dumpholes","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_INSTALL_DUMPHOLES + "?");
 			if is_ok {
 				budget <- budget - token_installation_dumpholes;
+				ask plot {
+					
+				}
 			}
+			
 		}else {
 			do tell("Not enough budget for " +ACT_INSTALL_DUMPHOLES );
 		}
@@ -733,13 +736,16 @@ species house {
 	}
 }
 species canal {
+	float width;
 	float solid_waste_level min: 0.0;
 	float water_waste_level min: 0.0;
 	float solid_waste_level_tmp;
 	float water_waste_level_tmp;
 	list<canal> downtream_canals;
 	
-	
+	user_command reverse_geom {
+		shape <- line(reverse(shape.points));
+	}
 	action init_flow {
 		solid_waste_level_tmp <- 0.0;
 		water_waste_level_tmp <- 0.0;
@@ -764,8 +770,7 @@ species canal {
 		water_waste_level <- water_waste_level + water_waste_level_tmp ;
 	}
 	aspect default {
-		draw shape + 10.0 color: blend(#red,#blue,(solid_waste_level+water_waste_level)/shape.perimeter / coeff_visu_canal);
-		draw "" + int(self) + " -> " + (downtream_canals collect int(each)) color: #black;
+		draw shape  + (width +3) color: blend(#red,#blue,(solid_waste_level+water_waste_level)/shape.perimeter / coeff_visu_canal);
 	}
 }
 
@@ -793,20 +798,6 @@ species local_landfill {
 		
 	}
 }
-/*species treatment_factory {
-	float capacity_per_day;
-	
-	reflex treatment when: stage = COMPUTE_INDICATORS {
-		float treated <- 0.0;
-		ask dumpyard {
-			float max_treated <- min(waste_quantity, myself.capacity_per_day);
-			waste_quantity <- waste_quantity - max_treated;
-		}
-	}
-	aspect default {
-		draw circle(capacity_per_day * 50.0) border: #black color: #gold;
-	}
-}*/
 
 species communal_landfill {
 	float waste_quantity min: 0.0;
@@ -937,11 +928,9 @@ experiment base_display virtual: true {
 			species collection_team;
 			species local_landfill;
 			species communal_landfill;
-			species village transparency: 0.5 ;
+			species village transparency: 0.5 ; 
 			
-		
 			
-			//event mouse_down action: create_bin; 
 		}
 		display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS{
 			chart "Waste pollution " size:{1.0, 0.3} background: #black color: #white{
