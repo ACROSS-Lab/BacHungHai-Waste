@@ -8,13 +8,17 @@
 model WasteManagement
 
 global {
+	
 	/******************* GEOGRAPHICAL DATA USED *************************************/
-	shape_file Hydrologie_shape_file <- shape_file("../includes/Definitive_versions/HydrologieV3.shp");
-	string clean_canal_path <- ("../includes/Definitive_versions/Hydrology_clean.shp");
+	//shape_file Hydrologie_shape_file <- shape_file("../includes/Definitive_versions/HydrologieV3.shp");
+	shape_file Hydrologie_shape_file <- shape_file("../includes/Definitive_versions/Hydrology_clean.shp");
+	
+	
+	string clean_canal_path <- ("../includes/Definitive_versions/Hydrology_clean2.shp");
 	bool clean_canal_data <- false;
 
 	geometry shape <- envelope(Hydrologie_shape_file);
-	
+	float tolerance <- 1#m;
 	
 	
 	init {
@@ -64,6 +68,22 @@ global {
 		ask canal {
 			downtream_canals<- list<canal>(canal_network out_edges_of (canal_network target_of self));	
 		}
+		do verify_connectivity;
+	}
+	
+	action verify_connectivity {
+		graph canal_network <- directed(as_edge_graph(canal));
+		ask canal {
+			geometry pt <- last(shape.points) buffer tolerance;
+			downtream_canals<- list<canal>(canal_network out_edges_of (canal_network target_of self));	
+			list<canal> canal_close <- (canal overlapping pt) - self;
+			canal_close <- canal_close where (last(each.shape.points) overlaps pt);
+			if not empty(canal_close - downtream_canals) {
+				color <- #red;
+			}
+		}
+		
+	
 	}
 	
 	user_command save_canal {
@@ -73,14 +93,21 @@ global {
 
 
 species canal {
+	rgb color <- #blue;
 	float width;
 	list<canal> downtream_canals;
 
 	user_command reverse_geom {
 		shape <- line(reverse(shape.points));
+		ask world {
+			do verify_connectivity;
+		}
+		ask experiment {
+			do update_outputs(true);
+		}
 	}
 	aspect default {
-		draw shape  + (width +1) end_arrow: 30 color: #blue;
+		draw shape  + (width +1) end_arrow: 30 color: color;
 			}
 	
 	aspect info {
