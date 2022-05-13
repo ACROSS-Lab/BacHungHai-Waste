@@ -19,6 +19,8 @@ global {
 	
 	shape_file villages_shape_file <- shape_file("../includes/Definitive_versions/Territoires_villagesV2.shp");
 
+	shape_file Fields_shape_file <- shape_file("../includes/Definitive_versions/FieldsV1.shp");
+
 	/*************** GENERAL PARAMETERS ON TIME AND SPACE ****************************/
 	
 	float step <- 1#day;// one simulation step = 1 day 
@@ -26,6 +28,7 @@ global {
 	float plot_size <- 250.0 #m; /// size of a field
 	
 	int end_of_game <- 8; // Number of turns of the game (1 turn = 1 year)
+	float tolerance_dist <- 1#m;
 	
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
@@ -167,26 +170,42 @@ global {
 	
 	
 	/********************** INITIALIZATION OF THE GAME ****************************/
-	
+
 	init {
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
+		
+		do create_canals;
+		
+		create commune from: Limites_commune_shape_file;
+		
+		do create_urban_area;
+		
+		do create_plots;
+	
+		do create_communal_landfill;
+		
+		do init_villages;	
+		
+		ask cell {do update_color;}
+		
+		computation_end <- current_date add_years 1;
+	}
+	
+		
+	
+	action create_canals {
 		create canal from: Hydrologie_shape_file with: (width:float(get("WIDTH")));	 
 		
 		graph canal_network <- directed(as_edge_graph(canal));
 		ask canal {
 			downtream_canals<- list<canal>(canal_network out_edges_of (canal_network target_of self));	
 		}
-		
-		geometry free_space <- copy(shape);
-		
-		create commune from: Limites_commune_shape_file {
-			free_space <- copy(shape);
-		}
-		list<geometry> uas;
+	}
+	
+	action create_urban_area {
 		create urban_area from: Limites_urban_areas_shape_file;
 		ask urban_area {
 			list<geometry> geoms <- to_squares (shape,house_size);
-			free_space <- free_space - shape;
 			float nb <- 0.0;
 			create house from: geoms {
 				create inhabitant {
@@ -201,12 +220,29 @@ global {
 		
 		} 
 		
-		
-		list<geometry> ps <- to_squares (free_space,plot_size);
-		
-
-		create plot from: ps {
-			closest_canal <- canal closest_to self;
+	}
+	
+	action create_communal_landfill {
+		create communal_landfill {
+			shape <- square(200) ;
+			location <- any_location_in(first(commune).shape.contour);
+			the_communal_landfill <- self;
+		}
+	}
+	
+	action create_plots {
+		create plot from: Fields_shape_file {
+			list<canal> canals <- canal at_distance tolerance_dist;
+			if empty(canals) {
+				closest_canal <- canal closest_to self;
+			} else {
+				geometry g <- shape + tolerance_dist;
+				if length(canals) = 1 {closest_canal <- first(canals);}
+				else {
+					closest_canal <- canals with_max_of (g inter each).perimeter;
+				}
+				perimeter_canal_nearby <- (g inter closest_canal).perimeter;
+			}
 			my_cells <- cell overlapping self;
 			the_village <- village closest_to self;
 			create farmer {
@@ -221,16 +257,9 @@ global {
 		 	impacted_by_canal <- (self distance_to closest_canal) <= distance_to_canal_for_pollution_impact;
 		}
 		
+	}
 	
-		create communal_landfill {
-			shape <- square(200) ;
-			location <- any_location_in(first(commune).shape.contour);
-			the_communal_landfill <- self;
-		}
-		
-			
-		
-		ask cell {do update_color;}
+	action init_villages {
 		ask village {
 			plots <- plot overlapping self;
 			cells <- cell overlapping self;
@@ -250,9 +279,7 @@ global {
 				myself.my_local_landfill <- self;
 			}
 		} 
-		computation_end <- current_date add_years 1;
 	}
-	
 	action activate_act1 {
 		ask village[index_player] {do drain_dredge;}
 	}
@@ -680,6 +707,7 @@ species plot {
 	communal_landfill the_communal_landfill;
 	local_landfill the_local_landfill;
 	bool impacted_by_canal <- false;
+	float perimeter_canal_nearby;
 	
 	action pollution_due_to_practice { 
 		if pratice_water_pollution_level > 0 {
