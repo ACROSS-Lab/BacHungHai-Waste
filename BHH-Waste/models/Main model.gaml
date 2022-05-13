@@ -13,7 +13,7 @@ global {
 
 	shape_file Limites_urban_areas_shape_file <- shape_file("../includes/Definitive_versions/Limites_villagesV2.shp");
 
-	shape_file Hydrologie_shape_file <- shape_file("../includes/Definitive_versions/HydrologieV3.shp");
+	shape_file Hydrologie_shape_file <- shape_file("../includes/Definitive_versions/Hydrology_clean2_2.shp");
 	
 	geometry shape <- envelope(Limites_commune_shape_file);
 	
@@ -74,6 +74,7 @@ global {
 	float ground_water_pollution_reducing_day <- 0.01; //quantity of the ground water pollution that disapear every day
 	float ground_solid_pollution_reducing_day <- 0.001; //quantity of the solid water pollution that disapear every day
 	
+	float water_waste_filtering_inhabitants <- 0.2 min: 0.0 max: 1.0; // part of the water waste produced per inhabitants that are filtered
 	float water_waste_year_inhabitants <- 38500.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
 	float solid_waste_year_inhabitants <-  220.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
@@ -86,6 +87,7 @@ global {
 	float part_solid_waste_canal_farmers <- 0.5; // proportion of solid waste throw in the canal per people living outside urban area; (1 - part_solid_waste_canal_farmers) is throw on the ground
 	float part_water_waste_canal_farmers <- 0.5;// proportion of water waste throw in the canal per people living outside urban area; (1 - part_water_waste_canal_farmers) is throw on the ground
 	
+	float part_of_water_waste_pollution_to_canal <- 0.01;// part of the water waste on ground to go the canal every day; 
 	
 	/********************** PARAMETERS RELATED ACTIONS ****************************/
 	
@@ -200,6 +202,12 @@ global {
 		ask canal {
 			downtream_canals<- list<canal>(canal_network out_edges_of (canal_network target_of self));	
 		}
+		
+		ask cell {
+			using topology (world) {
+				closest_canal <- canal closest_to location;
+			}
+		}
 	}
 	
 	action create_urban_area {
@@ -232,11 +240,11 @@ global {
 	
 	action create_plots {
 		create plot from: Fields_shape_file {
-			list<canal> canals <- canal at_distance tolerance_dist;
+			geometry g <- shape + tolerance_dist;
+			list<canal> canals <- canal overlapping g;
 			if empty(canals) {
 				closest_canal <- canal closest_to self;
 			} else {
-				geometry g <- shape + tolerance_dist;
 				if length(canals) = 1 {closest_canal <- first(canals);}
 				else {
 					closest_canal <- canals with_max_of (g inter each).perimeter;
@@ -244,6 +252,7 @@ global {
 				perimeter_canal_nearby <- (g inter closest_canal).perimeter;
 			}
 			my_cells <- cell overlapping self;
+			
 			the_village <- village closest_to self;
 			create farmer {
 				myself.the_farmer <- self;
@@ -500,6 +509,7 @@ grid cell height: 50 width: 50 {
 	float solid_waste_level <- 0.0 min: 0.0;
 	float water_waste_level <- 0.0 min: 0.0;
 	float pollution_level <- 0.0;
+	canal closest_canal;
 	
 	action natural_pollution_reduction {
 		if solid_waste_level > 0 {
@@ -507,6 +517,9 @@ grid cell height: 50 width: 50 {
 		}
 		if water_waste_level > 0 {
 			water_waste_level <- water_waste_level - ground_water_waste_pollution_impact_rate;
+			float to_canal <- water_waste_level * part_of_water_waste_pollution_to_canal;
+			closest_canal.water_waste_level <- closest_canal.water_waste_level + to_canal;
+			water_waste_level <- water_waste_level - to_canal;
 		}
 	}
 	action update_color {
@@ -720,8 +733,10 @@ species plot {
 				}
 			}
 		}
+		
 	}
 	
+
 	action compute_productivity {
 		current_productivity <- base_productivity;
 		if the_village.is_drained {
@@ -851,6 +866,7 @@ species inhabitant {
 	cell my_house;
 	canal closest_canal;
 	float nb_people <- 1.0;
+	float water_filtering <-water_waste_filtering_inhabitants;
 	float solid_waste_day <- nb_people * solid_waste_year_inhabitants / 365;
 	float water_waste_day <- nb_people * water_waste_year_inhabitants / 365;
 	float part_solid_waste_canal <- part_solid_waste_canal_inhabitants;
@@ -874,8 +890,10 @@ species inhabitant {
 			}
 		}
 		if water_waste_day > 0 {
-			float to_the_canal <- water_waste_day * part_water_waste_canal;
-			float to_the_ground <- water_waste_day - to_the_canal;
+			float w <- (1 - water_filtering) * water_waste_day;
+			float to_the_canal <- w * part_water_waste_canal ;
+			float to_the_ground <- w - to_the_canal;
+			
 			if to_the_canal > 0 {
 				closest_canal.water_waste_level <- closest_canal.water_waste_level + to_the_canal;
 			}

@@ -10,15 +10,15 @@ model WasteManagement
 global {
 	
 	/******************* GEOGRAPHICAL DATA USED *************************************/
-	//shape_file Hydrologie_shape_file <- shape_file("../includes/Definitive_versions/HydrologieV3.shp");
-	shape_file Hydrologie_shape_file <- shape_file("../includes/Definitive_versions/Hydrology_clean.shp");
+	shape_file Hydrologie_shape_file <- shape_file("../includes/Definitive_versions/Hydrology_clean2_2.shp");
 	
+
 	
-	string clean_canal_path <- ("../includes/Definitive_versions/Hydrology_clean2.shp");
+	string clean_canal_path <- ("../includes/Definitive_versions/Hydrology_clean2_3.shp");
 	bool clean_canal_data <- false;
 
 	geometry shape <- envelope(Hydrologie_shape_file);
-	float tolerance <- 1#m;
+	float tolerance <- 0.1#m parameter: true;
 	
 	
 	init {
@@ -51,7 +51,6 @@ global {
 				write name + " -> " + edges;
 				if not(empty(edges)) and (width < (edges max_of each.width)) {
 					should_be_reverse <- true;
-					write name + " reverse";
 				}
 				
 				if not should_be_reverse {
@@ -74,9 +73,12 @@ global {
 	action verify_connectivity {
 		graph canal_network <- directed(as_edge_graph(canal));
 		ask canal {
+			color <- #blue;
+		}
+		ask canal {
 			geometry pt <- last(shape.points) buffer tolerance;
 			downtream_canals<- list<canal>(canal_network out_edges_of (canal_network target_of self));	
-			list<canal> canal_close <- (canal overlapping pt) - self;
+			list<canal> canal_close <- (canal where (first(each.shape.points) overlaps pt)) - self;
 			canal_close <- canal_close where (last(each.shape.points) overlaps pt);
 			if not empty(canal_close - downtream_canals) {
 				color <- #red;
