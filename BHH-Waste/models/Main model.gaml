@@ -24,8 +24,7 @@ global {
 	/*************** GENERAL PARAMETERS ON TIME AND SPACE ****************************/
 	
 	float step <- 1#day;// one simulation step = 1 day 
-	float house_size <- 150.0 #m; // size of a house plot
-	float plot_size <- 250.0 #m; /// size of a field
+	float house_size <- 50.0 #m; // size of a house plot
 	
 	int end_of_game <- 8; // Number of turns of the game (1 turn = 1 year)
 	float tolerance_dist <- 1#m;
@@ -96,7 +95,7 @@ global {
 	float token_strong_waste_collection <- 40.0; //tokens/year - cost of "strong collection"
 	int collect_per_week_weak <- 2; //number of collect per week for "weak collection"
 	int collect_per_week_strong <- 4; //number of collect per week for "string collection"
-	float collection_team_collection_capacity_day <- 100.0; //quantity of solid waste remove during 1 day of work
+	float collection_team_collection_capacity_day <- 1000.0; //quantity of solid waste remove during 1 day of work
 	
 	
 	float token_trimestrial_collective_action <- 25.0; //per year
@@ -417,34 +416,37 @@ global {
 	}
 	
 	action increase_urban_area {
-		ask urban_area {
-			list<plot> neighbors_plot <- plot at_distance 0.1;
-			if not empty(neighbors_plot) {
-				float target_pop <- population *(1 + min_increase_urban_area_population_year);
-				loop while: not empty(neighbors_plot) and population <target_pop {
-					plot p <- one_of(neighbors_plot);
-					p >> neighbors_plot;
-					if (dead(p)) {break;}
-					geometry shape_plot <- copy(p.shape);
-					ask my_villages {inhabitants >> p.the_farmer; plots >> p;}
-					shape <- shape + shape_plot;
-					ask p.the_farmer {do die;}
-					ask p {do die;}
-					list<geometry> geoms <- to_squares (p,house_size);
-					float nb <- 0.0;
-					create house from: geoms {
-						create inhabitant {
-							location <- myself.location;
-							my_house <- cell(location);
-							my_cells <- cell overlapping myself;
-							closest_canal <- canal closest_to self;
-							nb <- nb + nb_people;
+		using topology(world) {
+			ask urban_area {
+				list<plot> neighbors_plot <- plot at_distance 0.1;
+				if not empty(neighbors_plot) {
+					float target_pop <- population *(1 + min_increase_urban_area_population_year);
+					loop while: not empty(neighbors_plot) and population <target_pop {
+						plot p <- one_of(neighbors_plot);
+						p >> neighbors_plot;
+						if (dead(p)) {break;}
+						geometry shape_plot <- copy(p.shape);
+						ask my_villages {inhabitants >> p.the_farmer; plots >> p;}
+						shape <- shape + shape_plot;
+						ask p.the_farmer {do die;}
+						ask p {do die;}
+						list<geometry> geoms <- to_squares (p,house_size);
+						float nb <- 0.0;
+						create house from: geoms {
+							create inhabitant {
+								location <- myself.location;
+								my_house <- cell(location);
+								my_cells <- cell overlapping myself;
+								closest_canal <- canal closest_to self;
+								nb <- nb + nb_people;
+							}
 						}
+						population <- population + nb;
+						
 					}
-					population <- population + nb;
-					
 				}
 			}
+			
 		}
 	}
 	
@@ -825,7 +827,7 @@ species local_landfill {
 	float waste_quantity;
 	
 	aspect default {
-		draw circle(50) depth: waste_quantity / 10.0 border: #blue color: #red;
+		draw circle(50) depth: waste_quantity / 100.0 border: #blue color: #red;
 	}
 		
 	action transfert_waste_to_communal_level {
@@ -842,7 +844,7 @@ species communal_landfill {
 	float waste_quantity min: 0.0;
 	
 	aspect default {
-		draw circle(100) depth: waste_quantity / 10.0 border: #blue color: #red;
+		draw circle(200) depth: waste_quantity / 100.0 border: #blue color: #red;
 	}
 	
 	action manage_waste {
