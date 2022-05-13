@@ -8,7 +8,7 @@
 
 model TangibleInteraction
 
-import "Waste Management.gaml"
+import "Main model.gaml"
 
 
 global {

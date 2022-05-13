@@ -460,9 +460,7 @@ global {
 		}
 	}
 	
-	user_command save_canal {
-		save canal to: "../includes/HydrologieV3.shp" type: shp attributes:["WIDTH"::width];
-	}
+
 }
 
 
@@ -771,9 +769,7 @@ species canal {
 	float water_waste_level_tmp;
 	list<canal> downtream_canals;
 	
-	user_command reverse_geom {
-		shape <- line(reverse(shape.points));
-	}
+	
 	action init_flow {
 		solid_waste_level_tmp <- 0.0;
 		water_waste_level_tmp <- 0.0;
