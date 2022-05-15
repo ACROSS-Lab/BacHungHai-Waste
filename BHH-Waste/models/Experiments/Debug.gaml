@@ -5,14 +5,14 @@
 * Tags: 
 */
 
-
+ 
 model Debug
 
 import "Abstract experiments.gaml"
 
 experiment base_debug virtual: true {
 	output{
-		display "Player 1"  type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
+		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS{ 
 			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
 				data "Water waste pollution" value: village[0].canals sum_of each.water_waste_level + village[0].cells sum_of each.water_waste_level  color: #red marker: false;
 			}
@@ -21,7 +21,7 @@ experiment base_debug virtual: true {
 			}
 		}
 		
-		display "Player 2"  type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
+		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS{ 
 			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
 				data "Water waste pollution" value: village[1].canals sum_of each.water_waste_level + village[1].cells sum_of each.water_waste_level  color: #red marker: false;
 			}
@@ -42,7 +42,7 @@ experiment base_debug virtual: true {
 			species communal_landfill;
 			species village transparency: 0.5 ; 
 		}
-		display "Player 3"  type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
+		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
 			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
 				data "Water waste pollution" value: village[2].canals sum_of each.water_waste_level + village[2].cells sum_of each.water_waste_level  color: #red marker: false;
 			}
@@ -50,7 +50,7 @@ experiment base_debug virtual: true {
 				data "Solid waste pollution" value: village[2].canals sum_of each.solid_waste_level + village[2].cells  sum_of each.solid_waste_level  color: #red marker: false;
 			}
 		}
-		display "Player 4" type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
+		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
 			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
 				data "Water waste pollution" value: village[3].canals sum_of each.water_waste_level + village[3].cells sum_of each.water_waste_level  color: #red marker: false;
 			}
