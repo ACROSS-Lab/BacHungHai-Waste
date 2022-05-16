@@ -108,6 +108,8 @@ global {
 	
 	float token_install_filter_for_homes_construction <- 200.0 ; //construction
 	float token_install_filter_for_homes_maintenance <- 20.0 ; //per year	
+	list<float> treatment_facility_decrease <- [0.3,0.45,0.9]; // impact of treatement facility for year 1, year 2, and after
+	
 	float token_sensibilization <- 15.0; //per year
 	
 	float token_pesticide_reducing <- 30.0; //per year
@@ -123,4 +125,8 @@ global {
 	
 	float token_installation_dumpholes <- 15.0; //per year
 	float impact_installation_dumpholes  <- 0.25; //decreasse
+	
+	float sensibilisation_function(float x) {
+		return (1 - 2/(1 +exp(x)));
+	}
 }

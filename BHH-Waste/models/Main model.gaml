@@ -8,7 +8,7 @@
 model WasteManagement
 
 import "Parameters.gaml"
-
+ 
 
 global {
 	
@@ -109,6 +109,7 @@ global {
 					my_cells <- cell overlapping myself;
 					closest_canal <- canal closest_to self;
 					nb <- nb + nb_people;
+					my_village <- first(village overlapping self);
 				}
 			}
 			population <- nb;
@@ -442,6 +443,8 @@ species village {
 	float population;
 	bool is_drained <- false;
 	bool weak_collection_policy;
+	int treatment_facility_year <- 0 max: 3;
+	bool treatment_facility_is_activated <- false;
 	
 	
 	action compute_indicators {
@@ -461,6 +464,7 @@ species village {
 				is_drained <- true;
 				ask canals {
 					solid_waste_level <- solid_waste_level * (1 - impact_drain_dredge_waste);
+					water_waste_level <- water_waste_level * (1 - impact_drain_dredge_waste);
 				}
 				budget <- budget - token_drain_dredge;
 			}
@@ -472,9 +476,27 @@ species village {
 	//2:ACT_FACILITY_TREATMENT
 	action install_facility_treatment_for_homes {
 		if budget >= token_install_filter_for_homes_construction {
-			bool  is_ok <- user_confirm("Action Facility treatment","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_FACILITY_TREATMENT + "?");
-			if is_ok {
-				budget <- budget - token_install_filter_for_homes_construction;
+			map results <- user_input_dialog("Install falicity treatment for urban areas. Cost: " +token_install_filter_for_homes_construction +"tokens. Number of tokens payed by each player",[enter("Player 1",int,0),enter("Player 2",int,0),enter("Player 3",int,0),enter("Player 4",int,0)]);
+			float p1 <- max(int(results["Player 1"]), village[0].budget);
+			float p2 <- max(int(results["Player 2"]), village[1].budget);
+			float p3 <- max(int(results["Player 3"]), village[2].budget);
+			float p4 <- max(int(results["Player 4"]), village[3].budget);
+			if p1 + p2 + p3 + p4 >= token_install_filter_for_homes_construction {
+				treatment_facility_is_activated <- true;
+				treatment_facility_year <- 1;
+				list<float> ps <- [p1,p2,p3,p4];	
+				if (p1 + p2 + p3 + p4) > token_install_filter_for_homes_construction {
+					float to_remove <- token_install_filter_for_homes_construction - (p1 + p2 + p3 + p4) ;
+					loop while: to_remove > 0 and (p1 + p2 + p3 + p4) > 0{
+						int i <- rnd(3);
+						float c <- min(1.0, to_remove, ps[i] );
+						to_remove <- to_remove - c;
+						ps[i] <- ps[i] - c;
+					}
+					loop i from: 0 to: 3 {
+						village[i].budget <- village[i].budget - ps[i];
+					}
+				}
 			}
 		}else {
 			do tell("Not enough budget for " +ACT_FACILITY_TREATMENT );
@@ -487,6 +509,9 @@ species village {
 			bool  is_ok <- user_confirm("Action Sensibilization","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SENSIBILIZATION + "?");
 			if is_ok {
 				budget <- budget - token_sensibilization;
+			}
+			ask inhabitants {
+				environmental_sensibility <- environmental_sensibility+ 1;
 			}
 		}else {
 			do tell("Not enough budget for " +ACT_SENSIBILIZATION );
@@ -579,10 +604,24 @@ species village {
 	action start_turn {
 		do tell("PLAYER " + (index_player + 1) + " TURN");
 		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_weak) + " per week";
-		map result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Choose a waste collection team policy",[choose("frenquency",string,current_val, [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"])]);
+		map result;
+		if treatment_facility_year > 0 {
+			result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Waste management policy",[choose("Choose a waste collection frenquency",string,current_val, [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"])]);
+		
+		} else {
+			result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Waste management policy",[
+				choose("Choose a waste collection frenquency",string,current_val, [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"]),
+				choose("Do you wish to pay for the home treatment facility?",bool,true, [true,false])
+			]);
+			treatment_facility_is_activated <- bool(result["Do you wish to pay for the home treatment facility?"]);
+			if treatment_facility_is_activated {budget <- budget - token_install_filter_for_homes_maintenance;}
+		
+		}
 		weak_collection_policy <- result["frenquency"] = ""+collect_per_week_weak +" per week";
 		budget <- budget - (weak_collection_policy ? token_weak_waste_collection : token_strong_waste_collection);
-		
+		if treatment_facility_is_activated {
+			treatment_facility_year <- treatment_facility_year + 1;
+		}
 	}
 	aspect default {
 		if (stage = PLAYER_TURN) {
@@ -764,11 +803,19 @@ species inhabitant {
 	float part_solid_waste_canal <- part_solid_waste_canal_inhabitants;
 	float part_water_waste_canal <- part_water_waste_canal_inhabitants;
 	list<cell> my_cells;
+	village my_village;
+	float environmental_sensibility <- 0.0;
 	aspect default {
 		draw circle(10.0) color: color border:color-25;
 	}
 	
+	
 	action domestic_waste_production {
+		float solid_waste_day_tmp <- solid_waste_day;
+		if (environmental_sensibility > 0) {
+			solid_waste_day_tmp <- solid_waste_day_tmp * world.sensibilisation_function(environmental_sensibility);
+		}
+		
 		if solid_waste_day > 0 {
 			float to_the_canal <- solid_waste_day * part_solid_waste_canal;
 			float to_the_ground <- solid_waste_day - to_the_canal;
@@ -781,10 +828,13 @@ species inhabitant {
 				}
 			}
 		}
+		float rate_decrease_due_to_treatment <- (my_village != nil and (not my_village.treatment_facility_is_activated)) ? 0.0 : treatment_facility_decrease[my_village.treatment_facility_year - 1];
+		
 		if water_waste_day > 0 {
 			float w <- (1 - water_filtering) * water_waste_day;
 			float to_the_canal <- w * part_water_waste_canal ;
-			float to_the_ground <- w - to_the_canal;
+			float to_the_ground <- w - to_the_canal; 
+			to_the_canal <- to_the_canal * (1 - rate_decrease_due_to_treatment);
 			
 			if to_the_canal > 0 {
 				closest_canal.water_waste_level <- closest_canal.water_waste_level + to_the_canal;
