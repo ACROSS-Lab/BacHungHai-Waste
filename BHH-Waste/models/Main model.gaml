@@ -124,9 +124,9 @@ global {
 			if type = "Commune" {
 				create communal_landfill with: (shape: s){
 					the_communal_landfill <- self;
-					ask farmer overlapping self {
-						my_village.farmers >> self;
-						ask my_plot {
+					ask plot overlapping self {
+						ask the_farmer {
+							my_village.farmers >> self;
 							do die;
 						}
 						do die;
@@ -136,14 +136,12 @@ global {
 				create local_landfill with:(shape:s){
 					my_village <- first(village overlapping self);
 					my_village.my_local_landfill <- self;
-					ask plot inside self {
-						ask farmer overlapping self {
+					ask plot overlapping self {
+						ask the_farmer {
 							my_village.farmers >> self;
-							ask my_plot {
-								do die;
-							}
 							do die;
 						}
+						do die;
 					}
 				}
 			}
@@ -861,7 +859,7 @@ species canal {
 }
 
 species commune {
-	rgb color <- #white;
+	rgb color <- #black;
 	aspect default {
 		draw shape color: color;
 	}
