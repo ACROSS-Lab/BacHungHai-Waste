@@ -69,8 +69,81 @@ experiment base_debug virtual: true {
 	}
 }
 
+experiment base_debug_graphic virtual: true {
+	output{
+
+		display map type: opengl  background: #black axes: false refresh: stage = COMPUTE_INDICATORS{
+			species commune;
+			species house;
+			species plot;
+			species canal;
+			species cell transparency: 0.5 ;
+			species inhabitant;
+			species farmer;
+			species collection_team;
+			species local_landfill;
+			species communal_landfill;
+			species village transparency: 0.5 ;
+						//define a new overlay layer positioned at the coordinate 5,5, with a constant size of 180 pixels per 100 pixels.
+            overlay position: { 5, 5 } size: { 180 #px, 100 #px } background: #black transparency: 0.0 border: #black rounded: true
+            {
+            	//for each possible type, we draw a square with the corresponding color and we write the name of the type
+                float y <- 30#px;
+                
+                draw "TIME" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
+                y <- y + 25#px;
+                draw "Day : " + cycle at: { 20#px, y } color: #white font: font("Helvetica", 18, #bold);
+                y <- y + 25#px;
+                      
+                draw "ENVIRONMENT" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
+                y <- y + 25#px;
+                draw square(10#px) at: { 20#px, y } color: #pink border: #white;
+                draw "commune" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 18, #bold);
+                y <- y + 25#px;
+                draw square(10#px) at: { 20#px, y } color: #gray border: #white;
+                draw "house" at: { 40#px, y + 4#px } color: #white font: font("Helvetica", 18, #bold);
+                y <- y + 25#px;
+                draw square(10#px) at: { 20#px, y } color: #green border: #white;
+                draw "plot" at: { 40#px, y + 4#px } color: #white font: font("Helvetica", 18, #bold);
+                y <- y + 50#px;
+                draw square(10#px) at: { 20#px, y } color: #blue border: #white;
+                draw "canal" at: { 40#px, y + 4#px } color: #white font: font("Helvetica", 18, #bold);
+                y <- y + 50#px;
+                 
+				y <- y + 100#px;
+				draw "PEOPLE" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
+                y <- y + 25#px;
+                draw circle(10#px) at: { 20#px, y } color: #red border: #red;
+                draw "inhabitans" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 18, #bold);
+                y <- y + 25#px;
+                draw circle(10#px) at: { 20#px, y } color: #yellow border: #red;
+                draw "farmer" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 18, #bold);
+                y <- y + 25#px;
+                
+                
+                y <- y + 100#px;
+                draw "LANDFILL" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
+                y <- y + 25#px;
+                draw triangle(25#px) at: { 20#px, y } color: #red border: #white;
+                draw "local landfill" at: { 40#px, y + 4#px } color: #white font: font("Helvetica", 18, #bold);
+                y <- y + 50#px;
+                draw triangle(50#px) at: { 20#px, y } color: #red border: #white;
+                draw "Communal  landfill" at: { 40#px, y + 4#px } color: #white font: font("Helvetica", 18, #bold);
+                y <- y + 25#px;
+
+            } 
+		}
+	}
+}
+
 
 experiment simulation_without_players parent: base_debug type: gui {
+	action _init_ {
+		create simulation with:(without_player:true);
+	}
+}
+
+experiment simulation_graphic parent: base_debug_graphic type: gui {
 	action _init_ {
 		create simulation with:(without_player:true);
 	}
