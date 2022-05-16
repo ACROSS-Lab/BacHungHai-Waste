@@ -9,7 +9,7 @@
 model Debug
 
 import "Abstract experiments.gaml"
-
+ 
 experiment base_debug virtual: true {
 	output{
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS{ 

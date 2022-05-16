@@ -110,20 +110,21 @@ global {
 	float token_install_filter_for_homes_maintenance <- 20.0 ; //per year	
 	list<float> treatment_facility_decrease <- [0.3,0.45,0.9]; // impact of treatement facility for year 1, year 2, and after
 	
-	float token_sensibilization <- 15.0; //per year
+	float token_sensibilization <- 15.0; //each time
 	
-	float token_pesticide_reducing <- 30.0; //per year
+	float token_pesticide_reducing <- 30.0; //
 	float impact_pesticide_reducing_production  <- 0.15; //decrease of the agricultural production
 	float impact_pesticide_reducing_waste  <- 0.33; //decrease waste production from farmers
 	
 	float token_implement_fallow <- 25.0; //per year
-	float impact_implement_fallow  <- 0.33; //decrease the agricultural production
+	float impact_implement_fallow_production  <- 0.33; //decrease the agricultural production
+	float impact_implement_fallow_waste  <- 0.33; //decrease the ground pollution
 	
 	float token_support_manure_buying <- 30.0; //per year
 	float impact_support_manure_buying_production  <- 0.15; //improvment of the agricultural production
 	float impact_support_manure_buying_waste  <- 0.2; //increase wastewater production
 	
-	float token_installation_dumpholes <- 15.0; //per year
+	float token_installation_dumpholes <- 15.0; //
 	float impact_installation_dumpholes  <- 0.25; //decreasse
 	
 	float sensibilisation_function(float x) { //function that returns the coefficient of solid production according to the environmental_sensibility of inahbitants 'x'

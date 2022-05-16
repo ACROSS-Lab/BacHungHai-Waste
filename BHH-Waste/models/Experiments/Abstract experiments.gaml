@@ -6,7 +6,7 @@
 */
 
 @no_experiment
-model Abstractexperiments
+model Abstractexperiments 
 
 import "../Main model.gaml"
 

@@ -161,9 +161,9 @@ global {
 			plots <- plot overlapping self;
 			cells <- cell overlapping self;
 			canals <- canal at_distance 1.0;
-			inhabitants <- (inhabitant overlapping self) + (farmer overlapping self);
-			population <- inhabitants sum_of each.nb_people;
-			
+			inhabitants <- (inhabitant overlapping self) ;
+			farmers <- (farmer overlapping self);
+			population <- (inhabitants + farmers) sum_of each.nb_people;
 			ask urban_area overlapping self {
 				my_villages << myself;
 			}
@@ -279,7 +279,7 @@ global {
 				budget <- budget_year_per_people * population;
 			}
 			ask village {
-				actions_done <- [];
+				actions_done_this_year <- [];
 				is_drained <- false;
 			}
 			turn <- turn + 1;
@@ -315,7 +315,7 @@ global {
 						p >> neighbors_plot;
 						if (dead(p)) {break;}
 						geometry shape_plot <- copy(p.shape);
-						ask my_villages {inhabitants >> p.the_farmer; plots >> p;}
+						ask my_villages {farmers >> p.the_farmer; plots >> p;}
 						shape <- shape + shape_plot;
 						ask p.the_farmer {do die;}
 						ask p {do die;}
@@ -330,7 +330,7 @@ global {
 								nb <- nb + nb_people;
 							}
 						}
-						population <- population + nb;
+						population <- population - 1 + nb;
 						
 					}
 				}
@@ -428,10 +428,12 @@ grid cell height: 50 width: 50 {
 
 species village {
 	rgb color <- village_color[int(self)];
-	list<string> actions_done;
+	list<string> actions_done_this_year;
+	list<string> actions_done_total;
 	list<cell> cells;
 	list<canal> canals;
 	list<inhabitant> inhabitants;
+	list<farmer> farmers;
 	local_landfill my_local_landfill;
 	float budget;
 	float solid_pollution_level ;
@@ -445,8 +447,6 @@ species village {
 	bool weak_collection_policy;
 	int treatment_facility_year <- 0 max: 3;
 	bool treatment_facility_is_activated <- false;
-	
-	
 	action compute_indicators {
 		solid_pollution_level <- ((cells sum_of each.solid_waste_level) + (canals sum_of (each.solid_waste_level))) / 10000.0;
 		water_pollution_level <- ((cells sum_of each.water_waste_level) + (canals sum_of (each.water_waste_level)))/ 10000.0;
@@ -458,139 +458,205 @@ species village {
 	
 	//1:ACT_DRAIN_DREDGE
 	action drain_dredge {
-		if budget >= token_drain_dredge {
-			bool  is_ok <- user_confirm("Action Drain & Dredge","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_DRAIN_DREDGE + "?");
-			if is_ok {
-				is_drained <- true;
-				ask canals {
-					solid_waste_level <- solid_waste_level * (1 - impact_drain_dredge_waste);
-					water_waste_level <- water_waste_level * (1 - impact_drain_dredge_waste);
-				}
-				budget <- budget - token_drain_dredge;
-			}
+		if (ACT_DRAIN_DREDGE in actions_done_this_year) {
+			do tell("Action " +ACT_DRAIN_DREDGE + " cannot be done twice" );
 		} else {
-			do tell("Not enough budget for " +ACT_DRAIN_DREDGE );
+			if budget >= token_drain_dredge {
+				bool  is_ok <- user_confirm("Action Drain & Dredge","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_DRAIN_DREDGE + "?");
+				if is_ok {
+					actions_done_total << ACT_DRAIN_DREDGE;
+					actions_done_this_year << ACT_DRAIN_DREDGE;
+					is_drained <- true;
+					ask canals {
+						solid_waste_level <- solid_waste_level * (1 - impact_drain_dredge_waste);
+						water_waste_level <- water_waste_level * (1 - impact_drain_dredge_waste);
+					}
+					budget <- budget - token_drain_dredge;
+				}
+			} else {
+				do tell("Not enough budget for " +ACT_DRAIN_DREDGE );
+			}
+			
 		}
 	}
 	
 	//2:ACT_FACILITY_TREATMENT
 	action install_facility_treatment_for_homes {
-		if budget >= token_install_filter_for_homes_construction {
-			map results <- user_input_dialog("Install falicity treatment for urban areas. Cost: " +token_install_filter_for_homes_construction +"tokens. Number of tokens payed by each player",[enter("Player 1",int,0),enter("Player 2",int,0),enter("Player 3",int,0),enter("Player 4",int,0)]);
-			float p1 <- max(int(results["Player 1"]), village[0].budget);
-			float p2 <- max(int(results["Player 2"]), village[1].budget);
-			float p3 <- max(int(results["Player 3"]), village[2].budget);
-			float p4 <- max(int(results["Player 4"]), village[3].budget);
-			if p1 + p2 + p3 + p4 >= token_install_filter_for_homes_construction {
-				treatment_facility_is_activated <- true;
-				treatment_facility_year <- 1;
-				list<float> ps <- [p1,p2,p3,p4];	
-				if (p1 + p2 + p3 + p4) > token_install_filter_for_homes_construction {
-					float to_remove <- token_install_filter_for_homes_construction - (p1 + p2 + p3 + p4) ;
-					loop while: to_remove > 0 and (p1 + p2 + p3 + p4) > 0{
-						int i <- rnd(3);
-						float c <- min(1.0, to_remove, ps[i] );
-						to_remove <- to_remove - c;
-						ps[i] <- ps[i] - c;
+		if (ACT_FACILITY_TREATMENT in actions_done_total) {
+			do tell("Action " +ACT_FACILITY_TREATMENT + " cannot be done twice" );
+		} else {
+			
+			if budget >= token_install_filter_for_homes_construction {
+				map results <- user_input_dialog("Install falicity treatment for urban areas. Cost: " +token_install_filter_for_homes_construction +"tokens. Number of tokens payed by each player",[enter("Player 1",int,0),enter("Player 2",int,0),enter("Player 3",int,0),enter("Player 4",int,0)]);
+				float p1 <- max(int(results["Player 1"]), village[0].budget);
+				float p2 <- max(int(results["Player 2"]), village[1].budget);
+				float p3 <- max(int(results["Player 3"]), village[2].budget);
+				float p4 <- max(int(results["Player 4"]), village[3].budget);
+				if p1 + p2 + p3 + p4 >= token_install_filter_for_homes_construction {
+					ask village {
+						actions_done_total << ACT_FACILITY_TREATMENT;
+						actions_done_this_year << ACT_FACILITY_TREATMENT;
 					}
-					loop i from: 0 to: 3 {
-						village[i].budget <- village[i].budget - ps[i];
+					
+					treatment_facility_is_activated <- true;
+					treatment_facility_year <- 1;
+					list<float> ps <- [p1,p2,p3,p4];	
+					if (p1 + p2 + p3 + p4) > token_install_filter_for_homes_construction {
+						float to_remove <- token_install_filter_for_homes_construction - (p1 + p2 + p3 + p4) ;
+						loop while: to_remove > 0 and (p1 + p2 + p3 + p4) > 0{
+							int i <- rnd(3);
+							float c <- min(1.0, to_remove, ps[i] );
+							to_remove <- to_remove - c;
+							ps[i] <- ps[i] - c;
+						}
+						loop i from: 0 to: 3 {
+							village[i].budget <- village[i].budget - ps[i];
+						}
 					}
 				}
+			}else {
+				do tell("Not enough budget for " +ACT_FACILITY_TREATMENT );
 			}
-		}else {
-			do tell("Not enough budget for " +ACT_FACILITY_TREATMENT );
 		}
 	}
 	
 	//3:ACT_SENSIBILIZATION
 	action sensibilization {
-		if budget >= token_sensibilization {
-			bool  is_ok <- user_confirm("Action Sensibilization","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SENSIBILIZATION + "?");
-			if is_ok {
-				budget <- budget - token_sensibilization;
+		if (ACT_SENSIBILIZATION in actions_done_this_year) {
+			do tell("Action " +ACT_SENSIBILIZATION + " cannot be done twice" );
+		} else {
+			if budget >= token_sensibilization {
+				bool  is_ok <- user_confirm("Action Sensibilization","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SENSIBILIZATION + "?");
+				if is_ok {
+					actions_done_total << ACT_SENSIBILIZATION;
+					actions_done_this_year << ACT_SENSIBILIZATION;
+					budget <- budget - token_sensibilization;
+					
+					ask inhabitants {
+						environmental_sensibility <- environmental_sensibility+ 1;
+					}
+				}
+			}else {
+				do tell("Not enough budget for " +ACT_SENSIBILIZATION );
 			}
-			ask inhabitants {
-				environmental_sensibility <- environmental_sensibility+ 1;
-			}
-		}else {
-			do tell("Not enough budget for " +ACT_SENSIBILIZATION );
 		}
 	}
 	
 	//4:ACTION_COLLECTIVE_ACTION
 	action trimestrial_collective_action {
-		if budget >= token_trimestrial_collective_action {
-			bool  is_ok <- user_confirm("Action trimestrial action","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACTION_COLLECTIVE_ACTION + "?");
-			if is_ok {
-				ask canals {
-					solid_waste_level <- solid_waste_level * (1 - impact_trimestrial_collective_action);
-				}
-				budget <- budget - token_trimestrial_collective_action;
-			}
+		if (ACTION_COLLECTIVE_ACTION in actions_done_this_year) {
+			do tell("Action " +ACTION_COLLECTIVE_ACTION + " cannot be done twice" );
 		} else {
-			do tell("Not enough budget for " +ACTION_COLLECTIVE_ACTION );
+			if budget >= token_trimestrial_collective_action {
+				bool  is_ok <- user_confirm("Action trimestrial action","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACTION_COLLECTIVE_ACTION + "?");
+				if is_ok {
+					actions_done_total << ACTION_COLLECTIVE_ACTION;
+					actions_done_this_year << ACTION_COLLECTIVE_ACTION;
+			
+					ask canals {
+						solid_waste_level <- solid_waste_level * (1 - impact_trimestrial_collective_action);
+					}
+					budget <- budget - token_trimestrial_collective_action;
+				}
+			} else {
+				do tell("Not enough budget for " +ACTION_COLLECTIVE_ACTION );
+			}
 		}
 		
 	}
 	
 	//5:ACT_PESTICIDE_REDUCTION
 	action pesticide_reducing {
-		if budget >= token_pesticide_reducing {
-			bool  is_ok <- user_confirm("Action Pesticide reducing","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_PESTICIDE_REDUCTION + "?");
-			if is_ok {
-				budget <- budget - token_pesticide_reducing;
-				ask plots {
-					does_reduce_pesticide <- true;
+		if (ACT_PESTICIDE_REDUCTION in actions_done_total) {
+			do tell("Action " +ACT_PESTICIDE_REDUCTION + " cannot be done twice" );
+		} else {
+			if budget >= token_pesticide_reducing {
+				bool  is_ok <- user_confirm("Action Pesticide reducing","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_PESTICIDE_REDUCTION + "?");
+				if is_ok {
+					actions_done_total << ACT_PESTICIDE_REDUCTION;
+					actions_done_this_year << ACT_PESTICIDE_REDUCTION;
+					budget <- budget - token_pesticide_reducing;
+					ask plots {
+						does_reduce_pesticide <- true;
+					}
 				}
+			}else {
+				do tell("Not enough budget for " +ACT_PESTICIDE_REDUCTION );
 			}
-		}else {
-			do tell("Not enough budget for " +ACT_PESTICIDE_REDUCTION );
 		}
 	}
 	
 	//6:ACT_SUPPORT_MANURE
 	action support_manure_buying {
-		if budget >= token_support_manure_buying {
-			bool  is_ok <- user_confirm("Action Support Mature","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SUPPORT_MANURE + "?");
-			if is_ok {
-				budget <- budget - token_support_manure_buying;
+		if (ACT_SUPPORT_MANURE in actions_done_this_year) {
+			do tell("Action " +ACT_SUPPORT_MANURE + " cannot be done twice" );
+		} else {
+			if budget >= token_support_manure_buying {
+				bool  is_ok <- user_confirm("Action Support Mature","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SUPPORT_MANURE + "?");
+				if is_ok {
+					actions_done_total << ACT_SUPPORT_MANURE;
+					actions_done_this_year << ACT_SUPPORT_MANURE;
+					budget <- budget - token_support_manure_buying;
+					ask plots {
+						use_more_manure <- true;
+					}
+				}
+			}else {
+				do tell("Not enough budget for " +ACT_SUPPORT_MANURE );
 			}
-			ask plots {
-				use_more_manure <- true;
-			}
-		}else {
-			do tell("Not enough budget for " +ACT_SUPPORT_MANURE );
 		}
 	}
 	
 	
 	//7:ACT_IMPLEMENT_FALLOW
 	action implement_fallow {
-		if budget >= token_implement_fallow {
+		if (ACT_IMPLEMENT_FALLOW in actions_done_this_year) {
+			do tell("Action " +ACT_IMPLEMENT_FALLOW + " cannot be done twice" );
+		} else {
+			if budget >= token_implement_fallow {
+			
 			bool  is_ok <- user_confirm("Action Implementation Follow","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_IMPLEMENT_FALLOW + "?");
 			if is_ok {
+				ask plots {
+					does_implement_fallow <- true;
+				}
 				budget <- budget - token_implement_fallow;
+				ask cells {
+					water_waste_level <- water_waste_level - impact_implement_fallow_waste;
+				}
+				actions_done_total << ACT_IMPLEMENT_FALLOW;
+				actions_done_this_year << ACT_IMPLEMENT_FALLOW;
+				
+		
+				}
+			}else {
+				do tell("Not enough budget for " +ACT_IMPLEMENT_FALLOW );
 			}
-		}else {
-			do tell("Not enough budget for " +ACT_IMPLEMENT_FALLOW );
+		
 		}
 	}
 	
 	
 	//8:ACT_INSTALL_DUMPHOLES,
 	action install_gumpholes {
-		if budget >= token_installation_dumpholes {
-			bool  is_ok <- user_confirm("Action Installation Dumpholes","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_INSTALL_DUMPHOLES + "?");
-			if is_ok {
-				budget <- budget - token_installation_dumpholes;
-				ask plot {
-					
-				}
-			}
+		if (ACT_INSTALL_DUMPHOLES in actions_done_total) {
+			do tell("Action " +ACT_INSTALL_DUMPHOLES + " cannot be done twice" );
+		} else {
 			
-		}else {
-			do tell("Not enough budget for " +ACT_INSTALL_DUMPHOLES );
+			if budget >= token_installation_dumpholes {
+				bool  is_ok <- user_confirm("Action Installation Dumpholes","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_INSTALL_DUMPHOLES + "?");
+				if is_ok {
+					actions_done_total << ACT_PESTICIDE_REDUCTION;
+					actions_done_this_year<< ACT_PESTICIDE_REDUCTION;
+					budget <- budget - token_installation_dumpholes;
+					ask farmers {
+						has_dumphole <- true;
+					}
+				}
+				
+			}else {
+				do tell("Not enough budget for " +ACT_INSTALL_DUMPHOLES );
+			}
 		}
 	}
 	
@@ -611,6 +677,7 @@ species village {
 		do tell("PLAYER " + (index_player + 1) + " TURN");
 		ask plots {
 			use_more_manure <- false;
+			does_implement_fallow <- false;
 		}
 		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_weak) + " per week";
 		map result;
@@ -660,8 +727,10 @@ species plot {
 	float perimeter_canal_nearby;
 	rgb color<-#darkgreen-25;
 	bool use_more_manure <- false;
+	bool does_implement_fallow <- false;
 	
 	action pollution_due_to_practice { 
+		
 		if use_more_manure {
 			pratice_water_pollution_level <- pratice_water_pollution_level * (1 - impact_support_manure_buying_waste);
 		}
@@ -686,6 +755,9 @@ species plot {
 
 	action compute_productivity {
 		current_productivity <- base_productivity;
+		if does_implement_fallow {
+			current_productivity <- current_productivity * (1 - impact_implement_fallow_production);
+		}
 		if use_more_manure {
 			current_productivity <- current_productivity * (1 - impact_support_manure_buying_production);
 		}
@@ -812,8 +884,13 @@ species farmer parent: inhabitant {
 	float water_waste_day <- nb_people * water_waste_year_farmers / 365;
 	float part_solid_waste_canal <- part_solid_waste_canal_farmers;
 	float part_water_waste_canal <- part_water_waste_canal_farmers;
+	bool has_dumphole <- false;
+	
+	float waste_for_a_day {
+		return has_dumphole ? (solid_waste_day * (1 - impact_installation_dumpholes)): solid_waste_day;
+	}
 }
-species inhabitant {
+species inhabitant { 
 	rgb color <- #midnightblue;
 	cell my_house;
 	canal closest_canal;
@@ -830,9 +907,12 @@ species inhabitant {
 		draw circle(10.0) color: color border:color-25;
 	}
 	
-	
+	float waste_for_a_day {
+		return solid_waste_day;
+	}
 	action domestic_waste_production {
-		float solid_waste_day_tmp <- solid_waste_day;
+		float solid_waste_day_tmp <- waste_for_a_day();
+		
 		if (environmental_sensibility > 0) {
 			solid_waste_day_tmp <- solid_waste_day_tmp * world.sensibilisation_function(environmental_sensibility);
 		}
