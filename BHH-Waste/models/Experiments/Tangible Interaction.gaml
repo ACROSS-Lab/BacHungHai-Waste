@@ -8,7 +8,8 @@
 
 model TangibleInteraction
 
-import "Main model.gaml"
+import "Abstract experiments.gaml"
+
 
 
 global {

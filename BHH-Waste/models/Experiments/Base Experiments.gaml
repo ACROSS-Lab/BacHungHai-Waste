@@ -1,23 +1,23 @@
 /**
-* Name: Debug
+* Name: BaseExperiments
 * Based on the internal empty template. 
 * Author: Patrick Taillandier
 * Tags: 
 */
 
 
-model Debug
+model BaseExperiments
 
-import "Main model.gaml"
+import "Abstract experiments.gaml"
 
-experiment simulation_without_players parent: base_debug type: gui {
+
+experiment simulation_without_players parent: base_display_layout_test type: gui {
 	action _init_ {
 		create simulation with:(without_player:true);
 	}
 }
 
-
-experiment the_serious_game parent: base_debug type: gui {
+experiment the_serious_game parent: base_display_layout_test type: gui {
 	float minimum_cycle_duration <- 0.01;
 	output {
 		display action_buton background:#black name:"Tools panel"  	{
