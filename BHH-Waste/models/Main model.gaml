@@ -705,7 +705,7 @@ species village {
 			}
 		} else {
 			
-			draw shape.contour + 20.0 color: color;
+			draw shape.contour + 20.0 color: #black;
 		}
 	}
 }
@@ -723,6 +723,7 @@ species plot {
 	local_landfill the_local_landfill;
 	bool impacted_by_canal <- false;
 	float perimeter_canal_nearby;
+	rgb color<-#darkgreen-25;
 	
 	action pollution_due_to_practice { 
 		if pratice_water_pollution_level > 0 {
@@ -767,7 +768,7 @@ species plot {
 	}
 	
 	aspect default {
-		draw shape color: #green border: #black;
+		draw shape color: color border: #black;
 	}
 }
 
@@ -776,8 +777,9 @@ species urban_area {
 	list<village> my_villages;
 }
 species house {
+	rgb color<-#darkslategray;
 	aspect default {
-		draw shape color: #gray border: #black;
+		draw shape color: color border: #black;
 	}
 }
 species canal {
@@ -818,7 +820,7 @@ species canal {
 }
 
 species commune {
-	rgb color <- #pink;
+	rgb color <- #white;
 	aspect default {
 		draw shape color: color;
 	}
@@ -858,7 +860,7 @@ species communal_landfill {
 }
 
 species farmer parent: inhabitant {
-	rgb color <- #yellow;
+	rgb color <- #orange;
 	float max_agricultural_waste_production <- rnd(1.0, 3.0);
 	float solid_waste_day <- nb_people * solid_waste_year_farmers / 365;
 	float water_waste_day <- nb_people * water_waste_year_farmers / 365;
@@ -866,7 +868,7 @@ species farmer parent: inhabitant {
 	float part_water_waste_canal <- part_water_waste_canal_farmers;
 }
 species inhabitant {
-	rgb color <- #red;
+	rgb color <- #midnightblue;
 	cell my_house;
 	canal closest_canal;
 	float nb_people <- 1.0;
@@ -877,7 +879,7 @@ species inhabitant {
 	float part_water_waste_canal <- part_water_waste_canal_inhabitants;
 	list<cell> my_cells;
 	aspect default {
-		draw circle(10.0) color: color;
+		draw circle(10.0) color: color border:color-25;
 	}
 	
 	action domestic_waste_production {
