@@ -70,10 +70,10 @@ global {
 		do create_urban_area;
 		
 		do create_plots;
-	
-		do create_communal_landfill;
-		
 		do init_villages;	
+		
+		do create_landfill;
+		
 		
 		ask cell {do update_color;}
 		
@@ -118,12 +118,37 @@ global {
 		
 	}
 	
-	action create_communal_landfill {
-		create communal_landfill {
-			shape <- square(200) ;
-			location <- any_location_in(first(commune).shape.contour);
-			the_communal_landfill <- self;
+	action create_landfill {
+		loop s over: Dumpyards_shape_file.contents {
+			string type <- s get ("TYPE");
+			if type = "Commune" {
+				create communal_landfill with: (shape: s){
+					the_communal_landfill <- self;
+					ask farmer overlapping self {
+						my_village.farmers >> self;
+						ask my_plot {
+							do die;
+						}
+						do die;
+					}
+				}
+			} else {
+				create local_landfill with:(shape:s){
+					my_village <- first(village overlapping self);
+					my_village.my_local_landfill <- self;
+					ask plot inside self {
+						ask farmer overlapping self {
+							my_village.farmers >> self;
+							ask my_plot {
+								do die;
+							}
+							do die;
+						}
+					}
+				}
+			}
 		}
+		
 	}
 	
 	action create_plots {
@@ -143,7 +168,9 @@ global {
 			
 			the_village <- village closest_to self;
 			create farmer {
+				my_village <- myself.the_village;
 				myself.the_farmer <- self;
+				my_plot <- myself;
 				closest_canal <- myself.closest_canal;
 				location <- myself.location;
 				my_house <- cell(location);
@@ -170,11 +197,7 @@ global {
 			create collection_team with:(my_village:self) {
 				myself.collection_teams << self;
 			}
-			create local_landfill with:(my_village:self){
-				
-				location <- any_location_in(myself);
-				myself.my_local_landfill <- self;
-			}
+			
 		} 
 	}
 	action activate_act1 {
@@ -849,7 +872,7 @@ species local_landfill {
 	float waste_quantity;
 	
 	aspect default {
-		draw circle(50) depth: waste_quantity / 100.0 border: #blue color: #red;
+		draw shape depth: waste_quantity / 100.0 border: #blue color: #red;
 	}
 		
 	action transfert_waste_to_communal_level {
@@ -866,7 +889,7 @@ species communal_landfill {
 	float waste_quantity min: 0.0;
 	
 	aspect default {
-		draw circle(200) depth: waste_quantity / 100.0 border: #blue color: #red;
+		draw  shape depth: waste_quantity / 100.0 border: #blue color: #red;
 	}
 	
 	action manage_waste {
@@ -885,7 +908,7 @@ species farmer parent: inhabitant {
 	float part_solid_waste_canal <- part_solid_waste_canal_farmers;
 	float part_water_waste_canal <- part_water_waste_canal_farmers;
 	bool has_dumphole <- false;
-	
+	plot my_plot;
 	float waste_for_a_day {
 		return has_dumphole ? (solid_waste_day * (1 - impact_installation_dumpholes)): solid_waste_day;
 	}

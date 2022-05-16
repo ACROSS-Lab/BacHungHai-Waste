@@ -22,6 +22,8 @@ global {
 
 	shape_file Fields_shape_file <- shape_file("../includes/Definitive_versions/FieldsV1.shp");
 
+	shape_file Dumpyards_shape_file <- shape_file("../includes/Definitive_versions/Dumpyards.shp");
+
 	/*************** GENERAL PARAMETERS ON TIME AND SPACE ****************************/
 	
 	float step <- 1#day;// one simulation step = 1 day 
