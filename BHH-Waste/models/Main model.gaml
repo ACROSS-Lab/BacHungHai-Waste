@@ -40,6 +40,7 @@ global {
 	
 	int action_type <- -1;	
 	
+	
 	communal_landfill the_communal_landfill;
 	
 	list<string> actions_name <- [
@@ -62,21 +63,13 @@ global {
 
 	init {
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
-		
 		do create_canals;
-		
 		create commune from: Limites_commune_shape_file;
-		
 		do create_urban_area;
-		
 		do create_plots;
 		do init_villages;	
-		
 		do create_landfill;
-		
-		
 		ask cell {do update_color;}
-		
 		computation_end <- current_date add_years 1;
 	}
 	
@@ -320,9 +313,15 @@ global {
 		ask cell {
 			do natural_pollution_reduction;
 		}
-		ask collection_team {
-			do collect_waste;
+		
+		ask village {
+			list<cell> cells_to_clean <-  cells where (each.solid_waste_level > 0);
+			ask collection_teams {
+				do collect_waste(cells_to_clean);
+			}
+			
 		}
+		
 	}
 	
 	action increase_urban_area {
@@ -367,6 +366,8 @@ global {
 		do manage_landfill;
 		do manage_daily_indicator;
 		do manage_end_of_indicator_computation;
+		
+		
 	}
 	
 	reflex playerturn when: stage = PLAYER_TURN{
@@ -950,7 +951,11 @@ species inhabitant {
 				}
 			}
 		}
-		float rate_decrease_due_to_treatment <- (my_village != nil and (not my_village.treatment_facility_is_activated)) ? 0.0 : treatment_facility_decrease[my_village.treatment_facility_year - 1];
+		
+		float rate_decrease_due_to_treatment <- 0.0;
+		if (my_village != nil and  my_village.treatment_facility_is_activated) {
+			rate_decrease_due_to_treatment <- treatment_facility_decrease[my_village.treatment_facility_year - 1];
+		} 
 		
 		if water_waste_day > 0 {
 			float w <- (1 - water_filtering) * water_waste_day;
@@ -978,15 +983,15 @@ species collection_team {
 	village my_village;
 	
 	
-	action collect_waste {
+	action collect_waste(list<cell> cells_to_clean) {
 		float waste_collected <- 0.0;
 		loop while: waste_collected < collection_capacity  {
-			list<cell> cells_to_clean <-  my_village.cells where (each.solid_waste_level > 0);
-			if  empty(cells_to_clean) {
+			if empty(cells_to_clean) {
 				break;
 			}
 			else {
-				cell the_cell <- cells_to_clean with_max_of (each.solid_waste_level);
+				cell the_cell <- first(cells_to_clean);
+				cells_to_clean >> the_cell;
 				ask the_cell{
 					float w <- min(myself.collection_capacity - waste_collected, solid_waste_level);
 					waste_collected <- waste_collected + w;
