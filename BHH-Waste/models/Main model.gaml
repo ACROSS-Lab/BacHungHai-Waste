@@ -540,6 +540,9 @@ species village {
 			bool  is_ok <- user_confirm("Action Pesticide reducing","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_PESTICIDE_REDUCTION + "?");
 			if is_ok {
 				budget <- budget - token_pesticide_reducing;
+				ask plots {
+					does_reduce_pesticide <- true;
+				}
 			}
 		}else {
 			do tell("Not enough budget for " +ACT_PESTICIDE_REDUCTION );
@@ -552,6 +555,9 @@ species village {
 			bool  is_ok <- user_confirm("Action Support Mature","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SUPPORT_MANURE + "?");
 			if is_ok {
 				budget <- budget - token_support_manure_buying;
+			}
+			ask plots {
+				use_more_manure <- true;
 			}
 		}else {
 			do tell("Not enough budget for " +ACT_SUPPORT_MANURE );
@@ -603,6 +609,9 @@ species village {
 	
 	action start_turn {
 		do tell("PLAYER " + (index_player + 1) + " TURN");
+		ask plots {
+			use_more_manure <- false;
+		}
 		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_weak) + " per week";
 		map result;
 		if treatment_facility_year > 0 {
@@ -638,6 +647,7 @@ species village {
 species plot {
 	village the_village;
 	float base_productivity <- field_initial_productivity min: 0.0;
+	bool does_reduce_pesticide <- false;
 	float current_productivity min: 0.0;
 	float pratice_water_pollution_level;
 	float part_to_canal_of_pollution;
@@ -649,8 +659,15 @@ species plot {
 	bool impacted_by_canal <- false;
 	float perimeter_canal_nearby;
 	rgb color<-#darkgreen-25;
+	bool use_more_manure <- false;
 	
 	action pollution_due_to_practice { 
+		if use_more_manure {
+			pratice_water_pollution_level <- pratice_water_pollution_level * (1 - impact_support_manure_buying_waste);
+		}
+		if does_reduce_pesticide {
+			pratice_water_pollution_level <- pratice_water_pollution_level * (1 - impact_pesticide_reducing_waste);
+		}
 		if pratice_water_pollution_level > 0 {
 			float to_the_canal <- pratice_water_pollution_level * part_to_canal_of_pollution;
 			float to_the_ground <- pratice_water_pollution_level - to_the_canal;
@@ -669,6 +686,10 @@ species plot {
 
 	action compute_productivity {
 		current_productivity <- base_productivity;
+		if use_more_manure {
+			current_productivity <- current_productivity * (1 - impact_support_manure_buying_production);
+		}
+		if does_reduce_pesticide {current_productivity <- current_productivity* (1 - impact_pesticide_reducing_production);}
 		if the_village.is_drained {
 			current_productivity <- current_productivity * (1 + impact_drain_dredge_agriculture);
 		}

@@ -126,7 +126,7 @@ global {
 	float token_installation_dumpholes <- 15.0; //per year
 	float impact_installation_dumpholes  <- 0.25; //decreasse
 	
-	float sensibilisation_function(float x) {
+	float sensibilisation_function(float x) { //function that returns the coefficient of solid production according to the environmental_sensibility of inahbitants 'x'
 		return (1 - 2/(1 +exp(x)));
 	}
 }
