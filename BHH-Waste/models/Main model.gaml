@@ -256,8 +256,24 @@ global {
 	}
 	
 	action manage_individual_pollution {
-		ask farmer + inhabitant{
-			do domestic_waste_production;
+	ask village {
+			list<float> typical_values_inhabitants <- first(inhabitants).typical_values_computation();
+			list<float> typical_values_farmers <- first(farmers).typical_values_computation();
+			float s_to_c <- typical_values_inhabitants[0];
+			float s_to_g <- typical_values_inhabitants[1];
+			float w_to_c <- typical_values_inhabitants[2];
+			float w_to_g <- typical_values_inhabitants[3];
+			ask inhabitants{
+				do domestic_waste_production(s_to_c,s_to_g,w_to_c,w_to_g);
+			}
+			s_to_c <- typical_values_farmers[0];
+			s_to_g <- typical_values_farmers[1];
+			w_to_c <- typical_values_farmers[2];
+			w_to_g <- typical_values_farmers[3];
+			
+			ask farmers{
+				do domestic_waste_production(s_to_c,s_to_g,w_to_c,w_to_g);
+			}
 		}
 		ask plot {
 			do pollution_due_to_practice;
@@ -932,24 +948,38 @@ species inhabitant {
 	float waste_for_a_day {
 		return solid_waste_day;
 	}
-	action domestic_waste_production {
+	action domestic_waste_production (float solid_waste_canal, float solid_waste_ground, float water_waste_canal, float water_waste_ground) {
+		if solid_waste_canal > 0 {
+				closest_canal.solid_waste_level <- closest_canal.solid_waste_level + solid_waste_canal;
+			}
+		if solid_waste_ground > 0 {
+			ask one_of(my_cells) {
+				solid_waste_level <- solid_waste_level + solid_waste_ground ;
+			}
+		}
+		if water_waste_canal > 0 {
+			closest_canal.water_waste_level <- closest_canal.water_waste_level + water_waste_canal;
+		}
+		if water_waste_ground > 0 {
+			ask one_of(my_cells) {
+				water_waste_level <- water_waste_level + water_waste_ground ;
+			}
+		}
+		
+	}
+	list<float> typical_values_computation {
+		list<float> typical_values;
+	
 		float solid_waste_day_tmp <- waste_for_a_day();
 		
 		if (environmental_sensibility > 0) {
 			solid_waste_day_tmp <- solid_waste_day_tmp * world.sensibilisation_function(environmental_sensibility);
 		}
-		
+			
 		if solid_waste_day > 0 {
 			float to_the_canal <- solid_waste_day * part_solid_waste_canal;
-			float to_the_ground <- solid_waste_day - to_the_canal;
-			if to_the_canal > 0 {
-				closest_canal.solid_waste_level <- closest_canal.solid_waste_level + to_the_canal;
-			}
-			if to_the_ground > 0 {
-				ask one_of(my_cells) {
-					solid_waste_level <- solid_waste_level + to_the_ground ;
-				}
-			}
+			typical_values<< to_the_canal;
+			typical_values<< solid_waste_day - to_the_canal;
 		}
 		
 		float rate_decrease_due_to_treatment <- 0.0;
@@ -960,19 +990,12 @@ species inhabitant {
 		if water_waste_day > 0 {
 			float w <- (1 - water_filtering) * water_waste_day;
 			float to_the_canal <- w * part_water_waste_canal ;
-			float to_the_ground <- w - to_the_canal; 
-			to_the_canal <- to_the_canal * (1 - rate_decrease_due_to_treatment);
+			typical_values << to_the_canal * (1 - rate_decrease_due_to_treatment);
+			typical_values << w - to_the_canal; 
 			
-			if to_the_canal > 0 {
-				closest_canal.water_waste_level <- closest_canal.water_waste_level + to_the_canal;
-			}
-			if to_the_ground > 0 {
-				ask one_of(my_cells) {
-					water_waste_level <- water_waste_level + to_the_ground ;
-				}
-			}
+		}
+		return typical_values;
 			
-		}	
 	}
 }
 
