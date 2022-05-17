@@ -44,16 +44,16 @@ global {
 	communal_landfill the_communal_landfill;
 	
 	string text_action <- "";
-	list<string> actions_name <- [
-		ACT_DRAIN_DREDGE,
-		ACT_FACILITY_TREATMENT,
-		ACT_SENSIBILIZATION,
-		ACTION_COLLECTIVE_ACTION,
-		ACT_PESTICIDE_REDUCTION,
-		ACT_SUPPORT_MANURE,
-		ACT_IMPLEMENT_FALLOW,
-		ACT_INSTALL_DUMPHOLES,
-		ACT_END_OF_TURN
+	map<string,string> actions_name <- [
+		"q"::ACT_DRAIN_DREDGE,
+		"w"::ACT_FACILITY_TREATMENT,
+		"e"::ACT_SENSIBILIZATION,
+		"r"::ACTION_COLLECTIVE_ACTION,
+		"t"::ACT_PESTICIDE_REDUCTION,
+		"y"::ACT_SUPPORT_MANURE,
+		"u"::ACT_IMPLEMENT_FALLOW,
+		"i"::ACT_INSTALL_DUMPHOLES,
+		"o"::ACT_END_OF_TURN
 	]; 
 	
 	
@@ -72,8 +72,8 @@ global {
 		do create_landfill;
 		ask cell {do update_color;}
 		computation_end <- current_date add_years 1;
-		loop i from: 0 to:length(actions_name) -1 {
-			text_action <- text_action + i +":" + actions_name[i] + "\n"; 
+		loop k over: actions_name.keys {
+			text_action <- text_action + k +":" + actions_name[k] + "\n"; 
 		}
 	}
 	
