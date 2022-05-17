@@ -111,7 +111,7 @@ experiment base_debug_graphic virtual: true {
 				draw "PEOPLE" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
                 y <- y + 25#px;
                 draw circle(10#px) at: { 20#px, y } color: first(inhabitant).color ;
-                draw "inhabitans" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 18, #bold);
+                draw "inhabitants" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 18, #bold);
                 y <- y + 25#px;
                 draw circle(10#px) at: { 20#px, y } color: first(farmer).color;
                 draw "farmer" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 18, #bold);
