@@ -101,7 +101,7 @@ global {
 					my_house <- cell(location);
 					my_cells <- cell overlapping myself;
 					closest_canal <- canal closest_to self;
-					nb <- nb + nb_people;
+					nb <- nb + 1;
 					my_village <- first(village overlapping self);
 				}
 			}
@@ -181,7 +181,8 @@ global {
 			canals <- canal at_distance 1.0;
 			inhabitants <- (inhabitant overlapping self) ;
 			farmers <- (farmer overlapping self);
-			population <- (inhabitants + farmers) sum_of each.nb_people;
+			population <- length(inhabitants)  + length(farmers) ;
+			
 			ask urban_area overlapping self {
 				my_villages << myself;
 			}
@@ -306,7 +307,7 @@ global {
 			index_player <- 0;
 			step <- 0.0001;
 			ask village {
-				budget <- budget_year_per_people * population;
+				budget <- budget_year_per_village;
 			}
 			ask village {
 				actions_done_this_year <- [];
@@ -363,7 +364,7 @@ global {
 								my_house <- cell(location);
 								my_cells <- cell overlapping myself;
 								closest_canal <- canal closest_to self;
-								nb <- nb + nb_people;
+								nb <- nb + 1;
 							}
 						}
 						population <- population - 1 + nb;
@@ -480,7 +481,7 @@ species village {
 	list<collection_team> collection_teams;
 	float bonus_agricultural_production;
 	list<plot> plots;
-	float population;
+	int population;
 	bool is_drained <- false;
 	bool weak_collection_policy;
 	int treatment_facility_year <- 0 max: 3;
@@ -918,8 +919,8 @@ species communal_landfill {
 species farmer parent: inhabitant {
 	rgb color <- #orange;
 	float max_agricultural_waste_production <- rnd(1.0, 3.0);
-	float solid_waste_day <- nb_people * solid_waste_year_farmers / 365;
-	float water_waste_day <- nb_people * water_waste_year_farmers / 365;
+	float solid_waste_day <-  solid_waste_year_farmers / 365;
+	float water_waste_day <-  water_waste_year_farmers / 365;
 	float part_solid_waste_canal <- part_solid_waste_canal_farmers;
 	float part_water_waste_canal <- part_water_waste_canal_farmers;
 	bool has_dumphole <- false;
@@ -932,10 +933,9 @@ species inhabitant {
 	rgb color <- #midnightblue;
 	cell my_house;
 	canal closest_canal;
-	float nb_people <- 1.0;
 	float water_filtering <-water_waste_filtering_inhabitants;
-	float solid_waste_day <- nb_people * solid_waste_year_inhabitants / 365;
-	float water_waste_day <- nb_people * water_waste_year_inhabitants / 365;
+	float solid_waste_day <-  solid_waste_year_inhabitants / 365;
+	float water_waste_day <-  water_waste_year_inhabitants / 365;
 	float part_solid_waste_canal <- part_solid_waste_canal_inhabitants;
 	float part_water_waste_canal <- part_water_waste_canal_inhabitants;
 	list<cell> my_cells;

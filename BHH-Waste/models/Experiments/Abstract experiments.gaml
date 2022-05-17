@@ -72,7 +72,7 @@ experiment base_display virtual: true {
 			
 			
 		}
-		/*display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS{
+		display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS{
 			chart "Waste pollution " size:{1.0, 0.3} background: #black color: #white{
 				data "Water waste pollution" value: canal sum_of each.water_waste_level + cell sum_of each.water_waste_level  color: #red marker: false;
 			}
@@ -81,7 +81,7 @@ experiment base_display virtual: true {
 			}
 			
 			
-		}*/
+		}
 	}
 }
 

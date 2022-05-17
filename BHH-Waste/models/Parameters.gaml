@@ -35,7 +35,7 @@ global {
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
-	float budget_year_per_people <- 1.0; // total buget per year for a village (in token): number of people x budget_year_per_people
+	float budget_year_per_village <- 200.0; // total buget per year for a village (in token):
 	float min_increase_urban_area_population_year <- 0.1; //min increase of urban area per year (in terms of number of people)
 	
 	
