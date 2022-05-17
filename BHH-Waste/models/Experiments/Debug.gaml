@@ -102,8 +102,8 @@ experiment base_debug parent: abstract_debug virtual: true {
 		 		data "Ecol labal max pollution" value:max_pollution_ecolabel color: #white marker: false;
 			}
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value: total_productivity color: #blue marker: false; 
-				data "Ecol labal min productivity" value: min_production_ecolabel color: #white marker: false; 
+				data "Productivity" value: total_productivity color: #blue thickness: 2.0 marker: false; 
+				data "Ecol labal min productivity" value: min_production_ecolabel thickness: 2.0 color: #white marker: false; 
 			}			
 		}
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 

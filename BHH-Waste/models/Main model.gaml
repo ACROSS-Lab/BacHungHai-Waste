@@ -75,11 +75,11 @@ global {
 	float total_solid_pollution update: village1_solid_pollution + village2_solid_pollution + village3_solid_pollution + village4_solid_pollution  ;
 	float total_water_pollution update:  village1_water_pollution + village2_water_pollution + village3_water_pollution + village4_water_pollution   ;
 	 
-	float village1_productivity update: village[0].plots sum_of each.current_productivity ;	
-	float village2_productivity update: village[1].plots sum_of each.current_productivity ;	
-	float village3_productivity update: village[2].plots sum_of each.current_productivity ;	
-	float village4_productivity update: village[3].plots sum_of each.current_productivity ;	
-	float total_productivity update: village1_productivity + village2_productivity + village3_productivity + village4_productivity;
+	float village1_productivity update: village[0].plots sum_of each.current_productivity / length(village[0].plots);	
+	float village2_productivity update: village[1].plots sum_of each.current_productivity / length(village[1].plots);
+	float village3_productivity update: village[2].plots sum_of each.current_productivity / length(village[2].plots);
+	float village4_productivity update: village[3].plots sum_of each.current_productivity / length(village[3].plots);
+	float total_productivity update: (village1_productivity + village2_productivity + village3_productivity + village4_productivity) / 4;
 			
 	
 	/********************** INITIALIZATION OF THE GAME ****************************/
@@ -226,11 +226,11 @@ global {
 			}
 			
 		} 
-		village1_productivity <-  village[0].plots sum_of each.current_productivity ;	
-		village2_productivity <-  village[1].plots sum_of each.current_productivity ;	
-		village3_productivity <-  village[2].plots sum_of each.current_productivity ;	
-		village4_productivity <-  village[3].plots sum_of each.current_productivity ;	
-		total_productivity <- village1_productivity + village2_productivity + village3_productivity + village4_productivity;	
+		village1_productivity <-  (village[0].plots sum_of each.current_productivity) / length(village[0].plots);	
+		village2_productivity <-  village[1].plots sum_of each.current_productivity / length(village[1].plots);	
+		village3_productivity <-  village[2].plots sum_of each.current_productivity / length(village[2].plots);	
+		village4_productivity <-  village[3].plots sum_of each.current_productivity / length(village[3].plots);	
+		total_productivity <- (village1_productivity + village2_productivity + village3_productivity + village4_productivity) / 4.0;	
 	
 	}
 	action activate_act1 {
