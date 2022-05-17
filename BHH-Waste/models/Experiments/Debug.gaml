@@ -9,7 +9,7 @@
 model Debug
 
 import "Abstract experiments.gaml"
- 
+
 experiment base_debug virtual: true {
 	output{
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS{ 
@@ -51,7 +51,7 @@ experiment base_debug virtual: true {
 			species local_landfill;
 			species communal_landfill;
 			species village transparency: 0.5 ; 
-			
+			   
 			
 		}
 		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
@@ -133,12 +133,18 @@ experiment base_debug_graphic virtual: true {
                 y <- y + 100#px;
                 draw "LANDFILL" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
                 y <- y + 25#px;
-                draw circle(12#px) at: { 20#px, y } color: #red border: #white;
+                draw circle(10#px) at: { 20#px, y } color: #red border: #white;
                 draw "local landfill" at: { 40#px, y + 4#px } color: #white font: font("Helvetica", 18, #bold);
                 y <- y + 50#px;
-                draw circle(25#px) at: { 20#px, y } color: #red border: #white;
+                draw circle(18#px) at: { 20#px, y } color: #red border: #white;
                 draw "Communal  landfill" at: { 40#px, y + 4#px } color: #white font: font("Helvetica", 18, #bold);
                 y <- y + 25#px;
+                
+                if (without_player) {
+                	draw "Actions: \n" +text_action at: { 40#px, y+ 30#px } color: # white font: font("Helvetica", 24, #bold);
+            
+                }
+				
 
             } 
 		}

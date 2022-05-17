@@ -43,6 +43,7 @@ global {
 	
 	communal_landfill the_communal_landfill;
 	
+	string text_action <- "";
 	list<string> actions_name <- [
 		ACT_DRAIN_DREDGE,
 		ACT_FACILITY_TREATMENT,
@@ -71,6 +72,9 @@ global {
 		do create_landfill;
 		ask cell {do update_color;}
 		computation_end <- current_date add_years 1;
+		loop i from: 0 to:length(actions_name) -1 {
+			text_action <- text_action + i +":" + actions_name[i] + "\n"; 
+		}
 	}
 	
 		
