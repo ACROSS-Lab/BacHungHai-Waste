@@ -145,10 +145,15 @@ experiment simulation_without_players parent: base_debug type: gui {
 	}
 }
 
-experiment simulation_graphic parent: base_debug_graphic type: gui {
+experiment simulation_graphic parent: abstract_debug type: gui {
 	action _init_ {
 		create simulation with:(without_player:true);
 	}
+	output{
+		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS or to_refresh {}
+	
+	}
+		
 }
 
 

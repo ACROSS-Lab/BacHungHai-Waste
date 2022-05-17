@@ -32,6 +32,11 @@ global {
 	int end_of_game <- 8; // Number of turns of the game (1 turn = 1 year)
 	float tolerance_dist <- 1#m;
 	
+	/*************** PARAMETERS ON ECO-LABEL ****************************/
+	
+	float convertion_from_l_water_waste_to_kg_solid_waste <- 0.01;
+	float min_production_ecolabel <- 100.0;
+	float max_pollution_ecolabel <- 100.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
@@ -43,9 +48,9 @@ global {
 	
 	list<rgb> village_color <- [#magenta, #gold, #violet,#orange]; // color for the 4 villages
 	float min_display_waste_value <- 0.2; //just use for display all the pollution cell 
-	float coeff_cell_pollution_display <- 0.01;  //coeff used to define the color of the cell according to the pollution
+	float coeff_cell_pollution_display <- 10.0;  //coeff used to define the color of the cell according to the pollution
 	float coeff_visu_canal <- 3.0;  //coeff used to define the color of the canal according to the pollution
-	
+	float coeff_visu_productivity <- 150.0;
 	
 	/********* PARAMETERS RELATED TO WATER FLOW (WASTE DIFFUSION) IN THE CANAL *******/
 	
@@ -72,6 +77,7 @@ global {
 	
 	
 	/*********** PARAMETERS RELATED TO WASTE PRODUCTION AND END OF LIFE *************/
+	
 	
 	float ground_water_pollution_reducing_day <- 0.01; //quantity of the ground water pollution that disapear every day
 	float ground_solid_pollution_reducing_day <- 0.001; //quantity of the solid water pollution that disapear every day
