@@ -29,7 +29,17 @@ experiment base_debug virtual: true {
 				data "Solid waste pollution" value: village[1].canals sum_of each.solid_waste_level + village[1].cells  sum_of each.solid_waste_level  color: #red marker: false;
 			}
 		}
-		display map type: opengl  background: #black axes: false refresh: stage = COMPUTE_INDICATORS{
+		display map type: opengl  background: #black axes: false refresh: stage = COMPUTE_INDICATORS  {
+			event "1" action: activate_act1;
+			event "2" action: activate_act2;
+			event "3" action: activate_act3;
+			event "4" action: activate_act4;
+			event "5" action: activate_act5;
+			event "6" action: activate_act6;
+			event "7" action: activate_act7;
+			event "8" action: activate_act8;
+			event "9" action: activate_act9;
+	
 			species commune;
 			species house;
 			species plot;
@@ -41,6 +51,8 @@ experiment base_debug virtual: true {
 			species local_landfill;
 			species communal_landfill;
 			species village transparency: 0.5 ; 
+			
+			
 		}
 		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
 			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
@@ -148,23 +160,7 @@ experiment simulation_graphic parent: base_debug_graphic type: gui {
 
 
 experiment the_serious_game parent: base_debug type: gui {
-	float minimum_cycle_duration <- 0.01;
-	output {
-		display action_buton background:#black name:"Tools panel"  	{
-			
-			species button aspect:normal ;
-			event mouse_down action:activate_act;   
-			event "1" action: activate_act1;
-			event "2" action: activate_act2;
-			event "3" action: activate_act3;
-			event "4" action: activate_act4;
-			event "5" action: activate_act5;
-			event "6" action: activate_act6;
-			event "7" action: activate_act7;
-			event "8" action: activate_act8;
-			event "9" action: activate_act9;
-	
-		}
-		
+		action _init_ {
+		create simulation with:(without_player:false);
 	}
 }

@@ -193,50 +193,52 @@ global {
 		} 
 	}
 	action activate_act1 {
-		ask village[index_player] {do drain_dredge;}
-	}
-	action activate_act2 {
-		ask village[index_player] {do install_facility_treatment_for_homes;}
-	}
-	action activate_act3 {
-		ask village[index_player] {do sensibilization;}
-	}
-	action activate_act4 {
-		ask village[index_player] {do trimestrial_collective_action;}
-	}
-	action activate_act5 {
-		ask village[index_player] {do pesticide_reducing;}
-	}
-	action activate_act6 {
-		ask village[index_player] {do support_manure_buying;}
-	}
-	action activate_act7 {
-		ask village[index_player] {do implement_fallow;}
-	}
-	action activate_act8 {
-		ask village[index_player] {do install_gumpholes;}
-	}
-	action activate_act9 {
-		ask village[index_player] {do end_of_turn;}
-	}
-	action activate_act {
 		if stage = PLAYER_TURN {
-			button selected_but <- first(button overlapping (circle(1) at_location #user_location));
-			if(selected_but != nil) {
-				ask selected_but {
-					ask button {bord_col<-#white;}
-					if (action_type != id) {
-						action_type<-id;
-						bord_col<-#red;
-						ask myself {do act_management();}
-					} else {
-						action_type<- -1;
-					}
-					
-				}
-			}
+			ask village[index_player] {do drain_dredge;}
 		}
 	}
+	action activate_act2 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do install_facility_treatment_for_homes;}
+		}
+	}
+	action activate_act3 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do sensibilization;}
+		}
+	}
+	action activate_act4 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do trimestrial_collective_action;}
+		}
+	}
+	action activate_act5 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do pesticide_reducing;}
+		}
+	}
+	action activate_act6 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do support_manure_buying;}
+		}
+			
+	}
+	action activate_act7 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do implement_fallow;}
+		}
+	}
+	action activate_act8 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do install_gumpholes;}
+		}
+	}
+	action activate_act9 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do end_of_turn;}
+		}
+	}
+	
 	
 	action act_management {
 		switch action_type {
@@ -401,38 +403,6 @@ global {
 	
 
 }
-
-
-grid button width:3 height:3 
-{
-	int id <- int(self);
-	rgb bord_col<-#white;
-	list<string> to_display_text;
-	int threshold_cut <- 15;
-	init {
-		string to_display <- actions_name[id];
-		int cpt <-0;
-		list<string> dd <- to_display split_with " ";
-		string current_line <- "";
-		loop d over: dd {
-			current_line <- current_line + " " + d;
-			if length(current_line) > threshold_cut {
-				to_display_text << copy(current_line);
-				current_line <- "";
-			}
-		}
-		to_display_text << copy(current_line);
-				
-	}
-	aspect normal {
-		draw rectangle(shape.width * 0.8,shape.height * 0.8).contour + (shape.height * 0.01) color: bord_col;
-		loop i from: 0 to: length(to_display_text) -1 {
-			draw to_display_text[i] font: font("Helvetica", 13 , #bold) anchor:#center color: #white at: {location.x, location.y - 500 + 200 * i};
-		}
-	
-	}
-}
-
 
 
 grid cell height: 50 width: 50 {
@@ -720,7 +690,7 @@ species village {
 		}
 		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_weak) + " per week";
 		map result;
-		if treatment_facility_year > 0 {
+		if treatment_facility_year = 0 {
 			result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Waste management policy",[choose("Choose a waste collection frenquency",string,current_val, [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"])]);
 		
 		} else {
