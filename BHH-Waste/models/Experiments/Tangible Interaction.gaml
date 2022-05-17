@@ -33,10 +33,10 @@ global {
 			
 	
 			
-			if ((result in ["Action 1", "Action 2", "Action 3","Action 4","Action 5", "Action 6", "Action 7","Action 8", "Action 9"]) and not(result in village[index_player].actions_done)) {
+			if ((result in ["Action 1", "Action 2", "Action 3","Action 4","Action 5", "Action 6", "Action 7","Action 8", "Action 9"]) and not(result in village[index_player].actions_done_this_year)) {
 				latest_action <- result;
 				last_action_time <- machine_time;
-				village[index_player].actions_done <<result;
+				village[index_player].actions_done_this_year <<result;
 				switch result {
 					match "Action 1" {
 						ask village[index_player] {

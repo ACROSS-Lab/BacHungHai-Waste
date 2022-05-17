@@ -43,6 +43,7 @@ global {
 	
 	communal_landfill the_communal_landfill;
 	
+	string text_action <- "";
 	list<string> actions_name <- [
 		ACT_DRAIN_DREDGE,
 		ACT_FACILITY_TREATMENT,
@@ -71,6 +72,9 @@ global {
 		do create_landfill;
 		ask cell {do update_color;}
 		computation_end <- current_date add_years 1;
+		loop i from: 0 to:length(actions_name) -1 {
+			text_action <- text_action + i +":" + actions_name[i] + "\n"; 
+		}
 	}
 	
 		
@@ -101,7 +105,7 @@ global {
 					my_house <- cell(location);
 					my_cells <- cell overlapping myself;
 					closest_canal <- canal closest_to self;
-					nb <- nb + nb_people;
+					nb <- nb + 1;
 					my_village <- first(village overlapping self);
 				}
 			}
@@ -181,7 +185,8 @@ global {
 			canals <- canal at_distance 1.0;
 			inhabitants <- (inhabitant overlapping self) ;
 			farmers <- (farmer overlapping self);
-			population <- (inhabitants + farmers) sum_of each.nb_people;
+			population <- length(inhabitants)  + length(farmers) ;
+			
 			ask urban_area overlapping self {
 				my_villages << myself;
 			}
@@ -192,50 +197,52 @@ global {
 		} 
 	}
 	action activate_act1 {
-		ask village[index_player] {do drain_dredge;}
-	}
-	action activate_act2 {
-		ask village[index_player] {do install_facility_treatment_for_homes;}
-	}
-	action activate_act3 {
-		ask village[index_player] {do sensibilization;}
-	}
-	action activate_act4 {
-		ask village[index_player] {do trimestrial_collective_action;}
-	}
-	action activate_act5 {
-		ask village[index_player] {do pesticide_reducing;}
-	}
-	action activate_act6 {
-		ask village[index_player] {do support_manure_buying;}
-	}
-	action activate_act7 {
-		ask village[index_player] {do implement_fallow;}
-	}
-	action activate_act8 {
-		ask village[index_player] {do install_gumpholes;}
-	}
-	action activate_act9 {
-		ask village[index_player] {do end_of_turn;}
-	}
-	action activate_act {
 		if stage = PLAYER_TURN {
-			button selected_but <- first(button overlapping (circle(1) at_location #user_location));
-			if(selected_but != nil) {
-				ask selected_but {
-					ask button {bord_col<-#white;}
-					if (action_type != id) {
-						action_type<-id;
-						bord_col<-#red;
-						ask myself {do act_management();}
-					} else {
-						action_type<- -1;
-					}
-					
-				}
-			}
+			ask village[index_player] {do drain_dredge;}
 		}
 	}
+	action activate_act2 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do install_facility_treatment_for_homes;}
+		}
+	}
+	action activate_act3 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do sensibilization;}
+		}
+	}
+	action activate_act4 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do trimestrial_collective_action;}
+		}
+	}
+	action activate_act5 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do pesticide_reducing;}
+		}
+	}
+	action activate_act6 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do support_manure_buying;}
+		}
+			
+	}
+	action activate_act7 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do implement_fallow;}
+		}
+	}
+	action activate_act8 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do install_gumpholes;}
+		}
+	}
+	action activate_act9 {
+		if stage = PLAYER_TURN {
+			ask village[index_player] {do end_of_turn;}
+		}
+	}
+	
 	
 	action act_management {
 		switch action_type {
@@ -256,8 +263,24 @@ global {
 	}
 	
 	action manage_individual_pollution {
-		ask farmer + inhabitant{
-			do domestic_waste_production;
+	ask village {
+			list<float> typical_values_inhabitants <- first(inhabitants).typical_values_computation();
+			list<float> typical_values_farmers <- first(farmers).typical_values_computation();
+			float s_to_c <- typical_values_inhabitants[0];
+			float s_to_g <- typical_values_inhabitants[1];
+			float w_to_c <- typical_values_inhabitants[2];
+			float w_to_g <- typical_values_inhabitants[3];
+			ask inhabitants{
+				do domestic_waste_production(s_to_c,s_to_g,w_to_c,w_to_g);
+			}
+			s_to_c <- typical_values_farmers[0];
+			s_to_g <- typical_values_farmers[1];
+			w_to_c <- typical_values_farmers[2];
+			w_to_g <- typical_values_farmers[3];
+			
+			ask farmers{
+				do domestic_waste_production(s_to_c,s_to_g,w_to_c,w_to_g);
+			}
 		}
 		ask plot {
 			do pollution_due_to_practice;
@@ -290,7 +313,7 @@ global {
 			index_player <- 0;
 			step <- 0.0001;
 			ask village {
-				budget <- budget_year_per_people * population;
+				budget <- budget_year_per_village;
 			}
 			ask village {
 				actions_done_this_year <- [];
@@ -347,7 +370,7 @@ global {
 								my_house <- cell(location);
 								my_cells <- cell overlapping myself;
 								closest_canal <- canal closest_to self;
-								nb <- nb + nb_people;
+								nb <- nb + 1;
 							}
 						}
 						population <- population - 1 + nb;
@@ -384,38 +407,6 @@ global {
 	
 
 }
-
-
-grid button width:3 height:3 
-{
-	int id <- int(self);
-	rgb bord_col<-#white;
-	list<string> to_display_text;
-	int threshold_cut <- 15;
-	init {
-		string to_display <- actions_name[id];
-		int cpt <-0;
-		list<string> dd <- to_display split_with " ";
-		string current_line <- "";
-		loop d over: dd {
-			current_line <- current_line + " " + d;
-			if length(current_line) > threshold_cut {
-				to_display_text << copy(current_line);
-				current_line <- "";
-			}
-		}
-		to_display_text << copy(current_line);
-				
-	}
-	aspect normal {
-		draw rectangle(shape.width * 0.8,shape.height * 0.8).contour + (shape.height * 0.01) color: bord_col;
-		loop i from: 0 to: length(to_display_text) -1 {
-			draw to_display_text[i] font: font("Helvetica", 13 , #bold) anchor:#center color: #white at: {location.x, location.y - 500 + 200 * i};
-		}
-	
-	}
-}
-
 
 
 grid cell height: 50 width: 50 {
@@ -464,7 +455,7 @@ species village {
 	list<collection_team> collection_teams;
 	float bonus_agricultural_production;
 	list<plot> plots;
-	float population;
+	int population;
 	bool is_drained <- false;
 	bool weak_collection_policy;
 	int treatment_facility_year <- 0 max: 3;
@@ -703,7 +694,7 @@ species village {
 		}
 		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_weak) + " per week";
 		map result;
-		if treatment_facility_year > 0 {
+		if treatment_facility_year = 0 {
 			result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Waste management policy",[choose("Choose a waste collection frenquency",string,current_val, [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"])]);
 		
 		} else {
@@ -902,8 +893,8 @@ species communal_landfill {
 species farmer parent: inhabitant {
 	rgb color <- #orange;
 	float max_agricultural_waste_production <- rnd(1.0, 3.0);
-	float solid_waste_day <- nb_people * solid_waste_year_farmers / 365;
-	float water_waste_day <- nb_people * water_waste_year_farmers / 365;
+	float solid_waste_day <-  solid_waste_year_farmers / 365;
+	float water_waste_day <-  water_waste_year_farmers / 365;
 	float part_solid_waste_canal <- part_solid_waste_canal_farmers;
 	float part_water_waste_canal <- part_water_waste_canal_farmers;
 	bool has_dumphole <- false;
@@ -916,10 +907,9 @@ species inhabitant {
 	rgb color <- #midnightblue;
 	cell my_house;
 	canal closest_canal;
-	float nb_people <- 1.0;
 	float water_filtering <-water_waste_filtering_inhabitants;
-	float solid_waste_day <- nb_people * solid_waste_year_inhabitants / 365;
-	float water_waste_day <- nb_people * water_waste_year_inhabitants / 365;
+	float solid_waste_day <-  solid_waste_year_inhabitants / 365;
+	float water_waste_day <-  water_waste_year_inhabitants / 365;
 	float part_solid_waste_canal <- part_solid_waste_canal_inhabitants;
 	float part_water_waste_canal <- part_water_waste_canal_inhabitants;
 	list<cell> my_cells;
@@ -932,24 +922,38 @@ species inhabitant {
 	float waste_for_a_day {
 		return solid_waste_day;
 	}
-	action domestic_waste_production {
+	action domestic_waste_production (float solid_waste_canal, float solid_waste_ground, float water_waste_canal, float water_waste_ground) {
+		if solid_waste_canal > 0 {
+				closest_canal.solid_waste_level <- closest_canal.solid_waste_level + solid_waste_canal;
+			}
+		if solid_waste_ground > 0 {
+			ask one_of(my_cells) {
+				solid_waste_level <- solid_waste_level + solid_waste_ground ;
+			}
+		}
+		if water_waste_canal > 0 {
+			closest_canal.water_waste_level <- closest_canal.water_waste_level + water_waste_canal;
+		}
+		if water_waste_ground > 0 {
+			ask one_of(my_cells) {
+				water_waste_level <- water_waste_level + water_waste_ground ;
+			}
+		}
+		
+	}
+	list<float> typical_values_computation {
+		list<float> typical_values;
+	
 		float solid_waste_day_tmp <- waste_for_a_day();
 		
 		if (environmental_sensibility > 0) {
 			solid_waste_day_tmp <- solid_waste_day_tmp * world.sensibilisation_function(environmental_sensibility);
 		}
-		
+			
 		if solid_waste_day > 0 {
 			float to_the_canal <- solid_waste_day * part_solid_waste_canal;
-			float to_the_ground <- solid_waste_day - to_the_canal;
-			if to_the_canal > 0 {
-				closest_canal.solid_waste_level <- closest_canal.solid_waste_level + to_the_canal;
-			}
-			if to_the_ground > 0 {
-				ask one_of(my_cells) {
-					solid_waste_level <- solid_waste_level + to_the_ground ;
-				}
-			}
+			typical_values<< to_the_canal;
+			typical_values<< solid_waste_day - to_the_canal;
 		}
 		
 		float rate_decrease_due_to_treatment <- 0.0;
@@ -960,19 +964,12 @@ species inhabitant {
 		if water_waste_day > 0 {
 			float w <- (1 - water_filtering) * water_waste_day;
 			float to_the_canal <- w * part_water_waste_canal ;
-			float to_the_ground <- w - to_the_canal; 
-			to_the_canal <- to_the_canal * (1 - rate_decrease_due_to_treatment);
+			typical_values << to_the_canal * (1 - rate_decrease_due_to_treatment);
+			typical_values << w - to_the_canal; 
 			
-			if to_the_canal > 0 {
-				closest_canal.water_waste_level <- closest_canal.water_waste_level + to_the_canal;
-			}
-			if to_the_ground > 0 {
-				ask one_of(my_cells) {
-					water_waste_level <- water_waste_level + to_the_ground ;
-				}
-			}
+		}
+		return typical_values;
 			
-		}	
 	}
 }
 
