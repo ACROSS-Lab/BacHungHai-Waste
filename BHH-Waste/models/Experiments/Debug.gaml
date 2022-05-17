@@ -81,7 +81,7 @@ experiment abstract_debug virtual: true {
 }
 experiment base_debug parent: abstract_debug virtual: true {
 	output{
-		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS  {
+		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS or to_refresh {
 			event "q" action: activate_act1;
 			event "w" action: activate_act2;
 			event "e" action: activate_act3;
@@ -138,16 +138,6 @@ experiment base_debug parent: abstract_debug virtual: true {
 	}
 }
 
-experiment base_debug_graphic parent: abstract_debug virtual: true {
-	output{
-
-	display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS  {
-		
-	}
-	
-	}
-}
-
 
 experiment simulation_without_players parent: base_debug type: gui {
 	action _init_ {
@@ -163,7 +153,7 @@ experiment simulation_graphic parent: base_debug_graphic type: gui {
 
 
 experiment the_serious_game parent: base_debug type: gui {
-		action _init_ {
+	action _init_ {
 		create simulation with:(without_player:false);
 	}
 }

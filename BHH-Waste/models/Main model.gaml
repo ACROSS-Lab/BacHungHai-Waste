@@ -40,6 +40,7 @@ global {
 	
 	int action_type <- -1;	
 	
+	bool to_refresh <- false update: false;
 	
 	communal_landfill the_communal_landfill;
 	
@@ -498,9 +499,7 @@ species village {
 		if (ACT_FACILITY_TREATMENT in actions_done_total) {
 			do tell("Action " +ACT_FACILITY_TREATMENT + " cannot be done twice" );
 		} else {
-			
-			if budget >= token_install_filter_for_homes_construction {
-				map results <- user_input_dialog("Install falicity treatment for urban areas. Cost: " +token_install_filter_for_homes_construction +"tokens. Number of tokens payed by each player",[enter("Player 1",int,0),enter("Player 2",int,0),enter("Player 3",int,0),enter("Player 4",int,0)]);
+				map results <- user_input_dialog("Install falicity treatment for urban areas. Cost: " +token_install_filter_for_homes_construction +" tokens. Number of tokens payed by each player",[enter("Player 1",int,0),enter("Player 2",int,0),enter("Player 3",int,0),enter("Player 4",int,0)]);
 				float p1 <- max(int(results["Player 1"]), village[0].budget);
 				float p2 <- max(int(results["Player 2"]), village[1].budget);
 				float p3 <- max(int(results["Player 3"]), village[2].budget);
@@ -526,10 +525,11 @@ species village {
 							village[i].budget <- village[i].budget - ps[i];
 						}
 					}
+				} else {
+						do tell("Not enough budget for " +ACT_FACILITY_TREATMENT );
+			
 				}
-			}else {
-				do tell("Not enough budget for " +ACT_FACILITY_TREATMENT );
-			}
+			
 		}
 	}
 	
@@ -711,6 +711,7 @@ species village {
 		if treatment_facility_is_activated {
 			treatment_facility_year <- treatment_facility_year + 1;
 		}
+		to_refresh <- true;
 	}
 	aspect default {
 		if (stage = PLAYER_TURN) {
