@@ -134,6 +134,7 @@ global {
 					ask plot overlapping self {
 						ask the_farmer {
 							my_village.farmers >> self;
+							
 							do die;
 						}
 						do die;
@@ -153,7 +154,9 @@ global {
 				}
 			}
 		}
-		
+		ask village {
+			plots <- plots where not dead(each);
+		}
 	}
 	
 	action create_plots {
@@ -386,6 +389,9 @@ global {
 				}
 			}
 			
+		}
+		ask village {
+			plots <- plots where not dead(each);
 		}
 	}
 	
