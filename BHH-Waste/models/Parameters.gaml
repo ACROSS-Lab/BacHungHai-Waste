@@ -35,12 +35,12 @@ global {
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 90.0;
-	float max_pollution_ecolabel <- 100000.0;
+	float min_production_ecolabel <- 80.0;
+	float max_pollution_ecolabel <- 150000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
-	float budget_year_per_village <- 200.0; // total buget per year for a village (in token):
+	float budget_year_per_village <- 100.0; // total buget per year for a village (in token):
 	float min_increase_urban_area_population_year <- 0.1; //min increase of urban area per year (in terms of number of people)
 	
 	
@@ -100,17 +100,17 @@ global {
 	/********************** PARAMETERS RELATED ACTIONS ****************************/
 	
 	
-	float token_weak_waste_collection <- 20.0; //tokens/year - cost of "weak collection"
-	float token_strong_waste_collection <- 40.0; //tokens/year - cost of "strong collection"
+	float token_weak_waste_collection <- 30.0; //tokens/year - cost of "weak collection"
+	float token_strong_waste_collection <- 50.0; //tokens/year - cost of "strong collection"
 	int collect_per_week_weak <- 2; //number of collect per week for "weak collection"
 	int collect_per_week_strong <- 4; //number of collect per week for "string collection"
-	float collection_team_collection_capacity_day <- 1000.0; //quantity of solid waste remove during 1 day of work
+	float collection_team_collection_capacity_day <- 1200.0; //quantity of solid waste remove during 1 day of work
 	
 	
-	float token_trimestrial_collective_action <- 25.0; //per year
+	float token_trimestrial_collective_action <- 35.0; //per year
 	float impact_trimestrial_collective_action <- 0.3; //part of the solid waste remove from the canal
 	
-	float token_drain_dredge <- 60.0; //per action
+	float token_drain_dredge <- 50.0; //per action
 	float impact_drain_dredge_waste <- 0.43; //part of the solid waste remove from the canal
 	float impact_drain_dredge_agriculture <- 0.2; //improvment of the agricultural production
 	
@@ -118,21 +118,21 @@ global {
 	float token_install_filter_for_homes_maintenance <- 20.0 ; //per year	
 	list<float> treatment_facility_decrease <- [0.3,0.45,0.9]; // impact of treatement facility for year 1, year 2, and after
 	
-	float token_sensibilization <- 15.0; //each time
+	float token_sensibilization <- 20.0; //each time
 	
-	float token_pesticide_reducing <- 30.0; //
+	float token_pesticide_reducing <- 40.0; //
 	float impact_pesticide_reducing_production  <- 0.15; //decrease of the agricultural production
 	float impact_pesticide_reducing_waste  <- 0.33; //decrease waste production from farmers
 	
-	float token_implement_fallow <- 25.0; //per year
+	float token_implement_fallow <- 40.0; //per year
 	float impact_implement_fallow_production  <- 0.33; //decrease the agricultural production
 	float impact_implement_fallow_waste  <- 0.33; //decrease the ground pollution
 	
-	float token_support_manure_buying <- 30.0; //per year
-	float impact_support_manure_buying_production  <- 0.15; //improvment of the agricultural production
-	float impact_support_manure_buying_waste  <- 0.2; //increase wastewater production
+	float token_support_manure_buying <- 40.0; //per year
+	float impact_support_manure_buying_production  <- 0.30; //improvment of the agricultural production
+	float impact_support_manure_buying_waste  <- 0.1; //increase wastewater production
 	
-	float token_installation_dumpholes <- 15.0; //
+	float token_installation_dumpholes <- 30.0; //
 	float impact_installation_dumpholes  <- 0.25; //decreasse
 	
 	float sensibilisation_function(float x) { //function that returns the coefficient of solid production according to the environmental_sensibility of inahbitants 'x'
