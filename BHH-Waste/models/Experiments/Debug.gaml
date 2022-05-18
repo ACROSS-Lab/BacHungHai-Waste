@@ -81,7 +81,7 @@ experiment abstract_debug virtual: true {
 }
 experiment base_debug parent: abstract_debug virtual: true {
 	output{
-		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS  {
+		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS or to_refresh {
 			event "q" action: activate_act1;
 			event "w" action: activate_act2;
 			event "e" action: activate_act3;
@@ -93,58 +93,60 @@ experiment base_debug parent: abstract_debug virtual: true {
 			event "o" action: activate_act9;
 		
 		}
-		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
-				data "Water waste pollution" value: village[0].canals sum_of each.water_waste_level + village[0].cells sum_of each.water_waste_level  color: #red marker: false;
+		
+		display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){
+			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
+				data "Solid waste pollution" value: village[3].canals sum_of each.solid_waste_level + village[3].cells sum_of each.solid_waste_level  color: #gray marker: false;
+				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[3].canals sum_of each.water_waste_level + village[3].cells  sum_of each.water_waste_level)  color: #red marker: false;
+		 
 			}
-			chart "Waste pollution " position:{0.5, 0.0} size:{0.5,1.0} background: #black color: #white{
-				data "Solid waste pollution" value: village[0].canals sum_of each.solid_waste_level + village[0].cells  sum_of each.solid_waste_level  color: #red marker: false;
+			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
+				data "Productivity" value: village[3].plots sum_of each.current_productivity color: #blue marker: false; 
+			}			
+		}
+		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
+			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
+				data "Solid waste pollution" value: village[0].canals sum_of each.solid_waste_level + village[0].cells sum_of each.solid_waste_level  color: #gray marker: false;
+				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[0].canals sum_of each.water_waste_level + village[0].cells  sum_of each.water_waste_level)  color: #red marker: false;
+		 
+			}
+			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
+				data "Productivity" value: village[0].plots sum_of each.current_productivity color: #blue marker: false; 
 			}
 		}
 		
 		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
-				data "Water waste pollution" value: village[1].canals sum_of each.water_waste_level + village[1].cells sum_of each.water_waste_level  color: #red marker: false;
+			chart "Waste pollution " size:{1.0, 0.5} background: #black color: #white{
+				data "Solid waste pollution" value: village[0].canals sum_of each.solid_waste_level + village[0].cells sum_of each.solid_waste_level  color: #gray marker: false;
+				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[0].canals sum_of each.water_waste_level + village[0].cells  sum_of each.water_waste_level)  color: #red marker: false;
+		 
 			}
-			chart "Waste pollution " position:{0.5, 0.0} size:{0.5,1.0} background: #black color: #white{
-				data "Solid waste pollution" value: village[1].canals sum_of each.solid_waste_level + village[1].cells  sum_of each.solid_waste_level  color: #red marker: false;
+			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
+				data "Productivity" value: village[0].plots sum_of each.current_productivity color: #blue marker: false; 
 			}
 		}
 		
 		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
-				data "Water waste pollution" value: village[2].canals sum_of each.water_waste_level + village[2].cells sum_of each.water_waste_level  color: #red marker: false;
+			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
+				data "Solid waste pollution" value: village[1].canals sum_of each.solid_waste_level + village[1].cells sum_of each.solid_waste_level  color: #gray marker: false;
+				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[1].canals sum_of each.water_waste_level + village[1].cells  sum_of each.water_waste_level)  color: #red marker: false;
+		 
 			}
-			chart "Waste pollution " position:{0.5, 0.0} size:{0.5,1.0} background: #black color: #white{
-				data "Solid waste pollution" value: village[2].canals sum_of each.solid_waste_level + village[2].cells  sum_of each.solid_waste_level  color: #red marker: false;
+			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
+				data "Productivity" value: village[1].plots sum_of each.current_productivity color: #blue marker: false; 
 			}
 		}
 		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
-				data "Water waste pollution" value: village[3].canals sum_of each.water_waste_level + village[3].cells sum_of each.water_waste_level  color: #red marker: false;
+			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
+				data "Solid waste pollution" value: village[2].canals sum_of each.solid_waste_level + village[2].cells sum_of each.solid_waste_level  color: #gray marker: false;
+				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[2].canals sum_of each.water_waste_level + village[2].cells  sum_of each.water_waste_level)  color: #red marker: false;
+		 
 			}
-			chart "Waste pollution " position:{0.5, 0.0} size:{0.5,1.0} background: #black color: #white{
-				data "Solid waste pollution" value: village[3].canals sum_of each.solid_waste_level + village[3].cells  sum_of each.solid_waste_level  color: #red marker: false;
+			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
+				data "Productivity" value: village[2].plots sum_of each.current_productivity color: #blue marker: false; 
 			}
 		}
-		display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){
-			chart "Waste pollution " size:{1.0, 0.3} background: #black color: #white{
-				data "Water waste pollution" value: canal sum_of each.water_waste_level + cell sum_of each.water_waste_level  color: #red marker: false;
-			}
-			chart "Waste pollution " position:{0, 1/3} size:{1.0, 1/3} background: #black color: #white{
-				data "Solid waste pollution" value: canal sum_of each.solid_waste_level + cell sum_of each.solid_waste_level  color: #red marker: false;
-			}			
-		}
-	}
-}
-
-experiment base_debug_graphic parent: abstract_debug virtual: true {
-	output{
-
-	display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS  {
 		
-	}
-	
 	}
 }
 
@@ -155,15 +157,20 @@ experiment simulation_without_players parent: base_debug type: gui {
 	}
 }
 
-experiment simulation_graphic parent: base_debug_graphic type: gui {
+experiment simulation_graphic parent: abstract_debug type: gui {
 	action _init_ {
 		create simulation with:(without_player:true);
 	}
+	output{
+		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS or to_refresh {}
+	
+	}
+		
 }
 
 
 experiment the_serious_game parent: base_debug type: gui {
-		action _init_ {
+	action _init_ {
 		create simulation with:(without_player:false);
 	}
 }
