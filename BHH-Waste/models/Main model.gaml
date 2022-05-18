@@ -545,11 +545,19 @@ species village {
 		if (ACT_FACILITY_TREATMENT in actions_done_total) {
 			do tell("Action " +ACT_FACILITY_TREATMENT + " cannot be done twice" );
 		} else {
-				map results <- user_input_dialog("Install falicity treatment for urban areas. Cost: " +token_install_filter_for_homes_construction +" tokens. Number of tokens payed by each player",[enter("Player 1",int,0),enter("Player 2",int,0),enter("Player 3",int,0),enter("Player 4",int,0)]);
-				float p1 <- min(int(results["Player 1"]), village[0].budget);
-				float p2 <- min(int(results["Player 2"]), village[1].budget);
-				float p3 <- min(int(results["Player 3"]), village[2].budget);
-				float p4 <- min(int(results["Player 4"]), village[3].budget);
+				float max_budget_p1 <- village[0].budget;
+				float max_budget_p2 <- village[1].budget -  (index_player < 1 ? token_weak_waste_collection : 0.0);
+				float max_budget_p3 <- village[2].budget -  (index_player < 2 ? token_weak_waste_collection : 0.0);
+				float max_budget_p4 <- village[3].budget -  (index_player < 3 ? token_weak_waste_collection : 0.0);
+				string p1_str <- "Player 1 (max budget: " + max_budget_p1 + ")";
+				string p2_str <- "Player 2 (max budget: " + max_budget_p2 + ")";
+				string p3_str <- "Player 3 (max budget: " + max_budget_p3 + ")";
+				string p4_str <- "Player 4 (max budget: " + max_budget_p4 + ")";
+				map results <- user_input_dialog("Install falicity treatment for urban areas. Cost: " +token_install_filter_for_homes_construction +" tokens. Number of tokens payed by each player",[enter(p1_str,int,0),enter(p2_str,int,0),enter(p3_str,int,0),enter(p4_str,int,0)]);
+				float p1 <- min(int(results[p1_str]), max_budget_p1);
+				float p2 <- min(int(results[p2_str]), max_budget_p2);
+				float p3 <- min(int(results[p3_str]), max_budget_p3);
+				float p4 <- min(int(results[p4_str]), max_budget_p4);
 				if p1 + p2 + p3 + p4 >= token_install_filter_for_homes_construction {
 					string cost_str <- "(Cost: "; 
 					bool add_ok <- false;
@@ -570,13 +578,16 @@ species village {
 					}
 					bool  is_ok <- user_confirm("Action Facility treatment","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_FACILITY_TREATMENT +  cost_str +"?");
 					if is_ok {
+						
 						ask village {
 							actions_done_total << ACT_FACILITY_TREATMENT;
 							actions_done_this_year << ACT_FACILITY_TREATMENT;
-						}
+							treatment_facility_is_activated <- true;
+							treatment_facility_year <- 0;
 						
-						treatment_facility_is_activated <- true;
+						}
 						treatment_facility_year <- 1;
+						
 						list<float> ps <- [p1,p2,p3,p4];	
 						if (p1 + p2 + p3 + p4) > token_install_filter_for_homes_construction {
 							float to_remove <- token_install_filter_for_homes_construction - (p1 + p2 + p3 + p4) ;
@@ -760,8 +771,13 @@ species village {
 		}
 		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_weak) + " per week";
 		map result;
+		
+		list<string> possibilities <- budget >=  token_strong_waste_collection ? [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"] : [""+collect_per_week_weak +" per week"];
+		if not(current_val in possibilities) {
+			current_val <- first(possibilities);
+		}
 		if treatment_facility_year = 0 {
-			result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Waste management policy",[choose("Choose a waste collection frenquency",string,current_val, [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"])]);
+			result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Waste management policy",[choose("Choose a waste collection frenquency",string,current_val, possibilities)]);
 		
 		} else {
 			result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Waste management policy",[
@@ -772,7 +788,7 @@ species village {
 			if treatment_facility_is_activated {budget <- budget - token_install_filter_for_homes_maintenance;}
 		
 		}
-		weak_collection_policy <- result["frenquency"] = ""+collect_per_week_weak +" per week";
+		weak_collection_policy <- result["Choose a waste collection frenquency"] = ""+collect_per_week_weak +" per week";
 		budget <- budget - (weak_collection_policy ? token_weak_waste_collection : token_strong_waste_collection);
 		if treatment_facility_is_activated {
 			treatment_facility_year <- treatment_facility_year + 1;
