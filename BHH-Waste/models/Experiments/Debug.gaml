@@ -32,7 +32,7 @@ experiment abstract_debug virtual: true {
 	       
 	                draw "TIME" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
 	                y <- y + 25#px;
-	                draw "Day : " + cycle at: { 40#px, y } color: #white font: font("Helvetica", 18, #bold);
+	                draw "Year: " + turn + " - Day: " + current_day at: { 40#px, y } color: #white font: font("Helvetica", 18, #bold);
 	                y <- y + 100#px;
 	                      
 	                draw "ENVIRONMENT" at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
@@ -68,11 +68,7 @@ experiment abstract_debug virtual: true {
 	                draw "Communal  landfill" at: { 40#px, y + 4#px } color: #white font: font("Helvetica", 18, #bold);
 	                y <- y + 25#px;
 	                
-	                if not(without_player) {
-	                	draw "Actions: \n" +text_action at: { 40#px, y+ 30#px } color: # white font: font("Helvetica", 24, #bold);
-	            
-	                }
-					
+	               
 	
 	            } 
 			}
@@ -81,6 +77,27 @@ experiment abstract_debug virtual: true {
 }
 experiment base_debug parent: abstract_debug virtual: true {
 	output{
+		display info_display background: #black type: opengl axes: false {
+			graphics "info day" {
+				draw "Year: " + turn + " - Day: " + current_day  at: { 40#px, 0#px } color: #white font: font("Helvetica", 40, #bold);
+			}
+			graphics "info Player" {
+				draw "Turn of player: " + (index_player + 1)  at: { 40#px, 50#px } color: #white font: font("Helvetica", 36, #bold);
+			}
+			graphics "Money Player" {
+				draw "Player 1: " + village[0].budget + " tokens"  at: { 40#px, 100#px } color: #white font: font("Helvetica", 24, #bold);
+				draw "Player 2: " + village[1].budget + " tokens"  at: { 40#px, 150#px } color: #white font: font("Helvetica", 24, #bold);
+				draw "Player 3: " + village[2].budget + " tokens"  at: { 40#px, 200#px } color: #white font: font("Helvetica", 24, #bold);
+				draw "Player 4: " + village[3].budget + " tokens"  at: { 40#px, 250#px } color: #white font: font("Helvetica", 24, #bold);
+			}
+			graphics "info action"{
+			 if not(without_player) {
+			 	draw "Actions:" at: { 40#px, 310#px } color: #white font: font("Helvetica", 24, #bold);
+	                draw text_action at: { 40#px,  340#px } color: #white font: font("Helvetica", 20, #plain);
+	          }
+	          
+			}	
+		}
 		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS or to_refresh {
 			event "q" action: activate_act1;
 			event "w" action: activate_act2;
@@ -96,10 +113,10 @@ experiment base_debug parent: abstract_debug virtual: true {
 		
 		display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: total_solid_pollution color: #gray marker: false;
-				data "Water waste pollution" value: total_water_pollution color: #orange marker: false;
-		 		data "Total pollution" value:total_water_pollution +  total_solid_pollution color: #red marker: false;
-		 		data "Ecol labal max pollution" value:max_pollution_ecolabel color: #white marker: false;
+				data "Solid waste pollution" value: total_solid_pollution color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value: total_water_pollution color: #orange marker: false thickness: 2.0 ;
+		 		data "Total pollution" value:total_water_pollution +  total_solid_pollution color: #red marker: false thickness: 2.0 ;
+		 		data "Ecol labal max pollution" value:max_pollution_ecolabel color: #white marker: false thickness: 2.0 ;
 			}
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
 				data "Productivity" value: total_productivity color: #blue thickness: 2.0 marker: false; 
@@ -108,42 +125,42 @@ experiment base_debug parent: abstract_debug virtual: true {
 		}
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: village1_solid_pollution  color: #gray marker: false;
-				data "Water waste pollution" value: village1_water_pollution  color: #red marker: false;
+				data "Solid waste pollution" value: village1_solid_pollution  color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value: village1_water_pollution  color: #red marker: false thickness: 2.0 ;
 		 
 			} 
 			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value: village1_productivity color: #blue marker: false; 
+				data "Productivity" value: village1_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
 		}
 		
 		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution " size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: village2_solid_pollution  color: #gray marker: false;
-				data "Water waste pollution" value: village2_water_pollution  color: #red marker: false;
+				data "Solid waste pollution" value: village2_solid_pollution  color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value: village2_water_pollution  color: #red marker: false thickness: 2.0 ;
 		 
 			}
 			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value:village2_productivity color: #blue marker: false; 
+				data "Productivity" value:village2_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
 		}
 		
 		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: village3_solid_pollution  color: #gray marker: false;
-				data "Water waste pollution" value: village3_water_pollution  color: #red marker: false;
+				data "Solid waste pollution" value: village3_solid_pollution  color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value: village3_water_pollution  color: #red marker: false thickness: 2.0 ;
 			}
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value:village3_productivity color: #blue marker: false; 
+				data "Productivity" value:village3_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
 		}
 		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: village4_solid_pollution  color: #gray marker: false;
-				data "Water waste pollution" value: village4_water_pollution  color: #red marker: false;
+				data "Solid waste pollution" value: village4_solid_pollution  color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value: village4_water_pollution  color: #red marker: false thickness: 2.0 ;
 			}
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value: village4_productivity color: #blue marker: false; 
+				data "Productivity" value: village4_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
 		}
 		

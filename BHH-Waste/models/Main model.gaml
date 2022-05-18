@@ -39,8 +39,6 @@ global {
 	string stage <-COMPUTE_INDICATORS;
 	
 	int index_player <- 0;
-	date computation_end;
-	
 	int action_type <- -1;	
 	
 	bool to_refresh <- false update: false;
@@ -62,6 +60,7 @@ global {
 	
 	
 	int turn <- 0;
+	int current_day <- 0;
 	
 	float village1_solid_pollution update: village[0].canals sum_of each.solid_waste_level + village[0].cells sum_of each.solid_waste_level ;
 	float village1_water_pollution update: convertion_from_l_water_waste_to_kg_solid_waste * (village[0].canals sum_of each.water_waste_level + village[0].cells  sum_of each.water_waste_level)  ;
@@ -92,7 +91,6 @@ global {
 		do create_plots;
 		do init_villages;	
 		do create_landfill;
-		computation_end <- current_date add_years 1;
 		loop k over: actions_name.keys {
 			text_action <- text_action + k +":" + actions_name[k] + "\n"; 
 		}
@@ -300,7 +298,7 @@ global {
 	}
 	
 	action manage_individual_pollution {
-	ask village {
+		ask village {
 			list<float> typical_values_inhabitants <- first(inhabitants).typical_values_computation();
 			list<float> typical_values_farmers <- first(farmers).typical_values_computation();
 			float s_to_c <- typical_values_inhabitants[0];
@@ -342,10 +340,10 @@ global {
 	}
 	
 	action manage_end_of_indicator_computation {
-		if (current_date >= computation_end) {
+		if (current_day = 365) {
 			stage <- PLAYER_TURN;
 			index_player <- 0;
-			step <- 0.0001;
+			step <- 0.000000000001;
 			ask village {
 				budget <- budget_year_per_village;
 			}
@@ -354,7 +352,8 @@ global {
 				is_drained <- false;
 			}
 			turn <- turn + 1;
-			if turn >= end_of_game {
+			
+			if turn > end_of_game {
 				do pause;
 			}
 			else if not without_player {
@@ -426,6 +425,7 @@ global {
 		do manage_landfill;
 		do manage_daily_indicator;
 		do manage_end_of_indicator_computation;
+		current_day <- current_day + 1;
 		
 		
 	}
@@ -433,8 +433,7 @@ global {
 	reflex playerturn when: stage = PLAYER_TURN{
 		if without_player or index_player >= length(village) {
 			stage <- COMPUTE_INDICATORS;
-			current_date <- computation_end;
-			computation_end <- computation_end add_years 1;
+			current_day <- 0;
 			step <- #day;
 			
 			if not without_player {do tell("INDICATOR COMPUTATION");}
@@ -528,7 +527,7 @@ species village {
 			do tell("Action " +ACT_DRAIN_DREDGE + " cannot be done twice" );
 		} else {
 			if budget >= token_drain_dredge {
-				bool  is_ok <- user_confirm("Action Drain & Dredge","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_DRAIN_DREDGE + "?");
+				bool  is_ok <- user_confirm("Action Drain & Dredge","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_DRAIN_DREDGE +  " (Cost: " +  token_drain_dredge +" tokens)?");
 				if is_ok {
 					actions_done_total << ACT_DRAIN_DREDGE;
 					actions_done_this_year << ACT_DRAIN_DREDGE;
@@ -552,26 +551,46 @@ species village {
 			do tell("Action " +ACT_FACILITY_TREATMENT + " cannot be done twice" );
 		} else {
 				map results <- user_input_dialog("Install falicity treatment for urban areas. Cost: " +token_install_filter_for_homes_construction +" tokens. Number of tokens payed by each player",[enter("Player 1",int,0),enter("Player 2",int,0),enter("Player 3",int,0),enter("Player 4",int,0)]);
-				float p1 <- max(int(results["Player 1"]), village[0].budget);
-				float p2 <- max(int(results["Player 2"]), village[1].budget);
-				float p3 <- max(int(results["Player 3"]), village[2].budget);
-				float p4 <- max(int(results["Player 4"]), village[3].budget);
+				float p1 <- min(int(results["Player 1"]), village[0].budget);
+				float p2 <- min(int(results["Player 2"]), village[1].budget);
+				float p3 <- min(int(results["Player 3"]), village[2].budget);
+				float p4 <- min(int(results["Player 4"]), village[3].budget);
 				if p1 + p2 + p3 + p4 >= token_install_filter_for_homes_construction {
-					ask village {
-						actions_done_total << ACT_FACILITY_TREATMENT;
-						actions_done_this_year << ACT_FACILITY_TREATMENT;
+					string cost_str <- "(Cost: "; 
+					bool add_ok <- false;
+					if p1 > 0 {
+						cost_str <- cost_str + "Player 1:" + p1 + " tokens";
+						add_ok <- true;
 					}
-					
-					treatment_facility_is_activated <- true;
-					treatment_facility_year <- 1;
-					list<float> ps <- [p1,p2,p3,p4];	
-					if (p1 + p2 + p3 + p4) > token_install_filter_for_homes_construction {
-						float to_remove <- token_install_filter_for_homes_construction - (p1 + p2 + p3 + p4) ;
-						loop while: to_remove > 0 and (p1 + p2 + p3 + p4) > 0{
-							int i <- rnd(3);
-							float c <- min(1.0, to_remove, ps[i] );
-							to_remove <- to_remove - c;
-							ps[i] <- ps[i] - c;
+					if p2 > 0 {
+						cost_str <- cost_str + (add_ok ? ", " : "")+  "Player 2:" + p2 + " tokens";
+						add_ok <- true;
+					}
+					if p3 > 0 {
+						cost_str <- cost_str  + (add_ok ? ", " : "")+ "Player 3:" + p3 + " tokens";
+						add_ok <- true;
+					}
+					if p4 > 0 {
+						cost_str <- cost_str  + (add_ok ? ", " : "")+ "Player 4:" + p4 + " tokens";
+					}
+					bool  is_ok <- user_confirm("Action Facility treatment","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_FACILITY_TREATMENT +  cost_str +"?");
+					if is_ok {
+						ask village {
+							actions_done_total << ACT_FACILITY_TREATMENT;
+							actions_done_this_year << ACT_FACILITY_TREATMENT;
+						}
+						
+						treatment_facility_is_activated <- true;
+						treatment_facility_year <- 1;
+						list<float> ps <- [p1,p2,p3,p4];	
+						if (p1 + p2 + p3 + p4) > token_install_filter_for_homes_construction {
+							float to_remove <- token_install_filter_for_homes_construction - (p1 + p2 + p3 + p4) ;
+							loop while: to_remove > 0 and (p1 + p2 + p3 + p4) > 0{
+								int i <- rnd(3);
+								float c <- min(1.0, to_remove, ps[i] );
+								to_remove <- to_remove - c;
+								ps[i] <- ps[i] - c;
+							}
 						}
 						loop i from: 0 to: 3 {
 							village[i].budget <- village[i].budget - ps[i];
@@ -591,7 +610,7 @@ species village {
 			do tell("Action " +ACT_SENSIBILIZATION + " cannot be done twice" );
 		} else {
 			if budget >= token_sensibilization {
-				bool  is_ok <- user_confirm("Action Sensibilization","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SENSIBILIZATION + "?");
+				bool  is_ok <- user_confirm("Action Sensibilization","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SENSIBILIZATION + " (Cost: " +  token_sensibilization +" tokens)?");
 				if is_ok {
 					actions_done_total << ACT_SENSIBILIZATION;
 					actions_done_this_year << ACT_SENSIBILIZATION;
@@ -613,7 +632,7 @@ species village {
 			do tell("Action " +ACTION_COLLECTIVE_ACTION + " cannot be done twice" );
 		} else {
 			if budget >= token_trimestrial_collective_action {
-				bool  is_ok <- user_confirm("Action trimestrial action","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACTION_COLLECTIVE_ACTION + "?");
+				bool  is_ok <- user_confirm("Action trimestrial action","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACTION_COLLECTIVE_ACTION + " (Cost: " +  token_trimestrial_collective_action +" tokens)?");
 				if is_ok {
 					actions_done_total << ACTION_COLLECTIVE_ACTION;
 					actions_done_this_year << ACTION_COLLECTIVE_ACTION;
@@ -636,7 +655,7 @@ species village {
 			do tell("Action " +ACT_PESTICIDE_REDUCTION + " cannot be done twice" );
 		} else {
 			if budget >= token_pesticide_reducing {
-				bool  is_ok <- user_confirm("Action Pesticide reducing","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_PESTICIDE_REDUCTION + "?");
+				bool  is_ok <- user_confirm("Action Pesticide reducing","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_PESTICIDE_REDUCTION + " (Cost: " +  token_pesticide_reducing +" tokens)?");
 				if is_ok {
 					actions_done_total << ACT_PESTICIDE_REDUCTION;
 					actions_done_this_year << ACT_PESTICIDE_REDUCTION;
@@ -657,7 +676,7 @@ species village {
 			do tell("Action " +ACT_SUPPORT_MANURE + " cannot be done twice" );
 		} else {
 			if budget >= token_support_manure_buying {
-				bool  is_ok <- user_confirm("Action Support Mature","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SUPPORT_MANURE + "?");
+				bool  is_ok <- user_confirm("Action Support Mature","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SUPPORT_MANURE + " (Cost: " +  token_support_manure_buying +" tokens)?");
 				if is_ok {
 					actions_done_total << ACT_SUPPORT_MANURE;
 					actions_done_this_year << ACT_SUPPORT_MANURE;
@@ -680,7 +699,7 @@ species village {
 		} else {
 			if budget >= token_implement_fallow {
 			
-			bool  is_ok <- user_confirm("Action Implementation Follow","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_IMPLEMENT_FALLOW + "?");
+			bool  is_ok <- user_confirm("Action Implementation Follow","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_IMPLEMENT_FALLOW + " (Cost: " +  token_implement_fallow +" tokens)?");
 			if is_ok {
 				ask plots {
 					does_implement_fallow <- true;
@@ -709,7 +728,7 @@ species village {
 		} else {
 			
 			if budget >= token_installation_dumpholes {
-				bool  is_ok <- user_confirm("Action Installation Dumpholes","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_INSTALL_DUMPHOLES + "?");
+				bool  is_ok <- user_confirm("Action Installation Dumpholes","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_INSTALL_DUMPHOLES + " (Cost: " +  token_installation_dumpholes +" tokens)?");
 				if is_ok {
 					actions_done_total << ACT_PESTICIDE_REDUCTION;
 					actions_done_this_year<< ACT_PESTICIDE_REDUCTION;
