@@ -1,0 +1,22 @@
+CALIBRATION DES ACTIONS (MAJ 18/05/22, 18:00)
+
+(y) - Action obligatoire : équilibrée (décrémentation annuelle équilibrée et proportionnelle) après augmentation de la capacité de ramassage journalière.
+
+(y) - Action "q" : ok pour le clean des déchets, j'ai réduit l'effet bénéfique sur la production agricole (0,2 -> 0,1) car effet trop fort. 
+
+(x) - Action "w" : a tester demain une fois le réglage de l'action effectuée (en l'état, impossibilité de renouveler l'entretien pour les villages 2 - 3 - 4)
+Edit : action équilibrée en fin de journée. Calibration prévue le 19/05
+
+(y) - Action "e" : bien équilibrée sur le temps long -> vu l'inertie, j'ai baissé le seuil de pollution max pour ecolabel à 100 000 unités
+
+(y) - Action "r" : bien équilibrée pour le moment
+
+(y) - Action "t" : réduction de la production agricole équilibrée, augmentation de la réduction de la production de wastewater
+
+(x) : Action "y" : action dont l'effet semble inversé. Acheter manure devrait permettre une légère augmentation de la production agricole, mais réglages font que l'augmentation du coef réduit la production agricole ? A vérifier le 19/05
+
+(y) : Action "u" : Réduction de la production agricole équilibrée. Réduction de ground poll augmentée de 0.33 à 0.40 pour donner des résultats ponctuels plus logiques à l'action
+
+(y) : Action (i) : bien équilibrée
+
+Fin de la session de calibration : seuils fixés à 100 000 unités poll max ; 80 production agricole min.
