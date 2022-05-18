@@ -36,11 +36,11 @@ global {
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
 	float min_production_ecolabel <- 80.0;
-	float max_pollution_ecolabel <- 150000.0;
+	float max_pollution_ecolabel <- 135000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
-	float budget_year_per_village <- 100.0; // total buget per year for a village (in token):
+	float budget_year_per_village <- 120.0; // total buget per year for a village (in token):
 	float min_increase_urban_area_population_year <- 0.1; //min increase of urban area per year (in terms of number of people)
 	
 	
