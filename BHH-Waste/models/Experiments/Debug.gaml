@@ -96,7 +96,16 @@ experiment base_debug parent: abstract_debug virtual: true {
 	                draw text_action at: { 40#px,  340#px } color: #white font: font("Helvetica", 20, #plain);
 	          }
 	          
-			}	
+			}
+			event "q" action: activate_act1;
+			event "w" action: activate_act2;
+			event "e" action: activate_act3;
+			event "r" action: activate_act4;
+			event "t" action: activate_act5;
+			event "y" action: activate_act6;
+			event "u" action: activate_act7;
+			event "i" action: activate_act8;
+			event "o" action: activate_act9;	
 		}
 		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS or to_refresh {
 			event "q" action: activate_act1;
@@ -121,7 +130,16 @@ experiment base_debug parent: abstract_debug virtual: true {
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
 				data "Productivity" value: total_productivity color: #blue thickness: 2.0 marker: false; 
 				data "Ecol labal min productivity" value: min_production_ecolabel thickness: 2.0 color: #white marker: false; 
-			}			
+			}
+			event "q" action: activate_act1;
+			event "w" action: activate_act2;
+			event "e" action: activate_act3;
+			event "r" action: activate_act4;
+			event "t" action: activate_act5;
+			event "y" action: activate_act6;
+			event "u" action: activate_act7;
+			event "i" action: activate_act8;
+			event "o" action: activate_act9;			
 		}
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
