@@ -35,7 +35,12 @@ global {
 	/********************** INTERNAL VARIABLES ****************************/
 	
 	bool without_player <- false; //for testing
-	string type_of_map_display <- MAP_SOLID_WASTE category: "Display" among: ["Map of solid waste", "Map of waster waste", "Map of total pollution", "Map of agricultural productivity"] parameter: "Type of map display" on_change: update_display;
+	bool display_productivity_waste <- false parameter:"Display field productivity" category: "Display";
+	
+	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display";
+	bool display_water_waste <- false parameter:"Display water waste" category: "Display";
+	bool display_total_waste <- false parameter:"Display total waste" category: "Display";
+	//string type_of_map_display <- MAP_SOLID_WASTE;// category: "Display" among: ["Map of solid waste", "Map of waster waste", "Map of total pollution", "Map of agricultural productivity"] parameter: "Type of map display" ;//on_change: update_display;
 	string stage <-COMPUTE_INDICATORS;
 	
 	int index_player <- 0;
@@ -458,30 +463,24 @@ grid cell height: 50 width: 50 {
 		}
 	}
 	 
-	
 	aspect default {
-		switch type_of_map_display {
-			match MAP_SOLID_WASTE {
-				float pollution_level_display <- solid_waste_level ;
-				if pollution_level_display >= min_display_waste_value  {
-					draw shape color: blend(#red,#blue,pollution_level_display);
-				}
+	 	if (display_total_waste) {
+			float pollution_level_display <- solid_waste_level + convertion_from_l_water_waste_to_kg_solid_waste / coeff_cell_pollution_display;
+			if pollution_level_display >= min_display_waste_value  {
+				draw shape color: blend(#red,#blue,pollution_level_display);
 			}
-			match MAP_WATER_WASTE {
-				float pollution_level_display <- water_waste_level * convertion_from_l_water_waste_to_kg_solid_waste / coeff_cell_pollution_display;
-				if pollution_level_display >= min_display_waste_value  {
-					draw shape color: blend(#red,#blue,pollution_level_display);
-				}
+		} else if (display_water_waste) {
+			float pollution_level_display <- water_waste_level * convertion_from_l_water_waste_to_kg_solid_waste / coeff_cell_pollution_display;
+			if pollution_level_display >= min_display_waste_value  {
+				draw shape color: blend(#red,#blue,pollution_level_display);
 			}
-			match MAP_TOTAL_WASTE {
-				float pollution_level_display <- solid_waste_level + convertion_from_l_water_waste_to_kg_solid_waste / coeff_cell_pollution_display;
-				if pollution_level_display >= min_display_waste_value  {
-					draw shape color: blend(#red,#blue,pollution_level_display);
-				}
+			
+		} else if (display_solid_waste) {
+			float pollution_level_display <- solid_waste_level ;
+			if pollution_level_display >= min_display_waste_value  {
+				draw shape color: blend(#red,#blue,pollution_level_display);
 			}
-			default {}
 		}
-		
 	}
 	
 }
@@ -882,13 +881,11 @@ species plot {
 	}
 	
 	aspect default {
-		switch type_of_map_display {
-			match MAP_PRODUCTIVITY {
-				draw shape  color:  blend(#blue,#white,current_productivity / coeff_visu_productivity);
-			}
-			default {
-				draw shape color: color border: #black;
-			}
+		if display_productivity_waste {
+			draw shape  color:  blend(#blue,#white,current_productivity / coeff_visu_productivity);
+		}
+		else {
+			draw shape color: color border: #black;
 		}
 		
 	}
@@ -955,21 +952,15 @@ species canal {
 		water_waste_level <- water_waste_level + water_waste_level_tmp ;
 	}
 	aspect default {
-		switch type_of_map_display {
-			match MAP_SOLID_WASTE {
-				draw shape  + (width +3) color: blend(#red,#blue,(solid_waste_level)/shape.perimeter / coeff_visu_canal);
-			}
-			match MAP_WATER_WASTE {
-				draw shape  + (width +3) color: blend(#red,#blue,(water_waste_level * convertion_from_l_water_waste_to_kg_solid_waste)/shape.perimeter / coeff_visu_canal);
-			}
-			match MAP_TOTAL_WASTE {
-				draw shape  + (width +3) color: blend(#red,#blue,(solid_waste_level + convertion_from_l_water_waste_to_kg_solid_waste *water_waste_level)/shape.perimeter / coeff_visu_canal);
-			}
-			match MAP_PRODUCTIVITY {
-				draw shape  + (width +3) color: #blue;
-			}
+		if display_total_waste {
+			draw shape  + (width +3) color: blend(#red,#blue,(solid_waste_level + convertion_from_l_water_waste_to_kg_solid_waste *water_waste_level)/shape.perimeter / coeff_visu_canal);
+		} else if display_solid_waste {
+			draw shape  + (width +3) color: blend(#red,#blue,(solid_waste_level)/shape.perimeter / coeff_visu_canal);
+		} else if display_solid_waste {
+			draw shape  + (width +3) color: blend(#red,#blue,(water_waste_level * convertion_from_l_water_waste_to_kg_solid_waste)/shape.perimeter / coeff_visu_canal);
+		} else {
+			draw shape  + (width +3) color: #blue;
 		}
-		
 	}
 }
 

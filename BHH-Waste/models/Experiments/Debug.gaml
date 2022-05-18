@@ -18,7 +18,7 @@ experiment abstract_debug virtual: true {
 				species house;
 				species plot;
 				species canal;
-				species cell transparency: 0.5 ;
+				species cell transparency: 0.5;
 				species inhabitant;
 				species farmer;
 				species collection_team;
