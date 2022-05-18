@@ -96,54 +96,54 @@ experiment base_debug parent: abstract_debug virtual: true {
 		
 		display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: village[3].canals sum_of each.solid_waste_level + village[3].cells sum_of each.solid_waste_level  color: #gray marker: false;
-				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[3].canals sum_of each.water_waste_level + village[3].cells  sum_of each.water_waste_level)  color: #red marker: false;
-		 
+				data "Solid waste pollution" value: total_solid_pollution color: #gray marker: false;
+				data "Water waste pollution" value: total_water_pollution color: #orange marker: false;
+		 		data "Total pollution" value:total_water_pollution +  total_solid_pollution color: #red marker: false;
+		 		data "Ecol labal max pollution" value:max_pollution_ecolabel color: #white marker: false;
 			}
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value: village[3].plots sum_of each.current_productivity color: #blue marker: false; 
+				data "Productivity" value: total_productivity color: #blue marker: false; 
+				data "Ecol labal min productivity" value: min_production_ecolabel color: #white marker: false; 
 			}			
 		}
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: village[0].canals sum_of each.solid_waste_level + village[0].cells sum_of each.solid_waste_level  color: #gray marker: false;
-				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[0].canals sum_of each.water_waste_level + village[0].cells  sum_of each.water_waste_level)  color: #red marker: false;
+				data "Solid waste pollution" value: village1_solid_pollution  color: #gray marker: false;
+				data "Water waste pollution" value: village1_water_pollution  color: #red marker: false;
 		 
-			}
+			} 
 			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value: village[0].plots sum_of each.current_productivity color: #blue marker: false; 
+				data "Productivity" value: village1_productivity color: #blue marker: false; 
 			}
 		}
 		
 		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution " size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: village[0].canals sum_of each.solid_waste_level + village[0].cells sum_of each.solid_waste_level  color: #gray marker: false;
-				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[0].canals sum_of each.water_waste_level + village[0].cells  sum_of each.water_waste_level)  color: #red marker: false;
+				data "Solid waste pollution" value: village2_solid_pollution  color: #gray marker: false;
+				data "Water waste pollution" value: village2_water_pollution  color: #red marker: false;
 		 
 			}
 			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value: village[0].plots sum_of each.current_productivity color: #blue marker: false; 
+				data "Productivity" value:village2_productivity color: #blue marker: false; 
 			}
 		}
 		
 		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: village[1].canals sum_of each.solid_waste_level + village[1].cells sum_of each.solid_waste_level  color: #gray marker: false;
-				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[1].canals sum_of each.water_waste_level + village[1].cells  sum_of each.water_waste_level)  color: #red marker: false;
-		 
+				data "Solid waste pollution" value: village3_solid_pollution  color: #gray marker: false;
+				data "Water waste pollution" value: village3_water_pollution  color: #red marker: false;
 			}
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value: village[1].plots sum_of each.current_productivity color: #blue marker: false; 
+				data "Productivity" value:village3_productivity color: #blue marker: false; 
 			}
 		}
 		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: village[2].canals sum_of each.solid_waste_level + village[2].cells sum_of each.solid_waste_level  color: #gray marker: false;
-				data "Water waste pollution" value: convertion_from_l_water_waste_to_kg_solid_waste * (village[2].canals sum_of each.water_waste_level + village[2].cells  sum_of each.water_waste_level)  color: #red marker: false;
-		 
+				data "Solid waste pollution" value: village4_solid_pollution  color: #gray marker: false;
+				data "Water waste pollution" value: village4_water_pollution  color: #red marker: false;
 			}
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
-				data "Productivity" value: village[2].plots sum_of each.current_productivity color: #blue marker: false; 
+				data "Productivity" value: village4_productivity color: #blue marker: false; 
 			}
 		}
 		

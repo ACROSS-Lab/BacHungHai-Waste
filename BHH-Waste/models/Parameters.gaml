@@ -35,8 +35,8 @@ global {
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 100.0;
-	float max_pollution_ecolabel <- 100.0;
+	float min_production_ecolabel <- 140000.0;
+	float max_pollution_ecolabel <- 100000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	

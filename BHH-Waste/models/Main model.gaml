@@ -63,6 +63,24 @@ global {
 	
 	int turn <- 0;
 	
+	float village1_solid_pollution update: village[0].canals sum_of each.solid_waste_level + village[0].cells sum_of each.solid_waste_level ;
+	float village1_water_pollution update: convertion_from_l_water_waste_to_kg_solid_waste * (village[0].canals sum_of each.water_waste_level + village[0].cells  sum_of each.water_waste_level)  ;
+	float village2_solid_pollution update: village[1].canals sum_of each.solid_waste_level + village[1].cells sum_of each.solid_waste_level ;
+	float village2_water_pollution update: convertion_from_l_water_waste_to_kg_solid_waste * (village[1].canals sum_of each.water_waste_level + village[1].cells  sum_of each.water_waste_level)  ;
+	float village3_solid_pollution update: village[2].canals sum_of each.solid_waste_level + village[2].cells sum_of each.solid_waste_level ;
+	float village3_water_pollution update: convertion_from_l_water_waste_to_kg_solid_waste * (village[2].canals sum_of each.water_waste_level + village[2].cells  sum_of each.water_waste_level)  ;
+	float village4_solid_pollution update: village[3].canals sum_of each.solid_waste_level + village[3].cells sum_of each.solid_waste_level ;
+	float village4_water_pollution update: convertion_from_l_water_waste_to_kg_solid_waste * (village[3].canals sum_of each.water_waste_level + village[3].cells  sum_of each.water_waste_level)  ;
+	
+	float total_solid_pollution update: village1_solid_pollution + village2_solid_pollution + village3_solid_pollution + village4_solid_pollution  ;
+	float total_water_pollution update:  village1_water_pollution + village2_water_pollution + village3_water_pollution + village4_water_pollution   ;
+	 
+	float village1_productivity update: village[0].plots sum_of each.current_productivity ;	
+	float village2_productivity update: village[1].plots sum_of each.current_productivity ;	
+	float village3_productivity update: village[2].plots sum_of each.current_productivity ;	
+	float village4_productivity update: village[3].plots sum_of each.current_productivity ;	
+	float total_productivity update: village1_productivity + village2_productivity + village3_productivity + village4_productivity;
+			
 	
 	/********************** INITIALIZATION OF THE GAME ****************************/
 
@@ -208,6 +226,12 @@ global {
 			}
 			
 		} 
+		village1_productivity <-  village[0].plots sum_of each.current_productivity ;	
+		village2_productivity <-  village[1].plots sum_of each.current_productivity ;	
+		village3_productivity <-  village[2].plots sum_of each.current_productivity ;	
+		village4_productivity <-  village[3].plots sum_of each.current_productivity ;	
+		total_productivity <- village1_productivity + village2_productivity + village3_productivity + village4_productivity;	
+	
 	}
 	action activate_act1 {
 		if stage = PLAYER_TURN {
@@ -757,7 +781,7 @@ species plot {
 	village the_village;
 	float base_productivity <- field_initial_productivity min: 0.0;
 	bool does_reduce_pesticide <- false;
-	float current_productivity min: 0.0;
+	float current_productivity <- field_initial_productivity min: 0.0;
 	float pratice_water_pollution_level;
 	float part_to_canal_of_pollution;
 	canal closest_canal;
