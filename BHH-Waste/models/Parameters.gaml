@@ -102,10 +102,10 @@ global {
 	
 	float token_weak_waste_collection <- 30.0; //tokens/year - cost of "weak collection"
 	float token_strong_waste_collection <- 50.0; //tokens/year - cost of "strong collection"
-	int collect_per_week_weak <- 2; //number of collect per week for "weak collection"
-	int collect_per_week_strong <- 4; //number of collect per week for "string collection"
 	float collection_team_collection_capacity_day <- 1350.0; //quantity of solid waste remove during 1 day of work
 	
+	list<int> days_collects_weak <- [2,5] ; //day of collects - 1 = monday, 7 = sunday
+	list<int> days_collects_strong <- [1, 3, 5,  7] ; //day of collects - 1 = monday, 7 = sunday
 	
 	float token_trimestrial_collective_action <- 35.0; //per year
 	float impact_trimestrial_collective_action <- 0.35; //part of the solid waste remove from the canal

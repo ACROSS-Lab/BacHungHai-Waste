@@ -376,13 +376,14 @@ global {
 		}
 		
 		ask village {
-			list<cell> cells_to_clean <-  cells where (each.solid_waste_level > 0);
+			int d <- (current_day mod 7) + 1;
 			ask collection_teams {
-				do collect_waste(cells_to_clean);
+				if (d in collection_days) {
+					list<cell> cells_to_clean <-  myself.cells where (each.solid_waste_level > 0);
+					do collect_waste(cells_to_clean);
+				}
 			}
-			
 		}
-		
 	}
 	
 	action increase_urban_area {
@@ -453,10 +454,10 @@ grid cell height: 50 width: 50 {
 	
 	action natural_pollution_reduction {
 		if solid_waste_level > 0 {
-			solid_waste_level <- solid_waste_level - ground_solid_waste_pollution_impact_rate;
+			solid_waste_level <- solid_waste_level * (1 - ground_solid_pollution_reducing_day);
 		}
 		if water_waste_level > 0 {
-			water_waste_level <- water_waste_level - ground_water_waste_pollution_impact_rate;
+			water_waste_level <- water_waste_level * (1 - ground_water_pollution_reducing_day);
 			float to_canal <- water_waste_level * part_of_water_waste_pollution_to_canal;
 			closest_canal.water_waste_level <- closest_canal.water_waste_level + to_canal;
 			water_waste_level <- water_waste_level - to_canal;
@@ -768,7 +769,9 @@ species village {
 			use_more_manure <- false;
 			does_implement_fallow <- false;
 		}
-		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_weak) + " per week";
+		int collect_per_week_weak <- length(days_collects_weak);
+		int collect_per_week_strong <- length(days_collects_strong);
+		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_strong) + " per week";
 		map result;
 		
 		list<string> possibilities <- budget >=  token_strong_waste_collection ? [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"] : [""+collect_per_week_weak +" per week"];
@@ -789,6 +792,7 @@ species village {
 		}
 		weak_collection_policy <- result["Choose a waste collection frenquency"] = ""+collect_per_week_weak +" per week";
 		budget <- budget - (weak_collection_policy ? token_weak_waste_collection : token_strong_waste_collection);
+		ask collection_teams {collection_days <- myself.weak_collection_policy ? days_collects_weak : days_collects_strong;}
 		if treatment_facility_is_activated {
 			treatment_facility_year <- treatment_facility_year + 1;
 		}
@@ -1089,8 +1093,8 @@ species inhabitant {
 
 species collection_team {
 	rgb color <- #gold;
-	int nb_collection_week <-collect_per_week_weak;
 	float collection_capacity <- collection_team_collection_capacity_day;
+	list<int> collection_days <- days_collects_weak;
 	village my_village;
 	
 	
