@@ -504,7 +504,7 @@ species village {
 	list<plot> plots;
 	int population;
 	bool is_drained <- false;
-	bool weak_collection_policy;
+	bool weak_collection_policy <- true;
 	int treatment_facility_year <- 0 max: 3;
 	bool treatment_facility_is_activated <- false;
 	action compute_indicators {
