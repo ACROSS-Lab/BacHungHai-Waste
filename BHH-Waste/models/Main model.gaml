@@ -912,7 +912,7 @@ species house {
 			my_cells <- cell overlapping myself;
 			my_village.inhabitants << self;
 			closest_canal <- canal closest_to self;
-			my_village.population <- my_village.population  + 1e
+			my_village.population <- my_village.population  + 1;
 		}
 	}
 	aspect default {
