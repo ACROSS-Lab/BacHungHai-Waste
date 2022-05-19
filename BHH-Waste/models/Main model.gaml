@@ -827,7 +827,7 @@ species plot {
 	action pollution_due_to_practice { 
 		
 		if use_more_manure {
-			pratice_water_pollution_level <- pratice_water_pollution_level * (1 - impact_support_manure_buying_waste);
+			pratice_water_pollution_level <- pratice_water_pollution_level * (1 + impact_support_manure_buying_waste);
 		}
 		if does_reduce_pesticide {
 			pratice_water_pollution_level <- pratice_water_pollution_level * (1 - impact_pesticide_reducing_waste);
@@ -854,7 +854,7 @@ species plot {
 			current_productivity <- current_productivity * (1 - impact_implement_fallow_production);
 		}
 		if use_more_manure {
-			current_productivity <- current_productivity * (1 - impact_support_manure_buying_production);
+			current_productivity <- current_productivity * (1 + impact_support_manure_buying_production);
 		}
 		if does_reduce_pesticide {current_productivity <- current_productivity* (1 - impact_pesticide_reducing_production);}
 		if the_village.is_drained {
