@@ -35,7 +35,7 @@ global {
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 80.0;
+	float min_production_ecolabel <- 85.0;
 	float max_pollution_ecolabel <- 100000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
@@ -83,7 +83,7 @@ global {
 	float ground_solid_pollution_reducing_day <- 0.001; //quantity of the solid water pollution that disapear every day
 	
 	float water_waste_filtering_inhabitants <- 0.2 min: 0.0 max: 1.0; // part of the water waste produced per inhabitants that are filtered
-	float water_waste_year_inhabitants <- 50000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
+	float water_waste_year_inhabitants <- 60000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
 	float solid_waste_year_inhabitants <-  200.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
 	float water_waste_year_farmers <- 30000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
