@@ -48,6 +48,8 @@ global {
 	
 	bool to_refresh <- false update: false;
 	
+	bool pause_for_player_turn <- true;
+	
 	communal_landfill the_communal_landfill;
 	
 	string text_action <- "";
@@ -357,11 +359,12 @@ global {
 				is_drained <- false;
 			}
 			turn <- turn + 1;
-			
 			if turn > end_of_game {
 				do pause;
 			}
 			else if not without_player {
+				if pause_for_player_turn{do pause;}
+			
 				do tell("PLAYER TURN");
 				ask village[0] {do start_turn;}
 			}
@@ -759,7 +762,9 @@ species village {
 				ask village[index_player] {
 					do start_turn;
 				}
-			}
+			} else if pause_for_player_turn{ask world {do resume;}}
+			
+			
 		}
 	}
 	
