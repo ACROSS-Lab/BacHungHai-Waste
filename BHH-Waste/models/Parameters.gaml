@@ -35,8 +35,8 @@ global {
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 85.0;
-	float max_pollution_ecolabel <- 100000.0;
+	float min_production_ecolabel <- 90.0;
+	float max_pollution_ecolabel <- 90000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
@@ -129,7 +129,7 @@ global {
 	float impact_implement_fallow_waste  <- 0.40; //decrease the ground pollution
 	
 	float token_support_manure_buying <- 40.0; //per year
-	float impact_support_manure_buying_production  <- 0.1; //improvment of the agricultural production
+	float impact_support_manure_buying_production  <- 0.05; //improvment of the agricultural production
 	float impact_support_manure_buying_waste  <- 0.1; //increase wastewater production
 	
 	float token_installation_dumpholes <- 30.0; //
