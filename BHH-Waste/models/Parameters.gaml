@@ -10,6 +10,16 @@ model Parameters
 
 global {
 	
+	/******************* USE TIMERS *************************************/
+	bool use_timer_player_turn <- true;
+	bool use_timer_group_action <- true;	
+	bool use_timer_for_discussion <- true;
+	
+	bool timer_just_for_warning <- false; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player
+	float time_for_player_turn <- 2#mn;
+	float time_for_discussion <- 3 #mn; // time before the player turns
+	float time_for_group_action <- 2#mn;  
+	
 	
 	/******************* LOG RESULTS *************************************/
 	
@@ -53,6 +63,8 @@ global {
 	
 	
 	/*************** PARAMETERS RELATED TO VISUALIZATION ****************************/
+	
+	int data_frequency <- 5;
 	
 	list<rgb> village_color <- [#magenta, #gold, #violet,#orange]; // color for the 4 villages
 	float min_display_waste_value <- 0.2; //just use for display all the pollution cell 

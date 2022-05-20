@@ -35,11 +35,11 @@ global {
 	/********************** INTERNAL VARIABLES ****************************/
 	
 	bool without_player <- false; //for testing
-	bool display_productivity_waste <- false parameter:"Display field productivity" category: "Display" on_change: update_display;
+	bool display_productivity_waste <- false parameter:"Display field productivity" category: "Display" ;
 	
-	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display" on_change: update_display;
-	bool display_water_waste <- false parameter:"Display water waste" category: "Display" on_change: update_display;
-	bool display_total_waste <- false parameter:"Display total waste" category: "Display" on_change: update_display;
+	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display" ;
+	bool display_water_waste <- false parameter:"Display water waste" category: "Display" ;
+	bool display_total_waste <- false parameter:"Display total waste" category: "Display" ;
 	//string type_of_map_display <- MAP_SOLID_WASTE;// category: "Display" among: ["Map of solid waste", "Map of waster waste", "Map of total pollution", "Map of agricultural productivity"] parameter: "Type of map display" ;//on_change: update_display;
 	string stage <-COMPUTE_INDICATORS;
 	
@@ -48,7 +48,6 @@ global {
 	
 	bool to_refresh <- false update: false;
 	
-	bool pause_for_player_turn <- true;
 	
 	communal_landfill the_communal_landfill;
 	
@@ -86,7 +85,26 @@ global {
 	float village3_productivity update: village[2].plots sum_of each.current_productivity / length(village[2].plots);
 	float village4_productivity update: village[3].plots sum_of each.current_productivity / length(village[3].plots);
 	float total_productivity update: (village1_productivity + village2_productivity + village3_productivity + village4_productivity) / 4;
-			
+	
+	list<int> time_step <-[];
+	list<float> village1_solid_pollution_values;
+	list<float> village2_solid_pollution_values;
+	list<float> village3_solid_pollution_values;
+	list<float> village4_solid_pollution_values;
+	list<float> village1_water_pollution_values;
+	list<float> village2_water_pollution_values;
+	list<float> village3_water_pollution_values;
+	list<float> village4_water_pollution_values;
+	list<float> village1_production_values;
+	list<float> village2_production_values;
+	list<float> village3_production_values;
+	list<float> village4_production_values;
+	list<float> total_solid_pollution_values;
+	list<float> total_water_pollution_values;
+	list<float> total_pollution_values;
+	list<float> total_production_values;
+	list<float> ecolabel_max_pollution_values;
+	list<float> ecolabel_min_production_values;
 	
 	/********************** INITIALIZATION OF THE GAME ****************************/
 
@@ -98,6 +116,7 @@ global {
 		do create_plots;
 		do init_villages;	
 		do create_landfill;
+		do add_data;
 		loop k over: actions_name.keys {
 			text_action <- text_action + k +":" + actions_name[k] + "\n"; 
 		}
@@ -375,8 +394,7 @@ global {
 				do pause;
 			}
 			else if not without_player {
-				if pause_for_player_turn{do pause;}
-			
+				
 				do tell("PLAYER TURN");
 				ask village[0] {do start_turn;}
 			}
@@ -446,7 +464,33 @@ global {
 		}
 	}
 	
+	action add_data {
+		time_step << turn * 365 + current_day;
+		village1_solid_pollution_values << village1_solid_pollution;
+	 	village2_solid_pollution_values << village2_solid_pollution;
+	 	village3_solid_pollution_values<< village3_solid_pollution;
+	 	village4_solid_pollution_values<< village4_solid_pollution;
+	 	village1_water_pollution_values<< village1_water_pollution;
+	 	village2_water_pollution_values<< village2_water_pollution;
+	 	village3_water_pollution_values<< village3_water_pollution;
+	 	village4_water_pollution_values<< village4_water_pollution;
+	 	village1_production_values << village1_productivity;
+	 	village2_production_values<< village2_productivity;
+	 	village3_production_values<< village3_productivity;
+	 	village4_production_values<< village4_productivity;
+	 	total_solid_pollution_values << total_solid_pollution;
+	 	total_water_pollution_values << total_water_pollution;
+	 	total_pollution_values << (total_solid_pollution + total_water_pollution);
+	 	total_production_values << total_productivity;
+	 	ecolabel_min_production_values << min_production_ecolabel;
+	 	ecolabel_max_pollution_values << max_pollution_ecolabel;
+	}
+	
+	
 	reflex indicators_computation when: stage = COMPUTE_INDICATORS {
+		if (current_day mod data_frequency) = 0 {
+			do add_data;
+		}
 		do manage_individual_pollution;
 		do manage_flow_canal;
 		do manage_pollution_decrease;
@@ -454,8 +498,6 @@ global {
 		do manage_daily_indicator;
 		do manage_end_of_indicator_computation;
 		current_day <- current_day + 1;
-		
-		
 	}
 	
 	reflex playerturn when: stage = PLAYER_TURN{
@@ -534,6 +576,7 @@ species village {
 	bool weak_collection_policy <- true;
 	int treatment_facility_year <- 0 max: 3;
 	bool treatment_facility_is_activated <- false;
+	float start_turn_time;
 	action compute_indicators {
 		solid_pollution_level <- ((cells sum_of each.solid_waste_level) + (canals sum_of (each.solid_waste_level))) / 10000.0;
 		water_pollution_level <- ((cells sum_of each.water_waste_level) + (canals sum_of (each.water_waste_level)))/ 10000.0;
@@ -793,7 +836,7 @@ species village {
 				ask village[index_player] {
 					do start_turn;
 				}
-			} else if pause_for_player_turn{ask world {do resume;}}
+			} 
 			
 			
 		}

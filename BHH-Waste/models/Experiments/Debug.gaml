@@ -13,7 +13,7 @@ import "Abstract experiments.gaml"
 
 experiment abstract_debug virtual: true {
 		output {
-			display map_abstract type: opengl  background: #black virtual: true axes: false refresh: stage = COMPUTE_INDICATORS{
+			display map_abstract type: opengl  background: #black virtual: true axes: false {//refresh: stage = COMPUTE_INDICATORS{
 				species commune;
 				species house;
 				species plot;
@@ -110,7 +110,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 			event "i" action: activate_act8;
 			event "o" action: activate_act9;	
 		}
-		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS or to_refresh {
+		display map type: opengl parent: map_abstract  background: #black axes: false{//} refresh: stage = COMPUTE_INDICATORS or to_refresh {
 			event "q" action: activate_act1;
 			event "w" action: activate_act2;
 			event "e" action: activate_act3;
@@ -123,16 +123,16 @@ experiment base_debug parent: abstract_debug virtual: true {
 		
 		}
 		
-		display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){
-			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
-				data "Solid waste pollution" value: total_solid_pollution color: #gray marker: false thickness: 2.0 ;
-				data "Water waste pollution" value: total_water_pollution color: #orange marker: false thickness: 2.0 ;
-		 		data "Total pollution" value:total_water_pollution +  total_solid_pollution color: #red marker: false thickness: 2.0 ;
-		 		data "Ecol labal max pollution" value:max_pollution_ecolabel color: #white marker: false thickness: 2.0 ;
+		display "global indicators" background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){
+			chart "Waste pollution "  size:{1.0, 0.5} type: xy background: #black color: #white{
+				data "Solid waste pollution" value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value: rows_list(matrix([time_step,total_water_pollution_values])) color: #orange marker: false thickness: 2.0 ;
+		 		data "Total pollution" value:rows_list(matrix([time_step,total_pollution_values])) color: #red marker: false thickness: 2.0 ;
+		 		data "Ecol labal max pollution" value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: #white marker: false thickness: 2.0 ;
 			}
-			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[80,120]{
-				data "Productivity" value: total_productivity color: #blue thickness: 2.0 marker: false; 
-				data "Ecol labal min productivity" value: min_production_ecolabel thickness: 2.0 color: #white marker: false; 
+			chart "Productivity " type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[80,120]{
+				data "Productivity" value: rows_list(matrix([time_step,total_production_values])) color: #blue thickness: 2.0 marker: false; 
+				data "Ecol labal min productivity" value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: 2.0 color: #white marker: false; 
 			}
 			event "q" action: activate_act1;
 			event "w" action: activate_act2;
@@ -144,54 +144,54 @@ experiment base_debug parent: abstract_debug virtual: true {
 			event "i" action: activate_act8;
 			event "o" action: activate_act9;			
 		}
-		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
+		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
 			
-			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white {
-				data "Solid waste pollution" value: village1_solid_pollution  color: #gray marker: false thickness: 2.0 ;
-				data "Water waste pollution" value: village1_water_pollution  color: #orange marker: false thickness: 2.0 ;
+			chart "Waste pollution "  size:{1.0, 0.5} type: xy background: #black color: #white {
+				data "Solid waste pollution" value:rows_list(matrix([time_step,village1_solid_pollution_values])) color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value:rows_list(matrix([time_step,village1_water_pollution_values])) color: #orange marker: false thickness: 2.0 ;
 		 
 			} 
-			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
-				data "Productivity" value: village1_productivity color: #blue marker: false thickness: 2.0 ; 
+			chart "Productivity " type: xy position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
+				data "Productivity" value:rows_list(matrix([time_step,village1_production_values])) color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
 				draw "Player 1" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
 			}
 		}
 		
-		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution " size:{1.0, 0.5} background: #black color: #white {
-				data "Solid waste pollution" value: village2_solid_pollution  color: #gray marker: false thickness: 2.0 ;
-				data "Water waste pollution" value: village2_water_pollution  color: #orange marker: false thickness: 2.0 ;
+		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
+			chart "Waste pollution " type: xy size:{1.0, 0.5} background: #black color: #white {
+				data "Solid waste pollution" value:rows_list(matrix([time_step,village2_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value:rows_list(matrix([time_step,village2_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 		 
 			}
-			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
-				data "Productivity" value:village2_productivity color: #blue marker: false thickness: 2.0 ; 
+			chart "Productivity "  type: xy position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
+				data "Productivity" value:rows_list(matrix([time_step,village2_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
 				draw "Player 2" at: {20, world.location.y - 500}  color: #white rotate: -90 font: font("Impact", 16, #bold) ;
 			}
 		}
 		
-		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white  {
-				data "Solid waste pollution" value: village3_solid_pollution  color: #gray marker: false thickness: 2.0 ;
-				data "Water waste pollution" value: village3_water_pollution  color: #orange marker: false thickness: 2.0 ;
+		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
+			chart "Waste pollution " type: xy  size:{1.0, 0.5} background: #black color: #white  {
+				data "Solid waste pollution" value:rows_list(matrix([time_step,village3_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value:rows_list(matrix([time_step,village3_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
-			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
-				data "Productivity" value:village3_productivity color: #blue marker: false thickness: 2.0 ; 
+			chart "Productivity" type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
+				data "Productivity" value:rows_list(matrix([time_step,village3_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
 				draw "Player 3" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
 			}
 		}
-		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white  {
-				data "Solid waste pollution" value: village4_solid_pollution  color: #gray marker: false thickness: 2.0 ;
-				data "Water waste pollution" value: village4_water_pollution  color: #orange marker: false thickness: 2.0 ;
+		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
+			chart "Waste pollution"  type: xy size:{1.0, 0.5} background: #black color: #white  {
+				data "Solid waste pollution" value:rows_list(matrix([time_step,village4_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
+				data "Water waste pollution" value:rows_list(matrix([time_step,village4_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
-			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[80,120]{
-				data "Productivity" value: village4_productivity color: #blue marker: false thickness: 2.0 ; 
+			chart "Productivity"type: xy  position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[80,120]{
+				data "Productivity" value:rows_list(matrix([time_step,village4_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
 				draw "Player 4" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
