@@ -110,7 +110,7 @@ global {
 	
 	
 	action update_display {
-		if (stage != PLAYER_TURN) {
+		if (stage = PLAYER_TURN) {
 				ask experiment {
 				do update_outputs(true);
 				to_refresh <- true;
@@ -370,6 +370,7 @@ global {
 				is_drained <- false;
 			}
 			turn <- turn + 1;
+			do update_display;
 			if turn > end_of_game {
 				do pause;
 			}
@@ -521,7 +522,7 @@ species village {
 	list<inhabitant> inhabitants;
 	list<farmer> farmers;
 	local_landfill my_local_landfill;
-	float budget;
+	float budget <- budget_year_per_village;
 	float solid_pollution_level ;
 	float water_pollution_level;
 	float productivity_level min: 0.0;
@@ -799,11 +800,14 @@ species village {
 	}
 	
 	action start_turn {
-		do tell("PLAYER " + (index_player + 1) + " TURN");
+		ask world {do update_display;}
+		
 		ask plots {
 			use_more_manure <- false;
 			does_implement_fallow <- false;
 		}
+		do tell("PLAYER " + (index_player + 1) + " TURN");
+		
 		int collect_per_week_weak <- length(days_collects_weak);
 		int collect_per_week_strong <- length(days_collects_strong);
 		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_strong) + " per week";
