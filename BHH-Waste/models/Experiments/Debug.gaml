@@ -78,7 +78,9 @@ experiment abstract_debug virtual: true {
 }
 experiment base_debug parent: abstract_debug virtual: true {
 	output{
+		 layout horizontal([vertical([1::5000,2::5000])::4541,vertical([horizontal([3::5000,4::5000])::5000,horizontal([5::5000,6::5000])::5000])::5459]) tabs:true editors: false;
 		display info_display background: #black type: opengl axes: false {
+			
 			graphics "info day" {
 				draw "Year: " + turn + " - Day: " + current_day  at: { 40#px, 0#px } color: #white font: font("Helvetica", 40, #bold);
 			}
@@ -143,6 +145,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 			event "o" action: activate_act9;			
 		}
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
+			
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
 				data "Solid waste pollution" value: village1_solid_pollution  color: #gray marker: false thickness: 2.0 ;
 				data "Water waste pollution" value: village1_water_pollution  color: #orange marker: false thickness: 2.0 ;
@@ -150,6 +153,9 @@ experiment base_debug parent: abstract_debug virtual: true {
 			} 
 			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
 				data "Productivity" value: village1_productivity color: #blue marker: false thickness: 2.0 ; 
+			}
+			graphics "Lengend" {	
+				draw "Player 1" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
 			}
 		}
 		
@@ -162,6 +168,9 @@ experiment base_debug parent: abstract_debug virtual: true {
 			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
 				data "Productivity" value:village2_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
+			graphics "Lengend" {	
+				draw "Player 2" at: {20, world.location.y - 500}  color: #white rotate: -90 font: font("Impact", 16, #bold) ;
+			}
 		}
 		
 		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
@@ -172,6 +181,9 @@ experiment base_debug parent: abstract_debug virtual: true {
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
 				data "Productivity" value:village3_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
+			graphics "Lengend" {	
+				draw "Player 3" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
+			}
 		}
 		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
@@ -180,6 +192,9 @@ experiment base_debug parent: abstract_debug virtual: true {
 			}
 			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
 				data "Productivity" value: village4_productivity color: #blue marker: false thickness: 2.0 ; 
+			}
+			graphics "Lengend" {	
+				draw "Player 4" at: {20, world.location.y - 500} /*anchor: #center */ color: #white rotate: -90 font: font("Impact", 16, #bold) ;
 			}
 		}
 		
