@@ -1096,13 +1096,13 @@ species inhabitant {
 		float solid_waste_day_tmp <- waste_for_a_day();
 		
 		if (environmental_sensibility > 0) {
-			solid_waste_day_tmp <- solid_waste_day_tmp * world.sensibilisation_function(environmental_sensibility);
+			solid_waste_day_tmp <- solid_waste_day_tmp * ( 1 - world.sensibilisation_function(environmental_sensibility));
 		}
 			
-		if solid_waste_day > 0 {
-			float to_the_canal <- solid_waste_day * part_solid_waste_canal;
+		if solid_waste_day_tmp > 0 {
+			float to_the_canal <- solid_waste_day_tmp * part_solid_waste_canal;
 			typical_values<< to_the_canal;
-			typical_values<< solid_waste_day - to_the_canal;
+			typical_values<< solid_waste_day_tmp - to_the_canal;
 		}
 		
 		float rate_decrease_due_to_treatment <- 0.0;
