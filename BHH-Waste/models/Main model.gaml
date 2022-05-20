@@ -35,11 +35,11 @@ global {
 	/********************** INTERNAL VARIABLES ****************************/
 	
 	bool without_player <- false; //for testing
-	bool display_productivity_waste <- false parameter:"Display field productivity" category: "Display";
+	bool display_productivity_waste <- false parameter:"Display field productivity" category: "Display" on_change: update_display;
 	
-	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display";
-	bool display_water_waste <- false parameter:"Display water waste" category: "Display";
-	bool display_total_waste <- false parameter:"Display total waste" category: "Display";
+	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display" on_change: update_display;
+	bool display_water_waste <- false parameter:"Display water waste" category: "Display" on_change: update_display;
+	bool display_total_waste <- false parameter:"Display total waste" category: "Display" on_change: update_display;
 	//string type_of_map_display <- MAP_SOLID_WASTE;// category: "Display" among: ["Map of solid waste", "Map of waster waste", "Map of total pollution", "Map of agricultural productivity"] parameter: "Type of map display" ;//on_change: update_display;
 	string stage <-COMPUTE_INDICATORS;
 	
@@ -101,13 +101,20 @@ global {
 		loop k over: actions_name.keys {
 			text_action <- text_action + k +":" + actions_name[k] + "\n"; 
 		}
+		
+		if save_log {
+			save "turn,player,productivity,solid_pollution,water_pollution"  to: systeme_evolution_log_path type: text rewrite: true;
+			save "turn,player,budget,action1,action2,action3,action4,action5,action6" to: village_action_log_path type: text rewrite: true;
+		}
 	}
 	
 	
 	action update_display {
-		ask experiment {
-			do update_outputs(true);
-			to_refresh <- true;
+		if (stage != PLAYER_TURN) {
+				ask experiment {
+				do update_outputs(true);
+				to_refresh <- true;
+			}
 		}
 	}
 		
@@ -367,6 +374,15 @@ global {
 			
 				do tell("PLAYER TURN");
 				ask village[0] {do start_turn;}
+			}
+			if save_log {
+				save ("" + turn  + ",0," + total_productivity + ","+ total_solid_pollution + "," + total_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",1," + village1_productivity + ","+ village1_solid_pollution + "," + village1_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",2," + village2_productivity + ","+ village2_solid_pollution + "," + village2_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",3," + village3_productivity + ","+ village3_solid_pollution + "," + village3_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",4," + village4_productivity + ","+ village4_solid_pollution + "," + village4_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				
+				
 			}
 		
 			
@@ -757,6 +773,13 @@ species village {
 	action end_of_turn {
 		bool  is_ok <- user_confirm("End of turn","PLAYER " + (index_player + 1) +", do you confirm that you want to end the turn?");
 		if is_ok {
+			if save_log {
+				string to_save <- "" + turn + "," + (index_player +1) + "," + budget;
+				loop act over: actions_done_this_year  {
+					to_save <- to_save+"," + act;
+				}
+				save to_save to: village_action_log_path type: text rewrite: false;
+			}
 			index_player <- index_player + 1;
 			if index_player < length(village) {
 				ask village[index_player] {
@@ -792,9 +815,12 @@ species village {
 				choose("Do you wish to pay for the home treatment facility?",bool,true, [true,false])
 			]);
 			treatment_facility_is_activated <- bool(result["Do you wish to pay for the home treatment facility?"]);
+			if true {actions_done_this_year <<  "Pay for treatment facility maintenance";}
+		
 			if treatment_facility_is_activated {budget <- budget - token_install_filter_for_homes_maintenance;}
 		
 		}
+		actions_done_this_year << result["Choose a waste collection frenquency"] ;
 		weak_collection_policy <- result["Choose a waste collection frenquency"] = ""+collect_per_week_weak +" per week";
 		budget <- budget - (weak_collection_policy ? token_weak_waste_collection : token_strong_waste_collection);
 		ask collection_teams {collection_days <- myself.weak_collection_policy ? days_collects_weak : days_collects_strong;}
