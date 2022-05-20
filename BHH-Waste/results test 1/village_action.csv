@@ -1,0 +1,33 @@
+turn,player,budget,action1,action2,action3,action4,action5,action6
+1,1,15.0,2 per week,Help farmer buy manure,Trimestrial collective action
+1,2,0.0,4 per week,Help farmers to reduce pesticides use,Help farmers to reduce pesticides use
+1,3,0.0,4 per week,Help farmer buy manure,Help farmers to reduce pesticides use
+1,4,5.0,4 per week,Trimestrial collective action,Help farmers to reduce pesticides use
+2,1,0.0,2 per week,Help farmer buy manure,Drain and dredge
+2,2,10.0,4 per week,Organise sensibilization about waste sorting workshops in schools,Trimestrial collective action
+2,3,5.0,2 per week,Drain and dredge,Trimestrial collective action
+2,4,0.0,2 per week,Help farmer buy manure,Drain and dredge
+3,1,10.0,2 per week,Help farmers to reduce pesticides use,Drain and dredge
+3,2,20.0,4 per week,Drain and dredge
+3,3,5.0,4 per week,Help farmer buy manure,Organise sensibilization about waste sorting workshops in schools
+3,4,10.0,4 per week,Organise sensibilization about waste sorting workshops in schools,Trimestrial collective action
+4,1,0.0,4 per week,Install water treatment facilities for every home
+4,2,5.0,Install water treatment facilities for every home,4 per week,Organise sensibilization about waste sorting workshops in schools
+4,3,10.0,Install water treatment facilities for every home,4 per week
+4,4,0.0,Install water treatment facilities for every home,2 per week,Trimestrial collective action,Organise sensibilization about waste sorting workshops in schools
+5,1,0.0,Pay for treatment facility maintenance,2 per week,Drain and dredge,Help farmer buy manure
+5,2,5.0,Pay for treatment facility maintenance,4 per week,Drain and dredge
+5,3,0.0,Pay for treatment facility maintenance,2 per week,Organise sensibilization about waste sorting workshops in schools,Drain and dredge
+5,4,5.0,Pay for treatment facility maintenance,4 per week,Drain and dredge
+6,1,0.0,Pay for treatment facility maintenance,2 per week,Put part of the fields in fallow ,Trimestrial collective action
+6,2,5.0,Pay for treatment facility maintenance,4 per week,Drain and dredge
+6,3,15.0,Pay for treatment facility maintenance,4 per week,Put part of the fields in fallow 
+6,4,5.0,Pay for treatment facility maintenance,4 per week,Drain and dredge
+7,1,10.0,Pay for treatment facility maintenance,4 per week,Organise sensibilization about waste sorting workshops in schools,Trimestrial collective action
+7,2,5.0,Pay for treatment facility maintenance,4 per week,Drain and dredge
+7,3,5.0,Pay for treatment facility maintenance,4 per week,Organise sensibilization about waste sorting workshops in schools,Put part of the fields in fallow 
+7,4,5.0,Pay for treatment facility maintenance,4 per week,Drain and dredge
+8,1,0.0,Pay for treatment facility maintenance,2 per week,Help farmer buy manure,Trimestrial collective action
+8,2,0.0,Pay for treatment facility maintenance,2 per week,Drain and dredge,Organise sensibilization about waste sorting workshops in schools
+8,3,5.0,Pay for treatment facility maintenance,4 per week,Drain and dredge
+8,4,5.0,Pay for treatment facility maintenance,4 per week,Drain and dredge
