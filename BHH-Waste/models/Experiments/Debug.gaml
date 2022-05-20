@@ -130,7 +130,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 		 		data "Total pollution" value:total_water_pollution +  total_solid_pollution color: #red marker: false thickness: 2.0 ;
 		 		data "Ecol labal max pollution" value:max_pollution_ecolabel color: #white marker: false thickness: 2.0 ;
 			}
-			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
+			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[80,120]{
 				data "Productivity" value: total_productivity color: #blue thickness: 2.0 marker: false; 
 				data "Ecol labal min productivity" value: min_production_ecolabel thickness: 2.0 color: #white marker: false; 
 			}
@@ -146,12 +146,12 @@ experiment base_debug parent: abstract_debug virtual: true {
 		}
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
 			
-			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
+			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white {
 				data "Solid waste pollution" value: village1_solid_pollution  color: #gray marker: false thickness: 2.0 ;
 				data "Water waste pollution" value: village1_water_pollution  color: #orange marker: false thickness: 2.0 ;
 		 
 			} 
-			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
+			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
 				data "Productivity" value: village1_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
@@ -160,12 +160,12 @@ experiment base_debug parent: abstract_debug virtual: true {
 		}
 		
 		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution " size:{1.0, 0.5} background: #black color: #white{
+			chart "Waste pollution " size:{1.0, 0.5} background: #black color: #white {
 				data "Solid waste pollution" value: village2_solid_pollution  color: #gray marker: false thickness: 2.0 ;
 				data "Water waste pollution" value: village2_water_pollution  color: #orange marker: false thickness: 2.0 ;
 		 
 			}
-			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white{
+			chart "Productivity " position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
 				data "Productivity" value:village2_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
@@ -174,11 +174,11 @@ experiment base_debug parent: abstract_debug virtual: true {
 		}
 		
 		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
+			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white  {
 				data "Solid waste pollution" value: village3_solid_pollution  color: #gray marker: false thickness: 2.0 ;
 				data "Water waste pollution" value: village3_water_pollution  color: #orange marker: false thickness: 2.0 ;
 			}
-			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
+			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
 				data "Productivity" value:village3_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
@@ -186,15 +186,15 @@ experiment base_debug parent: abstract_debug virtual: true {
 			}
 		}
 		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(5#cycle){ 
-			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white{
+			chart "Waste pollution "  size:{1.0, 0.5} background: #black color: #white  {
 				data "Solid waste pollution" value: village4_solid_pollution  color: #gray marker: false thickness: 2.0 ;
 				data "Water waste pollution" value: village4_water_pollution  color: #orange marker: false thickness: 2.0 ;
 			}
-			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white{
+			chart "Productivity " position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[80,120]{
 				data "Productivity" value: village4_productivity color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
-				draw "Player 4" at: {20, world.location.y - 500} /*anchor: #center */ color: #white rotate: -90 font: font("Impact", 16, #bold) ;
+				draw "Player 4" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
 			}
 		}
 		

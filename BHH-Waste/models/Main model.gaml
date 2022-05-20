@@ -140,13 +140,17 @@ global {
 			list<geometry> geoms <- to_squares (shape,house_size);
 			float nb <- 0.0;
 			create house from: geoms {
+				my_village <- first(village overlapping self);
+				if my_village = nil{
+					my_village <- village closest_to self;
+				}
 				create inhabitant {
 					location <- myself.location;
 					my_house <- cell(location);
 					my_cells <- cell overlapping myself;
 					closest_canal <- canal closest_to self;
 					nb <- nb + 1;
-					my_village <- first(village overlapping self);
+					my_village <- myself.my_village;
 				}
 			}
 			population <- nb;
@@ -424,7 +428,10 @@ global {
 						create house from: geoms {
 							inhabitant_to_create <- true;
 							create_inhabitant_day <- rnd(2,363);
-	
+							my_village <- first(village overlapping self);
+							if my_village = nil{
+								my_village <- village closest_to self;
+							}
 						}
 						population <- population - 1 ;
 						
@@ -934,6 +941,7 @@ species house {
 	bool inhabitant_to_create <- false;
 	int create_inhabitant_day <- -1;
 	rgb color<-#darkslategray;
+	village my_village;
 	
 	reflex new_inhabitants when: inhabitant_to_create and create_inhabitant_day = current_day{
 		do create_inhabitants;
@@ -942,7 +950,8 @@ species house {
 	action create_inhabitants {
 		create inhabitant {
 			location <- myself.location;
-			my_village <- first(village overlapping self);
+			my_village <- myself.my_village;
+			
 			my_house <- cell(location);
 			my_cells <- cell overlapping myself;
 			my_village.inhabitants << self;
