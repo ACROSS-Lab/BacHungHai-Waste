@@ -14,7 +14,8 @@ global {
 	
 	/********************** CONSTANTS ****************************/
 		
-	string PLAYER_TURN <- "player turn";
+	string PLAYER_ACTION_TURN <- "player action turn";
+	string PLAYER_DISCUSSION_TURN <- "player discussion turn";
 	string COMPUTE_INDICATORS <-  "compute indicators";
 	
 	string ACT_DRAIN_DREDGE <- "Drain and dredge";
@@ -47,7 +48,8 @@ global {
 	int action_type <- -1;	
 	
 	bool to_refresh <- false update: false;
-	
+	int remaining_time min: 0;
+	float start_discussion_turn_time;
 	
 	communal_landfill the_communal_landfill;
 	
@@ -129,7 +131,7 @@ global {
 	
 	
 	action update_display {
-		if (stage = PLAYER_TURN) {
+		if (stage = PLAYER_ACTION_TURN) {
 				ask experiment {
 				do update_outputs(true);
 				to_refresh <- true;
@@ -269,49 +271,52 @@ global {
 	
 	}
 	action activate_act1 {
-		if stage = PLAYER_TURN {
+		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do drain_dredge;}
 		}
 	}
 	action activate_act2 {
-		if stage = PLAYER_TURN {
+		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do install_facility_treatment_for_homes;}
 		}
 	}
 	action activate_act3 {
-		if stage = PLAYER_TURN {
+		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do sensibilization;}
 		}
 	}
 	action activate_act4 {
-		if stage = PLAYER_TURN {
+		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do trimestrial_collective_action;}
 		}
 	}
 	action activate_act5 {
-		if stage = PLAYER_TURN {
+		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do pesticide_reducing;}
 		}
 	}
 	action activate_act6 {
-		if stage = PLAYER_TURN {
+		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do support_manure_buying;}
 		}
 			
 	}
 	action activate_act7 {
-		if stage = PLAYER_TURN {
+		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do implement_fallow;}
 		}
 	}
 	action activate_act8 {
-		if stage = PLAYER_TURN {
+		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do install_gumpholes;}
 		}
 	}
 	action activate_act9 {
-		if stage = PLAYER_TURN {
+		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do end_of_turn;}
+		}if stage = PLAYER_DISCUSSION_TURN {
+			stage <- PLAYER_ACTION_TURN;
+		 	ask village[0] {do start_turn;}
 		}
 	}
 	
@@ -376,9 +381,13 @@ global {
 		}
 	}
 	
+	action end_of_discussion_phase {
+		ask village[0] {do start_turn;}
+	}
+	
 	action manage_end_of_indicator_computation {
 		if (current_day = 365) {
-			stage <- PLAYER_TURN;
+			stage <- PLAYER_DISCUSSION_TURN;
 			index_player <- 0;
 			step <- 0.000000000001;
 			ask village {
@@ -394,9 +403,11 @@ global {
 				do pause;
 			}
 			else if not without_player {
-				
 				do tell("PLAYER TURN");
-				ask village[0] {do start_turn;}
+				do tell("DISCUSSION PHASE");
+				start_discussion_turn_time <- machine_time;
+				ask world {do update_display;do resume;}
+		
 			}
 			if save_log {
 				save ("" + turn  + ",0," + total_productivity + ","+ total_solid_pollution + "," + total_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
@@ -404,11 +415,7 @@ global {
 				save ("" + turn  + ",2," + village2_productivity + ","+ village2_solid_pollution + "," + village2_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
 				save ("" + turn  + ",3," + village3_productivity + ","+ village3_solid_pollution + "," + village3_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
 				save ("" + turn  + ",4," + village4_productivity + ","+ village4_solid_pollution + "," + village4_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
-				
-				
 			}
-		
-			
 		}
 	}
 	
@@ -500,7 +507,7 @@ global {
 		current_day <- current_day + 1;
 	}
 	
-	reflex playerturn when: stage = PLAYER_TURN{
+	reflex playerturn when: stage = PLAYER_ACTION_TURN{
 		if without_player or index_player >= length(village) {
 			stage <- COMPUTE_INDICATORS;
 			current_day <- 0;
@@ -511,6 +518,30 @@ global {
 		}
 	}
 	
+	reflex end_of_discussion_turn when: use_timer_for_discussion and stage = PLAYER_DISCUSSION_TURN {
+		remaining_time <- int(time_for_discussion - machine_time/1000.0  +start_discussion_turn_time/1000.0); 
+		if remaining_time < 0 {
+			do tell("Time for discussion finished!");
+			do pause;
+			if not timer_just_for_warning {
+				ask village[0] {
+					do start_turn;
+				}
+			}
+		}
+	}
+	reflex end_of_player_turn when: use_timer_player_turn and stage = PLAYER_ACTION_TURN {
+		remaining_time <- int(time_for_player_turn - machine_time/1000.0  + village[index_player].start_turn_time/1000.0); 
+		if remaining_time < 0 {
+			do tell("Time for Player " + (index_player + 1) +" finished!");
+			do pause;
+			if not timer_just_for_warning {
+				ask village[index_player] {
+					do ending_turn;
+				}
+			}
+		}
+	}
 
 }
 
@@ -820,37 +851,39 @@ species village {
 		}
 	}
 	
+	action ending_turn {
+		if save_log {
+			string to_save <- "" + turn + "," + (index_player +1) + "," + budget;
+			loop act over: actions_done_this_year  {
+				to_save <- to_save+"," + act;
+			}
+			save to_save to: village_action_log_path type: text rewrite: false;
+		}
+		index_player <- index_player + 1;
+		if index_player < length(village) {
+			ask village[index_player] {
+				do start_turn;
+			}
+		} 
+	}
 	//9:ACT_END_TURN,
 	action end_of_turn {
 		bool  is_ok <- user_confirm("End of turn","PLAYER " + (index_player + 1) +", do you confirm that you want to end the turn?");
 		if is_ok {
-			if save_log {
-				string to_save <- "" + turn + "," + (index_player +1) + "," + budget;
-				loop act over: actions_done_this_year  {
-					to_save <- to_save+"," + act;
-				}
-				save to_save to: village_action_log_path type: text rewrite: false;
-			}
-			index_player <- index_player + 1;
-			if index_player < length(village) {
-				ask village[index_player] {
-					do start_turn;
-				}
-			} 
-			
-			
+			do ending_turn;
 		}
 	}
 	
 	action start_turn {
-		ask world {do update_display;}
+		start_turn_time <- machine_time;
+		
+		ask world {do update_display;do resume;}
 		
 		ask plots {
 			use_more_manure <- false;
 			does_implement_fallow <- false;
 		}
 		do tell("PLAYER " + (index_player + 1) + " TURN");
-		
 		int collect_per_week_weak <- length(days_collects_weak);
 		int collect_per_week_strong <- length(days_collects_strong);
 		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_strong) + " per week";
@@ -882,9 +915,10 @@ species village {
 			treatment_facility_year <- treatment_facility_year + 1;
 		}
 		to_refresh <- true;
+		
 	}
 	aspect default {
-		if (stage = PLAYER_TURN) {
+		if (stage = PLAYER_ACTION_TURN) {
 			if (index_player = int(self)) {
 				draw shape color: color;
 			}

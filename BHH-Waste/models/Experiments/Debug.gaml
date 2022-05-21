@@ -79,13 +79,39 @@ experiment abstract_debug virtual: true {
 experiment base_debug parent: abstract_debug virtual: true {
 	output{
 		 layout horizontal([vertical([1::5000,2::5000])::4541,vertical([horizontal([3::5000,4::5000])::5000,horizontal([5::5000,6::5000])::5000])::5459]) tabs:true editors: false;
+		display time_info background: #black type: opengl axes: false {
+			
+			graphics "TIMER" {
+				if use_timer_player_turn and stage = PLAYER_ACTION_TURN {
+					draw "Remaining time for the Player " + (index_player + 1) + ":" at: world.location  anchor: #center color: #white font: font("Helvetica", 100, #bold);
+				
+					draw "" + remaining_time +" s" at: world.location + {0,200#px} anchor: #center color: #white font: font("Impact", 200, #bold);
+				}
+				if use_timer_for_discussion and stage = PLAYER_DISCUSSION_TURN {
+					draw "Remaining time for the discussion: "  at: world.location  anchor: #center color: #white font: font("Helvetica", 100, #bold);
+				
+					draw "" + remaining_time +" s" at: world.location + {0,200#px} anchor: #center color: #white font: font("Impact", 200, #bold);
+				}
+				
+			}
+			
+		}
 		display info_display background: #black type: opengl axes: false {
 			
+		
 			graphics "info day" {
 				draw "Year: " + turn + " - Day: " + current_day  at: { 40#px, 0#px } color: #white font: font("Helvetica", 40, #bold);
 			}
 			graphics "info Player" {
-				draw "Turn of player: " + (index_player + 1)  at: { 40#px, 50#px } color: #white font: font("Helvetica", 36, #bold);
+				if (stage = PLAYER_ACTION_TURN) {
+					draw "Turn of player: " + (index_player + 1)  at: { 40#px, 50#px } color: #white font: font("Helvetica", 36, #bold);
+				}  else if (stage = PLAYER_DISCUSSION_TURN) {
+					draw "Discussion phase"  at: { 40#px, 50#px } color: #white font: font("Helvetica", 36, #bold);
+			
+				}else if (stage = COMPUTE_INDICATORS) {
+					draw "Simulation phase"  at: { 40#px, 50#px } color: #white font: font("Helvetica", 36, #bold);
+			
+				}
 			}
 			graphics "Money Player" {
 				draw "Player 1: " + village[0].budget + " tokens"  at: { 40#px, 100#px } color: #white font: font("Helvetica", 24, #bold);

@@ -11,14 +11,12 @@ model Parameters
 global {
 	
 	/******************* USE TIMERS *************************************/
-	bool use_timer_player_turn <- true;
-	bool use_timer_group_action <- true;	
+	bool use_timer_player_turn <- true;	
 	bool use_timer_for_discussion <- true;
 	
-	bool timer_just_for_warning <- false; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player
-	float time_for_player_turn <- 2#mn;
+	bool timer_just_for_warning <- true; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player - for the moment, some issue with the automatic change of step
+	float time_for_player_turn <- 20#s;
 	float time_for_discussion <- 3 #mn; // time before the player turns
-	float time_for_group_action <- 2#mn;  
 	
 	
 	/******************* LOG RESULTS *************************************/
