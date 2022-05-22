@@ -113,6 +113,7 @@ global {
 	/********************** INITIALIZATION OF THE GAME ****************************/
 
 	init {
+		name <- GAME_NAME;
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
 		do create_canals;
 		create commune from: Limites_commune_shape_file;

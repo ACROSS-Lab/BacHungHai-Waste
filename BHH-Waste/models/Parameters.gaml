@@ -10,6 +10,8 @@ model Parameters
 
 global {
 	
+	string GAME_NAME <- "EcoGame";
+	
 	/******************* USE TIMERS *************************************/
 	bool use_timer_player_turn <- true;	
 	bool use_timer_for_discussion <- true;
