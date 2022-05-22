@@ -955,6 +955,13 @@ species village {
 		}
 			
 	}
+	
+	aspect demo_with_name {
+		if draw_territory {
+			draw "Player " + (int(self) + 1) at: location + {0,0,10} color: #white anchor: #center font: font("Helvetica", 50, #bold);
+			draw shape.contour + 20.0 color: color;
+		}
+	}
 }
 
 species plot {
@@ -1106,7 +1113,7 @@ species canal {
 	}
 	aspect default {
 		if display_water_flow {
-			draw shape  + (width +3) color: #blue end_arrow: 40;
+			draw shape  + (width +3) color: #blue end_arrow: 40 ;
 		} else if display_total_waste {
 			draw shape  + (width +3) color: blend(#red,#blue,(solid_waste_level + convertion_from_l_water_waste_to_kg_solid_waste *water_waste_level)/shape.perimeter / coeff_visu_canal);
 		} else if display_solid_waste {

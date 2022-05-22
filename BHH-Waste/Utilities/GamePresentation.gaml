@@ -53,15 +53,16 @@ species waste_on_canal skills: [moving]{
 	}
 	
 	reflex move {
+		point prev_loc <- copy(location);
 		do goto target: target on:canal_network_ ;
-		if location = target {
+		if location = target or location = prev_loc{
 			do die;
 		}
 	}
 }
 
-experiment GamePresentation type: gui {
-	float minimum_cycle_duration <- 0.05;
+experiment GamePresentation type: gui autorun: true{
+	float minimum_cycle_duration <- 0.03;
 	output {
 			display map_abstract type: opengl  background: #black  axes: false synchronized: true  {
 				species commune;
@@ -73,7 +74,8 @@ experiment GamePresentation type: gui {
 				species local_landfill;
 				species communal_landfill;
 				species waste_on_canal;
-				species village aspect: demo transparency: 0.7 ;
+				species village aspect: demo transparency: 0.5 ;
+				species village aspect: demo_with_name;
 				//define a new overlay layer positioned at the coordinate 5,5, with a constant size of 180 pixels per 100 pixels.
 	            overlay position: { 5, 5 } size: { 180 #px, 100 #px } background: #black transparency: 0.0 border: #black rounded: true
 	            {
