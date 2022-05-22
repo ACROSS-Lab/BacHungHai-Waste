@@ -88,7 +88,7 @@ global {
 	float village4_productivity update: village[3].plots sum_of each.current_productivity / length(village[3].plots);
 	float total_productivity update: (village1_productivity + village2_productivity + village3_productivity + village4_productivity) / 4;
 	
-	list<int> time_step <-[];
+	list<int> time_step;
 	list<float> village1_solid_pollution_values;
 	list<float> village2_solid_pollution_values;
 	list<float> village3_solid_pollution_values;
@@ -108,6 +108,8 @@ global {
 	list<float> ecolabel_max_pollution_values;
 	list<float> ecolabel_min_production_values;
 	
+	bool is_production_ok <- true;
+	bool is_pollution_ok <- true;
 	/********************** INITIALIZATION OF THE GAME ****************************/
 
 	init {
@@ -387,7 +389,7 @@ global {
 	
 	action manage_end_of_indicator_computation {
 		if (current_day = 365) {
-			stage <- PLAYER_DISCUSSION_TURN;
+			stage <- without_player ? PLAYER_ACTION_TURN : PLAYER_DISCUSSION_TURN;
 			index_player <- 0;
 			step <- 0.000000000001;
 			ask village {
@@ -403,7 +405,15 @@ global {
 				do pause;
 			}
 			else if not without_player {
-				do tell("PLAYER TURN");
+				
+				string mess <- "PLAYER TURN\n" +((is_production_ok and is_pollution_ok)? "The commune has obtained the ecolabel for next year" : "The commune has not obtained the ecolabel for next year:" );
+				if (not is_production_ok) {
+					mess <- mess +"\n\t- The agricultural production is too low";
+				}
+				if (not is_pollution_ok) {
+					mess <- mess +"\n\t- The pollution is too high";
+				}
+				do tell(mess);
 				do tell("DISCUSSION PHASE");
 				start_discussion_turn_time <- machine_time;
 				ask world {do update_display;do resume;}
@@ -472,7 +482,8 @@ global {
 	}
 	
 	action add_data {
-		time_step << turn * 365 + current_day;
+		int time_s <- turn * 365 + current_day;
+		time_step << time_s;
 		village1_solid_pollution_values << village1_solid_pollution;
 	 	village2_solid_pollution_values << village2_solid_pollution;
 	 	village3_solid_pollution_values<< village3_solid_pollution;
@@ -489,6 +500,10 @@ global {
 	 	total_water_pollution_values << total_water_pollution;
 	 	total_pollution_values << (total_solid_pollution + total_water_pollution);
 	 	total_production_values << total_productivity;
+	 	
+	 	is_pollution_ok <- (total_solid_pollution + total_water_pollution) <= max_pollution_ecolabel ;
+	 	is_production_ok <- total_productivity >= min_production_ecolabel;
+	 	
 	 	ecolabel_min_production_values << min_production_ecolabel;
 	 	ecolabel_max_pollution_values << max_pollution_ecolabel;
 	}

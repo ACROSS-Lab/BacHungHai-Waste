@@ -79,7 +79,7 @@ experiment abstract_debug virtual: true {
 experiment base_debug parent: abstract_debug virtual: true {
 	output{
 		 layout horizontal([vertical([1::5000,2::5000])::4541,vertical([horizontal([3::5000,4::5000])::5000,horizontal([5::5000,6::5000])::5000])::5459]) tabs:true editors: false;
-		display time_info background: #black type: opengl axes: false {
+		display time_info background: #black type: opengl axes: false toolbar: false{
 			
 			graphics "TIMER" {
 				if use_timer_player_turn and stage = PLAYER_ACTION_TURN {
@@ -96,8 +96,10 @@ experiment base_debug parent: abstract_debug virtual: true {
 			}
 			
 		}
-		display info_display background: #black type: opengl axes: false {
-			
+		display info_display background: (is_production_ok and is_pollution_ok) ? #darkgreen : #darkred type: opengl axes: false toolbar: false {
+			graphics "info Ecolabel" {
+				draw  (is_production_ok and is_pollution_ok)  ? "Meets the standards of the ecolabel" : "Do not meet the standards of the ecolabel!"  at: { 0, -600 } color: #white font: font("Helvetica", 40, #bold);
+			}
 		
 			graphics "info day" {
 				draw "Year: " + turn + " - Day: " + current_day  at: { 40#px, 0#px } color: #white font: font("Helvetica", 40, #bold);
@@ -153,11 +155,11 @@ experiment base_debug parent: abstract_debug virtual: true {
 			chart "Waste pollution "  size:{1.0, 0.5} type: xy background: #black color: #white{
 				data "Solid waste pollution" value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #gray marker: false thickness: 2.0 ;
 				data "Water waste pollution" value: rows_list(matrix([time_step,total_water_pollution_values])) color: #orange marker: false thickness: 2.0 ;
-		 		data "Total pollution" value:rows_list(matrix([time_step,total_pollution_values])) color: #red marker: false thickness: 2.0 ;
+		 		data "Total pollution " value:rows_list(matrix([time_step,total_pollution_values])) color:is_pollution_ok ? #green: #red marker: false thickness: 2.0;
 		 		data "Ecol labal max pollution" value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: #white marker: false thickness: 2.0 ;
 			}
 			chart "Productivity " type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[80,120]{
-				data "Productivity" value: rows_list(matrix([time_step,total_production_values])) color: #blue thickness: 2.0 marker: false; 
+				data "Productivity" value: rows_list(matrix([time_step,total_production_values])) color: is_production_ok ? #green : #red thickness: 2.0 marker: false; 
 				data "Ecol labal min productivity" value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: 2.0 color: #white marker: false; 
 			}
 			event "q" action: activate_act1;
