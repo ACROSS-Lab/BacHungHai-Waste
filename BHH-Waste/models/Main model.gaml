@@ -41,6 +41,9 @@ global {
 	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display" ;
 	bool display_water_waste <- false parameter:"Display water waste" category: "Display" ;
 	bool display_total_waste <- false parameter:"Display total waste" category: "Display" ;
+	bool display_water_flow <- false;
+	bool draw_territory <- false;
+	
 	//string type_of_map_display <- MAP_SOLID_WASTE;// category: "Display" among: ["Map of solid waste", "Map of waster waste", "Map of total pollution", "Map of agricultural productivity"] parameter: "Type of map display" ;//on_change: update_display;
 	string stage <-COMPUTE_INDICATORS;
 	
@@ -939,9 +942,18 @@ species village {
 				draw shape color: color;
 			}
 		} else {
-			
-			draw shape.contour + 20.0 color: #black;
+			if (draw_territory) {
+				draw shape.contour + 20.0 color: #black;
+			}
 		}
+	}
+	
+	aspect demo {
+		if draw_territory {
+			
+			draw shape color: color;
+		}
+			
 	}
 }
 
@@ -1093,7 +1105,9 @@ species canal {
 		water_waste_level <- water_waste_level + water_waste_level_tmp ;
 	}
 	aspect default {
-		if display_total_waste {
+		if display_water_flow {
+			draw shape  + (width +3) color: #blue end_arrow: 40;
+		} else if display_total_waste {
 			draw shape  + (width +3) color: blend(#red,#blue,(solid_waste_level + convertion_from_l_water_waste_to_kg_solid_waste *water_waste_level)/shape.perimeter / coeff_visu_canal);
 		} else if display_solid_waste {
 			draw shape  + (width +3) color: blend(#red,#blue,(solid_waste_level)/shape.perimeter / coeff_visu_canal);
