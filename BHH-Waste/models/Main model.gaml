@@ -165,19 +165,24 @@ global {
 		create urban_area from: Limites_urban_areas_shape_file;
 		ask urban_area {
 			list<geometry> geoms <- to_squares (shape,house_size);
-			float nb <- 0.0;
+			int nb <- 0;
+			village v <- first(village overlapping self);
+			if v = nil{
+				v <- village closest_to self;
+			}
+				
+			v.urban_areas << self;
+				
 			create house from: geoms {
-				my_village <- first(village overlapping self);
-				if my_village = nil{
-					my_village <- village closest_to self;
-				}
+				myself.houses << self;
+				my_village <- v;
 				create inhabitant {
 					location <- myself.location;
 					my_house <- cell(location);
 					my_cells <- cell overlapping myself;
 					closest_canal <- canal closest_to self;
 					nb <- nb + 1;
-					my_village <- myself.my_village;
+					my_village <- v;
 				}
 			}
 			population <- nb;
@@ -450,35 +455,41 @@ global {
 	}
 	
 	action increase_urban_area {
-		using topology(world) {
-			ask urban_area {
-				list<plot> neighbors_plot <- plot at_distance 0.1;
-				if not empty(neighbors_plot) {
-					float target_pop <- population *(1 + min_increase_urban_area_population_year);
-					loop while: not empty(neighbors_plot) and population <target_pop {
-						plot p <- one_of(neighbors_plot);
-						p >> neighbors_plot;
-						if (dead(p)) {break;}
-						geometry shape_plot <- copy(p.shape);
-						ask my_villages {farmers >> p.the_farmer; plots >> p;}
-						shape <- shape + shape_plot;
-						ask p.the_farmer {do die;}
-						ask p {do die;}
-						list<geometry> geoms <- to_squares (p,house_size);
-						create house from: geoms {
-							inhabitant_to_create <- true;
-							create_inhabitant_day <- rnd(2,363);
-							my_village <- first(village overlapping self);
-							if my_village = nil{
-								my_village <- village closest_to self;
+		ask village {
+			target_population <- round(population *(1 + min_increase_urban_area_population_year));
+			using topology(world) {
+				ask urban_areas {
+					ask (houses where each.inhabitant_to_create) {
+						create_inhabitant_day <- rnd(2,363);	
+					}
+					list<plot> neighbors_plot <- myself.plots at_distance 0.1;
+					if not empty(neighbors_plot) {
+						int target_pop <- round(population *(1 + min_increase_urban_area_population_year)) -  (houses count each.inhabitant_to_create);
+						loop while: not empty(neighbors_plot) and population <target_pop {
+							plot p <- one_of(neighbors_plot);
+							p >> neighbors_plot;
+							if (dead(p)) {break;}
+							geometry shape_plot <- copy(p.shape);
+							ask my_villages {farmers >> p.the_farmer; plots >> p;}
+							shape <- shape + shape_plot;
+							ask p.the_farmer {do die;}
+							ask p {do die;}
+							list<geometry> geoms <- to_squares (p,house_size);
+							create house from: geoms {
+								inhabitant_to_create <- true;
+								create_inhabitant_day <- rnd(2,363);
+								my_village <- first(village overlapping self);
+								myself.houses << self;
+								if my_village = nil{
+									my_village <- village closest_to self;
+								}
 							}
+							population <- population - 1 ;
+							
 						}
-						population <- population - 1 ;
-						
 					}
 				}
 			}
-			
 		}
 		ask village {
 			plots <- plots where not dead(each);
@@ -613,6 +624,7 @@ species village {
 	list<canal> canals;
 	list<inhabitant> inhabitants;
 	list<farmer> farmers;
+	list<urban_area> urban_areas;
 	local_landfill my_local_landfill;
 	float budget <- budget_year_per_village;
 	float solid_pollution_level ;
@@ -622,6 +634,7 @@ species village {
 	float bonus_agricultural_production;
 	list<plot> plots;
 	int population;
+	int target_population;
 	bool is_drained <- false;
 	bool weak_collection_policy <- true;
 	int treatment_facility_year <- 0 max: 3;
@@ -1050,8 +1063,9 @@ species plot {
 }
 
 species urban_area {
-	float population;
+	int population;
 	list<village> my_villages;
+	list<house> houses;
 }
 species house {
 	bool inhabitant_to_create <- false;
@@ -1060,8 +1074,11 @@ species house {
 	village my_village;
 	
 	reflex new_inhabitants when: inhabitant_to_create and create_inhabitant_day = current_day{
-		do create_inhabitants;
-		inhabitant_to_create <- false;
+		if (my_village.population < my_village.target_population) {
+			do create_inhabitants;
+			inhabitant_to_create <- false;
+		}
+		
 	}
 	action create_inhabitants {
 		create inhabitant {

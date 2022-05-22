@@ -116,10 +116,10 @@ experiment base_debug parent: abstract_debug virtual: true {
 				}
 			}
 			graphics "Money Player" {
-				draw "Player 1: " + village[0].budget + " tokens"  at: { 40#px, 100#px } color: #white font: font("Helvetica", 24, #bold);
-				draw "Player 2: " + village[1].budget + " tokens"  at: { 40#px, 150#px } color: #white font: font("Helvetica", 24, #bold);
-				draw "Player 3: " + village[2].budget + " tokens"  at: { 40#px, 200#px } color: #white font: font("Helvetica", 24, #bold);
-				draw "Player 4: " + village[3].budget + " tokens"  at: { 40#px, 250#px } color: #white font: font("Helvetica", 24, #bold);
+				draw "Player 1: " + village[0].budget + " tokens - Num farmer households:" + length(village[0].farmers) +" Num urban households: " + length(village[0].inhabitants)    at: { 40#px, 100#px } color: #white font: font("Helvetica", 24, #bold);
+				draw "Player 2: " + village[1].budget + " tokens - Num farmer households:" + length(village[1].farmers) +" Num urban households: " + length(village[1].inhabitants)   at: { 40#px, 150#px } color: #white font: font("Helvetica", 24, #bold);
+				draw "Player 3: " + village[2].budget + " tokens - Num farmer households:" + length(village[2].farmers) +" Num urban households: " + length(village[2].inhabitants)   at: { 40#px, 200#px } color: #white font: font("Helvetica", 24, #bold);
+				draw "Player 4: " + village[3].budget + " tokens - Num farmer households:" + length(village[3].farmers) +" Num urban households: " + length(village[3].inhabitants)   at: { 40#px, 250#px } color: #white font: font("Helvetica", 24, #bold);
 			}
 			graphics "info action"{
 			 if not(without_player) {
