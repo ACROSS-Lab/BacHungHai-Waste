@@ -601,7 +601,8 @@ global {
 		}
 	}
 	reflex end_of_player_turn when: use_timer_player_turn and stage = PLAYER_ACTION_TURN {
-		remaining_time <- int(time_for_player_turn - machine_time/1000.0  + village[index_player].start_turn_time/1000.0); 
+		remaining_time <- int(time_for_player_turn - machine_time/1000.0  + village[index_player].start_turn_time/1000.0);
+ 
 		if remaining_time <= 0 {
 			do tell("Time for Player " + (index_player + 1) +" finished!");
 			do pause;

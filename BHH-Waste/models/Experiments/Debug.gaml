@@ -167,7 +167,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 		 		data "Total pollution " value:rows_list(matrix([time_step,total_pollution_values])) color:is_pollution_ok ? #green: #red marker: false thickness: 2.0;
 		 		data "Ecol labal max pollution" value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: #white marker: false thickness: 2.0 ;
 			}
-			chart "Production" type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[0,5000]{
+			chart "Production" type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[1300,2200]{
 				data "Production" value: rows_list(matrix([time_step,total_production_values])) color: is_production_ok ? #green : #red thickness: 2.0 marker: false; 
 				data "Ecol labal min production" value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: 2.0 color: #white marker: false; 
 			}
@@ -188,8 +188,8 @@ experiment base_debug parent: abstract_debug virtual: true {
 				data "Water waste pollution" value:rows_list(matrix([time_step,village1_water_pollution_values])) color: #orange marker: false thickness: 2.0 ;
 		 
 			} 
-			chart "Productivity " type: xy position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
-				data "Productivity" value:rows_list(matrix([time_step,village1_production_values])) color: #blue marker: false thickness: 2.0 ; 
+			chart "Production" type: xy position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[0,1000]{
+				data "Production" value:rows_list(matrix([time_step,village1_production_values])) color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
 				draw "Player 1" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
@@ -197,13 +197,13 @@ experiment base_debug parent: abstract_debug virtual: true {
 		}
 		
 		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
-			chart "Waste pollution " type: xy size:{1.0, 0.5} background: #black color: #white {
+			chart "Waste pollution" type: xy size:{1.0, 0.5} background: #black color: #white {
 				data "Solid waste pollution" value:rows_list(matrix([time_step,village2_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data "Water waste pollution" value:rows_list(matrix([time_step,village2_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 		 
 			}
-			chart "Productivity "  type: xy position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
-				data "Productivity" value:rows_list(matrix([time_step,village2_production_values]))  color: #blue marker: false thickness: 2.0 ; 
+			chart "Production"  type: xy position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[0,1000]{
+				data "Production" value:rows_list(matrix([time_step,village2_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
 				draw "Player 2" at: {20, world.location.y - 500}  color: #white rotate: -90 font: font("Impact", 16, #bold) ;
@@ -215,8 +215,8 @@ experiment base_debug parent: abstract_debug virtual: true {
 				data "Solid waste pollution" value:rows_list(matrix([time_step,village3_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data "Water waste pollution" value:rows_list(matrix([time_step,village3_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
-			chart "Productivity" type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white  y_range:[80,120]{
-				data "Productivity" value:rows_list(matrix([time_step,village3_production_values]))  color: #blue marker: false thickness: 2.0 ; 
+			chart "Production" type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white  y_range:[0,1000]{
+				data "Production" value:rows_list(matrix([time_step,village3_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
 				draw "Player 3" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
@@ -227,8 +227,8 @@ experiment base_debug parent: abstract_debug virtual: true {
 				data "Solid waste pollution" value:rows_list(matrix([time_step,village4_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data "Water waste pollution" value:rows_list(matrix([time_step,village4_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
-			chart "Productivity"type: xy  position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[80,120]{
-				data "Productivity" value:rows_list(matrix([time_step,village4_production_values]))  color: #blue marker: false thickness: 2.0 ; 
+			chart "Production"type: xy  position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[0,1000]{
+				data "Production" value:rows_list(matrix([time_step,village4_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics "Lengend" {	
 				draw "Player 4" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
