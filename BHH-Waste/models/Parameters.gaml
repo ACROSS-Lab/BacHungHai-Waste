@@ -56,12 +56,12 @@ global {
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
 	float min_production_ecolabel <- 85.0;
-	float max_pollution_ecolabel <- 100000.0;
+	float max_pollution_ecolabel <- 125000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
 	int base_budget_year_per_village <- 100; // total buget per year for a village (in token):
-	float min_increase_urban_area_population_year <- 0.03; //min increase of urban area per year (in terms of number of people)
+	float min_increase_urban_area_population_year <- 0.05; //min increase of urban area per year (in terms of number of people)
 	
 	int compute_budget(int urban_pop, int agricultural_pop, int day_ecolabel) {
 		return  base_budget_year_per_village + round((urban_pop + agricultural_pop) / 22) ;
@@ -109,7 +109,7 @@ global {
 	
 	float water_waste_filtering_inhabitants <- 0.2 min: 0.0 max: 1.0; // part of the water waste produced per inhabitants that are filtered
 	float water_waste_year_inhabitants <- 60000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
-	float solid_waste_year_inhabitants <-  200.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
+	float solid_waste_year_inhabitants <-  185.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
 	float water_waste_year_farmers <- 30000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
 	float solid_waste_year_farmers <-  150.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
