@@ -1117,6 +1117,7 @@ species plot {
 			current_productivity <- current_productivity - closest_canal.water_waste_level * canal_water_waste_pollution_impact_rate; 
 		}
 		current_production <- current_productivity * shape.area;
+	//	write "" + cycle + " " + name + " " + sample(current_productivity) + " " + sample(current_production);
 	}
 	
 	aspect default {
