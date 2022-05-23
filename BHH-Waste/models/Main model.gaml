@@ -1018,6 +1018,10 @@ species village {
 			
 	}
 	
+	aspect border_geom {
+		draw shape.contour buffer (20,20,0, true) depth: 1.0 color: color;
+	}
+	
 	aspect demo_with_name {
 		if draw_territory {
 			draw "Player " + (int(self) + 1) at: location + {0,0,10} color: #white anchor: #center font: font("Helvetica", 50, #bold);

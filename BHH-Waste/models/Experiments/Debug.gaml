@@ -24,7 +24,16 @@ experiment abstract_debug virtual: true {
 				species collection_team;
 				species local_landfill;
 				species communal_landfill;
+				species village aspect: border_geom ;
+				
 				species village transparency: 0.5 ;
+				graphics "Village name" {
+					  draw "Village 1" at: { world.location.x, -500 } color: village[0].color anchor: #center font: font("Impact", 30, #bold);
+					  draw "Village 2" at: { world.location.x * 2 +1000, world.location.y + 500} anchor: #center color: village[1].color font: font("Impact", 30, #bold);
+					  draw "Village 3" at: { world.location.x, world.location.y * 2} anchor: #center color: village[2].color font: font("Impact", 30, #bold);
+					  draw "Village 4" at: {-1000, world.location.y } color:village[3].color anchor: #center font: font("Impact", 30, #bold);
+	              
+				}
 				//define a new overlay layer positioned at the coordinate 5,5, with a constant size of 180 pixels per 100 pixels.
 	            overlay position: { 5, 5 } size: { 180 #px, 100 #px } background: #black transparency: 0.0 border: #black rounded: true
 	            {
