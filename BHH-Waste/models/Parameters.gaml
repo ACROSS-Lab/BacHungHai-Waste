@@ -26,8 +26,9 @@ global {
 	/******************* LOG RESULTS *************************************/
 	
 	bool save_log <- true;
-	string village_action_log_path <- "../../results/village_action.csv";
-	string systeme_evolution_log_path <- "../../results/system_evolution.csv";
+	string id_game <- ""+ (#now).year + "_" + (#now).month + "_" + (#now).day+"-" + (#now).hour + "_" + (#now).minute;
+	string village_action_log_path <- "../../results/" + id_game+"/village_action.csv";
+	string systeme_evolution_log_path <- "../../results/" + id_game+"/system_evolution.csv";
 	
 	/******************* GEOGRAPHICAL DATA USED *************************************/
 	shape_file Limites_commune_shape_file <- shape_file("../includes/Definitive_versions/Limites_communesV2.shp");
