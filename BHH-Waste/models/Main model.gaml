@@ -590,7 +590,7 @@ global {
 	
 	reflex end_of_discussion_turn when: use_timer_for_discussion and stage = PLAYER_DISCUSSION_TURN {
 		remaining_time <- int(time_for_discussion - machine_time/1000.0  +start_discussion_turn_time/1000.0); 
-		if remaining_time < 0 {
+		if remaining_time <= 0 {
 			do tell("Time for discussion finished!");
 			do pause;
 			if not timer_just_for_warning {
@@ -602,7 +602,7 @@ global {
 	}
 	reflex end_of_player_turn when: use_timer_player_turn and stage = PLAYER_ACTION_TURN {
 		remaining_time <- int(time_for_player_turn - machine_time/1000.0  + village[index_player].start_turn_time/1000.0); 
-		if remaining_time < 0 {
+		if remaining_time <= 0 {
 			do tell("Time for Player " + (index_player + 1) +" finished!");
 			do pause;
 			if not timer_just_for_warning {
