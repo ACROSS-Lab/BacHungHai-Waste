@@ -62,10 +62,10 @@ global {
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
 	int base_budget_year_per_village <- 100; // total buget per year for a village (in token):
-	float min_increase_urban_area_population_year <- 0.05; //min increase of urban area per year (in terms of number of people)
+	float min_increase_urban_area_population_year <- 0.15; //min increase of urban area per year (in terms of number of people)
 	
 	int compute_budget(int urban_pop, int agricultural_pop, int day_ecolabel) {
-		return  base_budget_year_per_village + round((urban_pop + agricultural_pop) / 22) ;
+		return  base_budget_year_per_village ; //+ round((urban_pop + agricultural_pop) / 22) ;
 	}
 	
 	/*************** PARAMETERS RELATED TO VISUALIZATION ****************************/
@@ -113,12 +113,12 @@ global {
 	float solid_waste_year_inhabitants <-  225.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
 	float water_waste_year_farmers <- 30000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
-	float solid_waste_year_farmers <-  150.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
+	float solid_waste_year_farmers <-  175.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
 	
-	float part_solid_waste_canal_inhabitants <- 0.0;//0.01; // proportion of solid waste throw in the canal per people living in urban area; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
+	float part_solid_waste_canal_inhabitants <- 0.001; // proportion of solid waste throw in the canal per people living in urban area; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
 	float part_water_waste_canal_inhabitants <- 1.0;// proportion of water waste throw in the canal per people living in urban area; (1 - part_water_waste_canal_inhabitants) is throw on the ground
 	
-	float part_solid_waste_canal_farmers <- 0.15; // proportion of solid waste throw in the canal per people living outside urban area; (1 - part_solid_waste_canal_farmers) is throw on the ground
+	float part_solid_waste_canal_farmers <- 0.015; // proportion of solid waste throw in the canal per people living outside urban area; (1 - part_solid_waste_canal_farmers) is throw on the ground
 	float part_water_waste_canal_farmers <- 0.5;// proportion of water waste throw in the canal per people living outside urban area; (1 - part_water_waste_canal_farmers) is throw on the ground
 	
 	float part_of_water_waste_pollution_to_canal <- 0.01;// part of the water waste on ground to go the canal every day; 
