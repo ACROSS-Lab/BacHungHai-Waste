@@ -167,7 +167,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 		 		data "Total pollution " value:rows_list(matrix([time_step,total_pollution_values])) color:is_pollution_ok ? #green: #red marker: false thickness: 2.0;
 		 		data "Ecol labal max pollution" value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: #white marker: false thickness: 2.0 ;
 			}
-			chart "Productivity " type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[80,120]{
+			chart "Productivity " type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[0,1000]{
 				data "Productivity" value: rows_list(matrix([time_step,total_production_values])) color: is_production_ok ? #green : #red thickness: 2.0 marker: false; 
 				data "Ecol labal min productivity" value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: 2.0 color: #white marker: false; 
 			}
