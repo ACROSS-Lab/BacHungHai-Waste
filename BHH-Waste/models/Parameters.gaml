@@ -56,8 +56,8 @@ global {
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 85.0;
-	float max_pollution_ecolabel <- 150000.0;
+	float min_production_ecolabel <- 1600.0;
+	float max_pollution_ecolabel <- 155000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
@@ -91,7 +91,7 @@ global {
 	float distance_to_canal_for_pollution_impact <- 50 #m; //all the fields at this distance are impacted by the canal pollution
 	float canal_solid_waste_pollution_impact_rate <- 0.01 / factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
 	float canal_water_waste_pollution_impact_rate <- 0.02/ factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
-	float ground_solid_waste_pollution_impact_rate <- 0.03/ factor_productivity; //production (yield) = production  - (sum solid pollution on cell * pollution_impact_rate)
+	float ground_solid_waste_pollution_impact_rate <- 0.02/ factor_productivity; //production (yield) = production  - (sum solid pollution on cell * pollution_impact_rate)
 	float ground_water_waste_pollution_impact_rate <- 0.1/ factor_productivity; //production (yield) = production  - (sum water pollution on cell * pollution_impact_rate)
 	
 	float quantity_from_local_to_communal_landfill <- 350.0; //quantity of solid waste transfert to communal landfill every day for each local landfill 
@@ -116,7 +116,7 @@ global {
 	float water_waste_year_farmers <- 30000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
 	float solid_waste_year_farmers <-  175.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
 	
-	float part_solid_waste_canal_inhabitants <- 0.5; // proportion of solid waste throw in the canal per people living in urban area; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
+	float part_solid_waste_canal_inhabitants <- 0.4; // proportion of solid waste throw in the canal per people living in urban area; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
 	float part_water_waste_canal_inhabitants <- 1.0;// proportion of water waste throw in the canal per people living in urban area; (1 - part_water_waste_canal_inhabitants) is throw on the ground
 	
 	float part_solid_waste_canal_farmers <- 0.015; // proportion of solid waste throw in the canal per people living outside urban area; (1 - part_solid_waste_canal_farmers) is throw on the ground
@@ -143,17 +143,17 @@ global {
 	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.0; //part of the solid and water waste remove from the canal
 	
 	int token_drain_dredge <- 50; //per action
-	float impact_drain_dredge_waste <- 0.43; //part of the solid waste remove from the canal
+	float impact_drain_dredge_waste <- 0.3; //part of the solid waste remove from the canal
 	float impact_drain_dredge_agriculture <- 0.1; //improvment of the agricultural production
 	
 	int token_install_filter_for_homes_construction <- 200 ; //construction
 	int token_install_filter_for_homes_maintenance <- 15; //per year	
-	list<float> treatment_facility_decrease <- [0.45,0.75,0.9]; // impact of treatement facility for year 1, year 2, and after
+	list<float> treatment_facility_decrease <- [0.30,0.50,0.80]; // impact of treatement facility for year 1, year 2, and after
 	
 	int token_sensibilization <- 20; //each time
 	
 	int token_pesticide_reducing <- 40; //
-	float impact_pesticide_reducing_production  <- 0.07; //decrease of the agricultural production
+	float impact_pesticide_reducing_production  <- 0.035; //decrease of the agricultural production
 	float impact_pesticide_reducing_waste  <- 0.85; //decrease waste production from farmers
 	
 	int token_implement_fallow <- 40; //per year
@@ -161,7 +161,7 @@ global {
 	float impact_implement_fallow_waste  <- 0.40; //decrease the ground pollution
 	
 	int token_support_manure_buying <- 40; //per year
-	float impact_support_manure_buying_production  <- 0.05; //improvment of the agricultural production
+	float impact_support_manure_buying_production  <- 0.1; //improvment of the agricultural production
 	float impact_support_manure_buying_waste  <- 0.1; //increase wastewater production
 	
 	int token_installation_dumpholes <- 40; //
