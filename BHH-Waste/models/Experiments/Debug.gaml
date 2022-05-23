@@ -10,7 +10,7 @@
 model Debug
 
 import "Abstract experiments.gaml"
-
+ 
 experiment abstract_debug virtual: true {
 		output {
 			display map_abstract type: opengl  background: #black virtual: true axes: false {//refresh: stage = COMPUTE_INDICATORS{

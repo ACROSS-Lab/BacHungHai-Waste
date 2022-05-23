@@ -273,6 +273,8 @@ global {
 			create collection_team with:(my_village:self) {
 				myself.collection_teams << self;
 			}
+			budget <- world.compute_budget(length(inhabitants), length(farmers), days_with_ecolabel);
+		
 			
 		} 
 		village1_productivity <-  (village[0].plots sum_of each.current_productivity) / length(village[0].plots);	
@@ -299,7 +301,7 @@ global {
 	}
 	action activate_act4 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do trimestrial_collective_action;}
+			ask village[index_player] {do trimestrial_collective_action(true);}
 		}
 	}
 	action activate_act5 {
@@ -664,7 +666,7 @@ species village {
 	list<farmer> farmers;
 	list<urban_area> urban_areas;
 	local_landfill my_local_landfill;
-	float budget <- budget_year_per_village;
+	int budget;
 	float solid_pollution_level ;
 	float water_pollution_level;
 	float productivity_level min: 0.0;
@@ -680,13 +682,13 @@ species village {
 	float start_turn_time;
 	int diff_farmers;
 	int diff_urban_inhabitants;
-	float diff_budget;
-	float prev_budget <- -1.0;
+	int diff_budget;
+	int prev_budget <- -1;
 	
 	
 	action compute_new_budget {
 		budget <- world.compute_budget(length(inhabitants), length(farmers), days_with_ecolabel);
-		diff_budget <- prev_budget = -1.0 ? 0.0 : (budget - prev_budget);
+		diff_budget <- prev_budget = -1 ? 0 : (budget - prev_budget);
 		prev_budget  <- copy(budget);
 	}
 	action compute_indicators {
@@ -704,7 +706,7 @@ species village {
 			do tell("Action " +ACT_DRAIN_DREDGE + " cannot be done twice" );
 		} else {
 			if budget >= token_drain_dredge {
-				bool  is_ok <- user_confirm("Action Drain & Dredge","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_DRAIN_DREDGE +  " (Cost: " +  token_drain_dredge +" tokens)?");
+				bool  is_ok <- user_confirm("Action Drain & Dredge","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_DRAIN_DREDGE +  " (Cost: " +  impact_trimestrial_collective_action_weak +" tokens)?");
 				if is_ok {
 					actions_done_total << ACT_DRAIN_DREDGE;
 					actions_done_this_year << ACT_DRAIN_DREDGE;
@@ -727,19 +729,19 @@ species village {
 		if (ACT_FACILITY_TREATMENT in actions_done_total) {
 			do tell("Action " +ACT_FACILITY_TREATMENT + " cannot be done twice" );
 		} else {
-				float max_budget_p1 <- village[0].budget;
-				float max_budget_p2 <- village[1].budget -  (index_player < 1 ? token_weak_waste_collection : 0.0);
-				float max_budget_p3 <- village[2].budget -  (index_player < 2 ? token_weak_waste_collection : 0.0);
-				float max_budget_p4 <- village[3].budget -  (index_player < 3 ? token_weak_waste_collection : 0.0);
+				int max_budget_p1 <- village[0].budget;
+				int max_budget_p2 <- village[1].budget -  (index_player < 1 ? token_weak_waste_collection : 0);
+				int max_budget_p3 <- village[2].budget -  (index_player < 2 ? token_weak_waste_collection : 0);
+				int max_budget_p4 <- village[3].budget -  (index_player < 3 ? token_weak_waste_collection : 0);
 				string p1_str <- "Player 1 (max budget: " + max_budget_p1 + ")";
 				string p2_str <- "Player 2 (max budget: " + max_budget_p2 + ")";
 				string p3_str <- "Player 3 (max budget: " + max_budget_p3 + ")";
 				string p4_str <- "Player 4 (max budget: " + max_budget_p4 + ")";
 				map results <- user_input_dialog("Install falicity treatment for urban areas. Cost: " +token_install_filter_for_homes_construction +" tokens. Number of tokens payed by each player",[enter(p1_str,int,0),enter(p2_str,int,0),enter(p3_str,int,0),enter(p4_str,int,0)]);
-				float p1 <- min(int(results[p1_str]), max_budget_p1);
-				float p2 <- min(int(results[p2_str]), max_budget_p2);
-				float p3 <- min(int(results[p3_str]), max_budget_p3);
-				float p4 <- min(int(results[p4_str]), max_budget_p4);
+				int p1 <- min(int(results[p1_str]), max_budget_p1);
+				int p2 <- min(int(results[p2_str]), max_budget_p2);
+				int p3 <- min(int(results[p3_str]), max_budget_p3);
+				int p4 <- min(int(results[p4_str]), max_budget_p4);
 				if p1 + p2 + p3 + p4 >= token_install_filter_for_homes_construction {
 					string cost_str <- "(Cost: "; 
 					bool add_ok <- false;
@@ -770,12 +772,12 @@ species village {
 						}
 						treatment_facility_year <- 1;
 						
-						list<float> ps <- [p1,p2,p3,p4];	
+						list<int> ps <- [p1,p2,p3,p4];	
 						if (p1 + p2 + p3 + p4) > token_install_filter_for_homes_construction {
-							float to_remove <- token_install_filter_for_homes_construction - (p1 + p2 + p3 + p4) ;
+							int to_remove <- token_install_filter_for_homes_construction - (p1 + p2 + p3 + p4) ;
 							loop while: to_remove > 0 and (p1 + p2 + p3 + p4) > 0{
 								int i <- rnd(3);
-								float c <- min(1.0, to_remove, ps[i] );
+								int c <- min(1, to_remove, ps[i] );
 								to_remove <- to_remove - c;
 								ps[i] <- ps[i] - c;
 							}
@@ -815,16 +817,23 @@ species village {
 	}
 	
 	//4:ACTION_COLLECTIVE_ACTION
-	action trimestrial_collective_action {
+	action trimestrial_collective_action (bool strong){
 		if (ACTION_COLLECTIVE_ACTION in actions_done_this_year) {
 			do tell("Action " +ACTION_COLLECTIVE_ACTION + " cannot be done twice" );
 		} else {
+			int token_trimestrial_collective_action <- token_trimestrial_collective_action_strong;
+			if not strong {
+				token_trimestrial_collective_action <- token_trimestrial_collective_action_weak;
+			}
 			if budget >= token_trimestrial_collective_action {
 				bool  is_ok <- user_confirm("Action trimestrial action","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACTION_COLLECTIVE_ACTION + " (Cost: " +  token_trimestrial_collective_action +" tokens)?");
 				if is_ok {
 					actions_done_total << ACTION_COLLECTIVE_ACTION;
 					actions_done_this_year << ACTION_COLLECTIVE_ACTION;
-			
+					float impact_trimestrial_collective_action <- impact_trimestrial_collective_action_strong;
+					if not strong {
+						impact_trimestrial_collective_action <- impact_trimestrial_collective_action_weak;
+					} 
 					ask canals {
 						solid_waste_level <- solid_waste_level * (1 - impact_trimestrial_collective_action);
 					}
