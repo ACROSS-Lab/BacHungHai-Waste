@@ -446,8 +446,8 @@ global {
 	
 	string message_village(int id) {
 		string gain_lost <- "";
-		if (village[id].diff_farmers < 0) {gain_lost <- ("Village " + id +" lost " + abs(village[id].diff_farmers) + " farms");}
-		if (village[0].diff_urban_inhabitants > 0) {
+		if (village[id].diff_farmers < 0) {gain_lost <- ("Village " + (id+1) +" lost " + abs(village[id].diff_farmers) + " farms");}
+		if (village[id].diff_urban_inhabitants > 0) {
 			if gain_lost = "" {
 				gain_lost <- ("Village " + (id+1) +"  gained " + abs(village[id].diff_urban_inhabitants) + " urban households");
 			} else {
@@ -1357,7 +1357,7 @@ species collection_team {
 				}
 			}
 		}
-		write sample(waste_collected);
+		//write sample(waste_collected);
 		ask my_village.my_local_landfill {
 			waste_quantity <- waste_quantity + waste_collected;
 		}
