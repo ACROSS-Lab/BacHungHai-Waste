@@ -86,11 +86,11 @@ global {
 	float total_solid_pollution update: village1_solid_pollution + village2_solid_pollution + village3_solid_pollution + village4_solid_pollution  ;
 	float total_water_pollution update:  village1_water_pollution + village2_water_pollution + village3_water_pollution + village4_water_pollution   ;
 	 
-	float village1_productivity update: village[0].plots sum_of each.current_productivity / length(village[0].plots);	
-	float village2_productivity update: village[1].plots sum_of each.current_productivity / length(village[1].plots);
-	float village3_productivity update: village[2].plots sum_of each.current_productivity / length(village[2].plots);
-	float village4_productivity update: village[3].plots sum_of each.current_productivity / length(village[3].plots);
-	float total_productivity update: (village1_productivity + village2_productivity + village3_productivity + village4_productivity) / 4;
+	float village1_production update: village[0].plots sum_of each.current_production ;	
+	float village2_production update: village[1].plots sum_of each.current_production ;
+	float village3_production update: village[2].plots sum_of each.current_production ;
+	float village4_production update: village[3].plots sum_of each.current_production ;
+	float total_production update: (village1_production + village2_production + village3_production + village4_production) ;
 	
 	list<int> time_step;
 	list<float> village1_solid_pollution_values;
@@ -277,11 +277,11 @@ global {
 		
 			
 		} 
-		village1_productivity <-  (village[0].plots sum_of each.current_productivity) / length(village[0].plots);	
-		village2_productivity <-  village[1].plots sum_of each.current_productivity / length(village[1].plots);	
-		village3_productivity <-  village[2].plots sum_of each.current_productivity / length(village[2].plots);	
-		village4_productivity <-  village[3].plots sum_of each.current_productivity / length(village[3].plots);	
-		total_productivity <- (village1_productivity + village2_productivity + village3_productivity + village4_productivity) / 4.0;	
+		village1_production <-  (village[0].plots sum_of each.current_production);	
+		village2_production <-  village[1].plots sum_of each.current_production ;	
+		village3_production <-  village[2].plots sum_of each.current_production ;	
+		village4_production <-  village[3].plots sum_of each.current_production ;	
+		total_production <- (village1_production + village2_production + village3_production + village4_production) ;	
 	
 	}
 	action activate_act1 {
@@ -380,7 +380,7 @@ global {
 	
 	action manage_daily_indicator {
 		ask plot {
-			do compute_productivity;
+			do compute_production;
 		}
 		
 		ask village {do compute_indicators;}
@@ -435,11 +435,11 @@ global {
 		
 			}
 			if save_log {
-				save ("" + turn  + ",0," + total_productivity + ","+ total_solid_pollution + "," + total_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",1," + village1_productivity + ","+ village1_solid_pollution + "," + village1_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",2," + village2_productivity + ","+ village2_solid_pollution + "," + village2_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",3," + village3_productivity + ","+ village3_solid_pollution + "," + village3_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",4," + village4_productivity + ","+ village4_solid_pollution + "," + village4_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",0," + total_production + ","+ total_solid_pollution + "," + total_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",1," + village1_production + ","+ village1_solid_pollution + "," + village1_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",2," + village2_production + ","+ village2_solid_pollution + "," + village2_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",3," + village3_production + ","+ village3_solid_pollution + "," + village3_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",4," + village4_production + ","+ village4_solid_pollution + "," + village4_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
 			}
 		}
 	}
@@ -541,22 +541,22 @@ global {
 	 	village2_water_pollution_values<< village2_water_pollution;
 	 	village3_water_pollution_values<< village3_water_pollution;
 	 	village4_water_pollution_values<< village4_water_pollution;
-	 	village1_production_values << village1_productivity;
-	 	village2_production_values<< village2_productivity;
-	 	village3_production_values<< village3_productivity;
-	 	village4_production_values<< village4_productivity;
+	 	village1_production_values << village1_production;
+	 	village2_production_values<< village2_production;
+	 	village3_production_values<< village3_production;
+	 	village4_production_values<< village4_production;
 	 	total_solid_pollution_values << total_solid_pollution;
 	 	total_water_pollution_values << total_water_pollution;
 	 	total_pollution_values << (total_solid_pollution + total_water_pollution);
-	 	total_production_values << total_productivity;
+	 	total_production_values << total_production;
 	 	
 	 	is_pollution_ok <- (total_solid_pollution + total_water_pollution) <= max_pollution_ecolabel ;
-	 	is_production_ok <- total_productivity >= min_production_ecolabel;
+	 	is_production_ok <- total_production >= min_production_ecolabel;
 	 	
 	 	ecolabel_min_production_values << min_production_ecolabel;
 	 	ecolabel_max_pollution_values << max_pollution_ecolabel;
 	 	
-	 	if ((total_solid_pollution + total_water_pollution) <= max_pollution_ecolabel) and (total_productivity >= min_production_ecolabel) {
+	 	if ((total_solid_pollution + total_water_pollution) <= max_pollution_ecolabel) and (total_production >= min_production_ecolabel) {
 	 		days_with_ecolabel <- days_with_ecolabel + 1;
 	 	}
 	 	
@@ -669,7 +669,7 @@ species village {
 	int budget;
 	float solid_pollution_level ;
 	float water_pollution_level;
-	float productivity_level min: 0.0;
+	float production_level min: 0.0;
 	list<collection_team> collection_teams;
 	float bonus_agricultural_production;
 	list<plot> plots;
@@ -696,7 +696,7 @@ species village {
 		solid_pollution_level <- ((cells sum_of each.solid_waste_level) + (canals sum_of (each.solid_waste_level))) / 10000.0;
 		water_pollution_level <- ((cells sum_of each.water_waste_level) + (canals sum_of (each.water_waste_level)))/ 10000.0;
 		plots <- plots where not dead(each);
-		productivity_level <- (plots sum_of each.current_productivity) / length(plots) / 100.0;
+		production_level <- (plots sum_of each.current_production);
 	}
 
 	
@@ -1048,6 +1048,7 @@ species plot {
 	float base_productivity <- field_initial_productivity min: 0.0;
 	bool does_reduce_pesticide <- false;
 	float current_productivity <- field_initial_productivity min: 0.0;
+	float current_production <- current_productivity * shape.area min: 0.0;
 	float pratice_water_pollution_level;
 	float part_to_canal_of_pollution;
 	canal closest_canal;
@@ -1085,7 +1086,7 @@ species plot {
 	}
 	
 
-	action compute_productivity {
+	action compute_production {
 		current_productivity <- base_productivity;
 		if does_implement_fallow {
 			current_productivity <- current_productivity * (1 - impact_implement_fallow_production);
@@ -1115,6 +1116,7 @@ species plot {
 			current_productivity <- current_productivity - closest_canal.solid_waste_level * canal_solid_waste_pollution_impact_rate; 
 			current_productivity <- current_productivity - closest_canal.water_waste_level * canal_water_waste_pollution_impact_rate; 
 		}
+		current_production <- current_productivity * shape.area;
 	}
 	
 	aspect default {
@@ -1357,7 +1359,7 @@ species collection_team {
 				}
 			}
 		}
-		write sample(waste_collected);
+		//write sample(waste_collected);
 		ask my_village.my_local_landfill {
 			waste_quantity <- waste_quantity + waste_collected;
 		}
