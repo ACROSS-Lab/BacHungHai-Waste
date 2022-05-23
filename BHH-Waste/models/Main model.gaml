@@ -677,6 +677,7 @@ species village {
 	int target_population;
 	bool is_drained <- false;
 	bool weak_collection_policy <- true;
+	bool strong_collection_policy <- true;
 	int treatment_facility_year <- 0 max: 3;
 	bool treatment_facility_is_activated <- false;
 	float start_turn_time;
@@ -976,10 +977,11 @@ species village {
 		do tell("PLAYER " + (index_player + 1) + " TURN");
 		int collect_per_week_weak <- length(days_collects_weak);
 		int collect_per_week_strong <- length(days_collects_strong);
-		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : collect_per_week_strong) + " per week";
+		int collect_per_week_ultimate <- length(days_collects_ultimate);
+		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : (strong_collection_policy ? collect_per_week_strong : collect_per_week_ultimate)) + " per week";
 		map result;
 		
-		list<string> possibilities <- budget >=  token_strong_waste_collection ? [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"] : [""+collect_per_week_weak +" per week"];
+		list<string> possibilities <- budget >=  token_ultimate_waste_collection ? [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week", ""+collect_per_week_ultimate +" per week"] : (budget >=  token_strong_waste_collection ? [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"] : [""+collect_per_week_weak +" per week"]);
 		if not(current_val in possibilities) {
 			current_val <- first(possibilities);
 		}
@@ -988,7 +990,7 @@ species village {
 		
 		} else {
 			result <- user_input_dialog("PLAYER " + (index_player + 1)+" - Waste management policy",[
-				choose("Choose a waste collection frenquency",string,current_val, [""+collect_per_week_weak +" per week",""+collect_per_week_strong +" per week"]),
+				choose("Choose a waste collection frenquency",string,current_val,possibilities),
 				choose("Do you wish to pay for the home treatment facility?",bool,true, [true,false])
 			]);
 			treatment_facility_is_activated <- bool(result["Do you wish to pay for the home treatment facility?"]);
@@ -999,8 +1001,10 @@ species village {
 		}
 		actions_done_this_year << result["Choose a waste collection frenquency"] ;
 		weak_collection_policy <- result["Choose a waste collection frenquency"] = ""+collect_per_week_weak +" per week";
-		budget <- budget - (weak_collection_policy ? token_weak_waste_collection : token_strong_waste_collection);
-		ask collection_teams {collection_days <- myself.weak_collection_policy ? days_collects_weak : days_collects_strong;}
+		strong_collection_policy <- result["Choose a waste collection frenquency"] = ""+collect_per_week_strong +" per week";
+		
+		budget <- budget - (weak_collection_policy ? token_weak_waste_collection :(strong_collection_policy ? token_strong_waste_collection : token_ultimate_waste_collection));
+		ask collection_teams {collection_days <- myself.weak_collection_policy ? days_collects_weak : (myself.strong_collection_policy ? days_collects_strong : days_collects_ultimate);}
 		if treatment_facility_is_activated {
 			treatment_facility_year <- treatment_facility_year + 1;
 		}
