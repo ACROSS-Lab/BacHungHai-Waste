@@ -10,6 +10,8 @@ model Parameters
 
 global {
 	
+	/******************* GENERAL PARAMETERS *************************************/
+	
 	string GAME_NAME <- "EcoGame";
 	
 	/******************* USE TIMERS *************************************/
@@ -61,6 +63,9 @@ global {
 	float budget_year_per_village <- 120.0; // total buget per year for a village (in token):
 	float min_increase_urban_area_population_year <- 0.03; //min increase of urban area per year (in terms of number of people)
 	
+	float compute_budget(int urban_pop, int agricultural_pop, int day_ecolabel) {
+		return  budget_year_per_village;
+	}
 	
 	/*************** PARAMETERS RELATED TO VISUALIZATION ****************************/
 	

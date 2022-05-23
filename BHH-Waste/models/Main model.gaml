@@ -72,6 +72,7 @@ global {
 	
 	int turn <- 0;
 	int current_day <- 0;
+	int days_with_ecolabel <- 0;
 	
 	float village1_solid_pollution update: village[0].canals sum_of each.solid_waste_level + village[0].cells sum_of each.solid_waste_level ;
 	float village1_water_pollution update: convertion_from_l_water_waste_to_kg_solid_waste * (village[0].canals sum_of each.water_waste_level + village[0].cells  sum_of each.water_waste_level)  ;
@@ -402,7 +403,7 @@ global {
 			index_player <- 0;
 			step <- 0.000000000001;
 			ask village {
-				budget <- budget_year_per_village;
+				do compute_new_budget;
 			}
 			ask village {
 				actions_done_this_year <- [];
@@ -422,6 +423,9 @@ global {
 				if (not is_pollution_ok) {
 					mess <- mess +"\n\t- The pollution is too high";
 				}
+				loop i from: 0 to: 3 {
+					mess <- mess + "\n" + message_village(i) ;	
+				}
 				do tell(mess);
 				do tell("DISCUSSION PHASE");
 				start_discussion_turn_time <- machine_time;
@@ -438,6 +442,34 @@ global {
 		}
 	}
 	
+	string message_village(int id) {
+		string gain_lost <- "";
+		if (village[id].diff_farmers < 0) {gain_lost <- ("Village " + id +" lost " + abs(village[id].diff_farmers) + " farms");}
+		if (village[0].diff_urban_inhabitants > 0) {
+			if gain_lost = "" {
+				gain_lost <- ("Village " + (id+1) +"  gained " + abs(village[id].diff_urban_inhabitants) + " urban households");
+			} else {
+				gain_lost <- gain_lost + (" and gained " + abs(village[id].diff_urban_inhabitants) + " urban households");
+			}
+		}
+		if village[id].diff_budget  =0 {
+			if gain_lost = "" {
+				gain_lost <- ("The budget of village " + (id+1) +" has not evolved");
+			} else {
+				gain_lost <- gain_lost + ("; its budget has not evolved");		
+			}
+		} else {
+			string incdec <- (village[id].diff_budget  >0) ? "increased by " :"decreased by ";
+			if gain_lost = "" {
+				gain_lost <- ("The budget of village " + (id+1) +" " + incdec + abs(village[id].diff_budget) + " tokens");
+			} else {
+				gain_lost <- gain_lost +("; its budget "+ incdec + abs(village[id].diff_budget) + " tokens");
+			}
+		}
+		
+		return gain_lost;
+	}
+	 
 	action manage_pollution_decrease {
 		ask cell {
 			do natural_pollution_reduction;
@@ -485,7 +517,7 @@ global {
 								}
 							}
 							population <- population - 1 ;
-							
+							myself.diff_farmers<- myself.diff_farmers - 1;
 						}
 					}
 				}
@@ -521,6 +553,11 @@ global {
 	 	
 	 	ecolabel_min_production_values << min_production_ecolabel;
 	 	ecolabel_max_pollution_values << max_pollution_ecolabel;
+	 	
+	 	if ((total_solid_pollution + total_water_pollution) <= max_pollution_ecolabel) and (total_productivity >= min_production_ecolabel) {
+	 		days_with_ecolabel <- days_with_ecolabel + 1;
+	 	}
+	 	
 	}
 	
 	
@@ -540,6 +577,7 @@ global {
 	reflex playerturn when: stage = PLAYER_ACTION_TURN{
 		if without_player or index_player >= length(village) {
 			stage <- COMPUTE_INDICATORS;
+			days_with_ecolabel <- 0;
 			current_day <- 0;
 			step <- #day;
 			
@@ -640,6 +678,17 @@ species village {
 	int treatment_facility_year <- 0 max: 3;
 	bool treatment_facility_is_activated <- false;
 	float start_turn_time;
+	int diff_farmers;
+	int diff_urban_inhabitants;
+	float diff_budget;
+	float prev_budget <- -1.0;
+	
+	
+	action compute_new_budget {
+		budget <- world.compute_budget(length(inhabitants), length(farmers), days_with_ecolabel);
+		diff_budget <- prev_budget = -1.0 ? 0.0 : (budget - prev_budget);
+		prev_budget  <- copy(budget);
+	}
 	action compute_indicators {
 		solid_pollution_level <- ((cells sum_of each.solid_waste_level) + (canals sum_of (each.solid_waste_level))) / 10000.0;
 		water_pollution_level <- ((cells sum_of each.water_waste_level) + (canals sum_of (each.water_waste_level)))/ 10000.0;
@@ -1090,6 +1139,8 @@ species house {
 			my_village.inhabitants << self;
 			closest_canal <- canal closest_to self;
 			my_village.population <- my_village.population  + 1;
+			
+			my_village.diff_urban_inhabitants <- my_village.diff_urban_inhabitants + 1;
 		}
 	}
 	aspect default {
