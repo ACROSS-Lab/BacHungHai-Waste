@@ -8,6 +8,7 @@
 @no_experiment
 model Abstractexperiments 
 
+
 import "../Global.gaml"
 
 
