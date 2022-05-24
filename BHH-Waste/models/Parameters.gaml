@@ -61,7 +61,7 @@ global {
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 1400.0;
+	float min_production_ecolabel <- 1380.0;
 	float max_pollution_ecolabel <- 320000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
@@ -95,8 +95,8 @@ global {
 	float field_initial_productivity <- 100/factor_productivity; // initial productivity of fields;
 	float distance_to_canal_for_pollution_impact <- 50 #m; //all the fields at this distance are impacted by the canal pollution
 	float canal_solid_waste_pollution_impact_rate <- 0.008 / factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
-	float canal_water_waste_pollution_impact_rate <- 0.02/ factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
-	float ground_solid_waste_pollution_impact_rate <- 0.018 / factor_productivity; //production (yield) = production  - (sum solid pollution on cell * pollution_impact_rate)
+	float canal_water_waste_pollution_impact_rate <- 0.015/ factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
+	float ground_solid_waste_pollution_impact_rate <- 0.04 / factor_productivity; //production (yield) = production  - (sum solid pollution on cell * pollution_impact_rate)
 	float ground_water_waste_pollution_impact_rate <- 0.1/ factor_productivity; //production (yield) = production  - (sum water pollution on cell * pollution_impact_rate)
 	
 	float quantity_from_local_to_communal_landfill <- 350.0; //quantity of solid waste transfert to communal landfill every day for each local landfill 
