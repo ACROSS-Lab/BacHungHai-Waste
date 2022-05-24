@@ -117,6 +117,7 @@ global {
 	/********************** INITIALIZATION OF THE GAME ****************************/
 
 	init {
+		do load_language;
 		name <- GAME_NAME;
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
 		do create_canals;
@@ -133,6 +134,14 @@ global {
 		if save_log {
 			save "turn,player,productivity,solid_pollution,water_pollution"  to: systeme_evolution_log_path type: text rewrite: true;
 			save "turn,player,budget,action1,action2,action3,action4,action5,action6" to: village_action_log_path type: text rewrite: true;
+		}
+	}
+	
+	action load_language {
+		matrix mat <- matrix(translation_game_csv_file);
+		int index_col <- max(0, (mat row_at 0) index_of (langage));
+		loop i from: 1 to: mat.rows -1 {
+			shape.attributes[mat[0,i]] <- mat[index_col,i];
 		}
 	}
 	
@@ -260,7 +269,7 @@ global {
 	
 	action init_villages {
 		ask village {
-			name <- "Village " + (int(self) + 1);
+			name <- VILLAGE + " " + (int(self) + 1);
 			plots <- plot overlapping self;
 			cells <- cell overlapping self;
 			canals <- canal at_distance 1.0;
@@ -420,18 +429,18 @@ global {
 			}
 			else if not without_player {
 				
-				string mess <- "PLAYER TURN\n" +((is_production_ok and is_pollution_ok)? "The commune has obtained the ecolabel for next year" : "The commune has not obtained the ecolabel for next year:" );
+				string mess <- PLAYER_TURN +"\n" +((is_production_ok and is_pollution_ok)? COMMUNE_STANDARD_ECOLABEL : COMMUNE_NOT_STANDARD_ECOLABEL + ":" );
 				if (not is_production_ok) {
-					mess <- mess +"\n\t- The agricultural production is too low";
+					mess <- mess +"\n\t- " + AGRICULTURAL_PROD_LOW;
 				}
 				if (not is_pollution_ok) {
-					mess <- mess +"\n\t- The pollution is too high";
+					mess <- mess +"\n\t- " + POLLUTION_TOO_HIGH;
 				}
 				loop i from: 0 to: 3 {
 					mess <- mess + "\n" + message_village(i) ;	
 				}
 				do tell(mess);
-				do tell("DISCUSSION PHASE");
+				do tell(DISCUSSION_PHASE);
 				start_discussion_turn_time <- machine_time;
 				ask world {do update_display;do resume;}
 		
@@ -448,26 +457,26 @@ global {
 	
 	string message_village(int id) {
 		string gain_lost <- "";
-		if (village[id].diff_farmers < 0) {gain_lost <- ("Village " + (id+1) +" lost " + abs(village[id].diff_farmers) + " farms");}
+		if (village[id].diff_farmers < 0) {gain_lost <- (VILLAGE + " " + (id+1) +" "+ LOST+" " + abs(village[id].diff_farmers) + " " + FARMS);}
 		if (village[id].diff_urban_inhabitants > 0) {
 			if gain_lost = "" {
-				gain_lost <- ("Village " + (id+1) +"  gained " + abs(village[id].diff_urban_inhabitants) + " urban households");
+				gain_lost <- (VILLAGE+ " " + (id+1) +"  " + GAINED + " " + abs(village[id].diff_urban_inhabitants) + " " + URBAN_HOUSEHOLDS);
 			} else {
-				gain_lost <- gain_lost + (" and gained " + abs(village[id].diff_urban_inhabitants) + " urban households");
+				gain_lost <- gain_lost + (" " + AND + " " + GAINED + " " + abs(village[id].diff_urban_inhabitants) + " " + URBAN_HOUSEHOLDS);
 			}
 		}
 		if village[id].diff_budget  =0 {
 			if gain_lost = "" {
-				gain_lost <- ("The budget of village " + (id+1) +" has not evolved");
+				gain_lost <- (BUDGET_VILLAGE + " " + (id+1) +" " + NOT_EVOLVED);
 			} else {
-				gain_lost <- gain_lost + ("; its budget has not evolved");		
+				gain_lost <- gain_lost + ("; " + THE_BUDGET + " " + NOT_EVOLVED);		
 			}
 		} else {
-			string incdec <- (village[id].diff_budget  >0) ? "increased by " :"decreased by ";
+			string incdec <- ((village[id].diff_budget  >0) ? INCREASED_BY :DECREASED_BY) + " ";
 			if gain_lost = "" {
-				gain_lost <- ("The budget of village " + (id+1) +" " + incdec + abs(village[id].diff_budget) + " tokens");
+				gain_lost <- (BUDGET_VILLAGE + " " + (id+1) +" " + incdec + abs(village[id].diff_budget) + " " + TOKENS);
 			} else {
-				gain_lost <- gain_lost +("; its budget "+ incdec + abs(village[id].diff_budget) + " tokens");
+				gain_lost <- gain_lost +("; " + THE_BUDGET + " "+ incdec + abs(village[id].diff_budget) + " " + TOKENS);
 			}
 		}
 		
@@ -585,7 +594,7 @@ global {
 			current_day <- 0;
 			step <- #day;
 			
-			if not without_player {do tell("INDICATOR COMPUTATION");}
+			if not without_player {do tell(INDICATOR_COMPUTATION);}
 			do increase_urban_area;
 		}
 	}
@@ -593,7 +602,7 @@ global {
 	reflex end_of_discussion_turn when: use_timer_for_discussion and stage = PLAYER_DISCUSSION_TURN {
 		remaining_time <- int(time_for_discussion - machine_time/1000.0  +start_discussion_turn_time/1000.0); 
 		if remaining_time <= 0 {
-			do tell("Time for discussion finished!");
+			do tell(TIME_DISCUSSION_FINISHED);
 			do pause;
 			if not timer_just_for_warning {
 				ask village[0] {
@@ -606,7 +615,7 @@ global {
 		remaining_time <- int(time_for_player_turn - machine_time/1000.0  + village[index_player].start_turn_time/1000.0);
  
 		if remaining_time <= 0 {
-			do tell("Time for Player " + (index_player + 1) +" finished!");
+			do tell(TIME_PLAYER + " " + (index_player + 1) +" " + FINISHED);
 			do pause;
 			if not timer_just_for_warning {
 				ask village[index_player] {

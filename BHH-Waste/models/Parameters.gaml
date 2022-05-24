@@ -13,6 +13,11 @@ global {
 	/******************* GENERAL PARAMETERS *************************************/
 	
 	string GAME_NAME <- "EcoGame";
+	string langage <- "Français";
+	
+	
+	csv_file translation_game_csv_file <- csv_file("../includes/translation_game.csv", ",", false);
+
 	
 	/******************* USE TIMERS *************************************/
 	bool use_timer_player_turn <- true;	
