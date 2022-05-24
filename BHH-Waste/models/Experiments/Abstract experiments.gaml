@@ -8,14 +8,10 @@
 @no_experiment
 model Abstractexperiments 
 
-import "../Main model.gaml"
+import "../Global.gaml"
 
 
 
-
-global {
-	/** Insert the global definitions, variables and actions here */
-}
 
 
 experiment base_display virtual: true {

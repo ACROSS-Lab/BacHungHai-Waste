@@ -8,7 +8,7 @@
 
 model BaseExperiments 
 
-import "Abstract experiments.gaml"
+import "Abstract experiments.gaml" 
 
 
 experiment simulation_without_players parent: base_display_layout_test type: gui {
