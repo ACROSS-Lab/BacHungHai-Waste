@@ -260,6 +260,7 @@ global {
 	
 	action init_villages {
 		ask village {
+			name <- "Village " + (int(self) + 1);
 			plots <- plot overlapping self;
 			cells <- cell overlapping self;
 			canals <- canal at_distance 1.0;
@@ -301,13 +302,13 @@ global {
 	}
 	action activate_act4 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do trimestrial_collective_action(true);}
+			ask village[index_player] {do trimestrial_collective_action;}
 		}
 	}
 	action activate_act5 {
 		if stage = PLAYER_ACTION_TURN {
 			ask village[index_player] {do pesticide_reducing;}
-		}
+		} 
 	}
 	action activate_act6 {
 		if stage = PLAYER_ACTION_TURN {

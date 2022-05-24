@@ -185,10 +185,19 @@ species village {
 	}
 	
 	//4:ACTION_COLLECTIVE_ACTION
-	action trimestrial_collective_action (bool strong){
+	action trimestrial_collective_action{
 		if (ACTION_COLLECTIVE_ACTION in actions_done_this_year) {
 			do tell("Action " +ACTION_COLLECTIVE_ACTION + " cannot be done twice" );
 		} else {
+			string weak_str <- "Low for " + token_trimestrial_collective_action_weak + " tokens";
+			string strong_str <- "High for " + token_trimestrial_collective_action_strong + " tokens";
+			list<string> possibilities <- [weak_str];
+			if (budget >= token_trimestrial_collective_action_strong) {
+				possibilities << strong_str;
+			} 
+			map result <- user_input_dialog("PLAYER " + (index_player + 1)+" - " + ACTION_COLLECTIVE_ACTION  ,[choose("Level",string,weak_str, possibilities)]);
+			bool strong <- result["Level"] = strong_str;
+		
 			int token_trimestrial_collective_action <- token_trimestrial_collective_action_strong;
 			if not strong {
 				token_trimestrial_collective_action <- token_trimestrial_collective_action_weak;
@@ -236,10 +245,19 @@ species village {
 	}
 	
 	//6:ACT_SUPPORT_MANURE
-	action support_manure_buying(bool strong) {
+	action support_manure_buying {
 		if (ACT_SUPPORT_MANURE in actions_done_this_year) {
 			do tell("Action " +ACT_SUPPORT_MANURE + " cannot be done twice" );
 		} else {
+			string weak_str <- "Low for " + token_support_manure_buying_weak + " tokens";
+			string strong_str <- "High for " + token_support_manure_buying_strong + " tokens";
+			list<string> possibilities <- [weak_str];
+			if (budget >= token_support_manure_buying_strong) {
+				possibilities << strong_str;
+			} 
+			map result <- user_input_dialog("PLAYER " + (index_player + 1)+" - " + ACT_SUPPORT_MANURE  ,[choose("Level",string,weak_str, possibilities)]);
+			bool strong <- result["Level"] = strong_str;
+		
 			int token_support_manure_buying <- strong ? token_support_manure_buying_strong : token_support_manure_buying_weak;
 			if budget >= token_support_manure_buying {
 				bool  is_ok <- user_confirm("Action Support Mature","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SUPPORT_MANURE + " (Cost: " +  token_support_manure_buying +" tokens)?");
