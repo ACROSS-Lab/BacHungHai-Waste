@@ -10,7 +10,7 @@ model TangibleInteraction
 
 import "Abstract experiments.gaml"
 
-
+ 
 
 global {
 	int webcam <- 0;

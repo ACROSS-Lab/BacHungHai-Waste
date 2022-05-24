@@ -1,0 +1,22 @@
+COUT ET EFFET DES ACTIONS :
+- Collection team : 30 ; 50 ; 90
+	Reduce solid waste
+- Trimestrial collective action : 18 ; 35
+	Reduce solid waste
+- Drain and dredge : 25 ; 50
+	Reduce solid waste and wastewater
+- Home filters : 200 (+15 each year) (ONCE)
+	Reduce wastewater
+- Sensibilization : 20
+	Reduce solid waste
+- Pesticides : 40 (ONCE)
+	Reduce solid waste
+	Decreases production
+- Fallow : 40 
+	Reduce soil pollution 
+	Decreases production for this year then increases it
+- Manure : 20 ; 40
+	Increases production 
+	Increases wastewater
+- Dumpholes : 40 (ONCE)
+	Decreases solid waste
