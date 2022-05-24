@@ -65,7 +65,7 @@ global {
 	float min_increase_urban_area_population_year <- 2.0 ; //min increase of urban area per year (in terms of number of people)
 	
 	int compute_budget(int urban_pop, int agricultural_pop, int day_ecolabel) {
-		return  base_budget_year_per_village + 20 ; //+ round((urban_pop + agricultural_pop) / 22) ;
+		return  base_budget_year_per_village + round((urban_pop + agricultural_pop) / 30) ;
 	}
 	
 	/*************** PARAMETERS RELATED TO VISUALIZATION ****************************/
