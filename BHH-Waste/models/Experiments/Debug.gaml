@@ -43,7 +43,7 @@ experiment abstract_debug virtual: true {
 	       
 	                draw TIME at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
 	                y <- y + 25#px;
-	                draw "Year: " + turn + " - Day: " + current_day at: { 40#px, y } color: #white font: font("Helvetica", 18, #bold);
+	                draw YEAR + ": " + turn + " - " + DAY + ": " + current_day at: { 40#px, y } color: #white font: font("Helvetica", 18, #bold);
 	                y <- y + 100#px;
 	                      
 	                draw ENVIRONMENT at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 24, #bold);
@@ -184,55 +184,55 @@ experiment base_debug parent: abstract_debug virtual: true {
 		}
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
 			
-			chart WASTE_POLLUTION size:{1.0, 0.5} type: xy background: #black color: #white {
+			chart WASTE_POLLUTION size:{0.8, 0.4} position: {0.2, 0.0} type: xy background: #black color: #white {
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village1_solid_pollution_values])) color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village1_water_pollution_values])) color: #orange marker: false thickness: 2.0 ;
 		 
 			} 
-			chart PRODUCTION type: xy position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[0,1000]{
+			chart PRODUCTION type: xy position:{0.2, 0.5} size:{0.8, 0.5} background: #black color: #white  y_range:[0,1000]{
 				data PRODUCTION value:rows_list(matrix([time_step,village1_production_values])) color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics LEGEND {	
-				draw PLAYER + " 1" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
+				draw PLAYER + " 1" at: {0, world.location.y - 500} color: #white rotate: -90 font: font("Helvetica", 16, #bold) ;
 			}
 		}
 		
 		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
-			chart WASTE_POLLUTION type: xy size:{1.0, 0.5} background: #black color: #white {
+			chart WASTE_POLLUTION type: xy size:{0.8, 0.5} position: {0.2, 0.0}  background: #black color: #white {
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village2_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village2_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 		 
 			}
-			chart PRODUCTION type: xy position:{0.0, 0.5} size:{1.0, 0.5} background: #black color: #white  y_range:[0,1000]{
+			chart PRODUCTION type: xy position:{0.2, 0.5} size:{0.8, 0.5} background: #black color: #white  y_range:[0,1000]{
 				data PRODUCTION value:rows_list(matrix([time_step,village2_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics LEGEND {	
-				draw PLAYER + " 2" at: {20, world.location.y - 500}  color: #white rotate: -90 font: font("Impact", 16, #bold) ;
+				draw PLAYER + " 2" at: {0, world.location.y - 500}  color: #white rotate: -90 font: font("Helvetica", 16, #bold) ;
 			}
 		}
 		
 		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
-			chart WASTE_POLLUTION type: xy  size:{1.0, 0.5} background: #black color: #white  {
+			chart WASTE_POLLUTION type: xy  size:{0.8, 0.5} position: {0.2, 0.0} background: #black color: #white  {
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village3_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village3_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
-			chart PRODUCTION type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white  y_range:[0,1000]{
+			chart PRODUCTION type: xy position:{0.2, 0.5}  size:{0.8, 0.5} background: #black color: #white  y_range:[0,1000]{
 				data PRODUCTION value:rows_list(matrix([time_step,village3_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics LEGEND {	
-				draw PLAYER + " 3" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
+				draw PLAYER + " 3" at: {0, world.location.y - 500} color: #white rotate: -90 font: font("Helvetica", 16, #bold) ;
 			}
 		}
 		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
-			chart WASTE_POLLUTION  type: xy size:{1.0, 0.5} background: #black color: #white  {
+			chart WASTE_POLLUTION  type: xy size:{0.8, 0.5} position: {0.2, 0.0} background: #black color: #white  {
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village4_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village4_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
-			chart  PRODUCTION type: xy  position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[0,1000]{
+			chart  PRODUCTION type: xy  position:{0.2, 0.5}  size:{0.8, 0.5} background: #black color: #white y_range:[0,1000]{
 				data PRODUCTION value:rows_list(matrix([time_step,village4_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics LEGEND {	
-				draw PLAYER + " 4" at: {20, world.location.y - 500} color: #white rotate: -90 font: font("Impact", 16, #bold) ;
+				draw PLAYER + " 4" at: {0, world.location.y - 500} color: #white rotate: -90 font: font("Helvetica", 16, #bold) ;
 			}
 		}
 		
