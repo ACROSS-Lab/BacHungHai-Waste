@@ -174,7 +174,7 @@ species village {
 					actions_done_this_year << ACT_SENSIBILIZATION;
 					budget <- budget - token_sensibilization;
 					
-					ask inhabitants {
+					ask inhabitants + farmers {
 						environmental_sensibility <- environmental_sensibility+ impact_sensibilization;
 					}
 				}
@@ -300,7 +300,7 @@ species village {
 					actions_done_total << ACT_PESTICIDE_REDUCTION;
 					actions_done_this_year<< ACT_PESTICIDE_REDUCTION;
 					budget <- budget - token_installation_dumpholes;
-					ask farmers {
+					ask plots {
 						has_dumphole <- true;
 					}
 				}

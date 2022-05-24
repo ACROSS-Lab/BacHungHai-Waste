@@ -17,8 +17,8 @@ species plot {
 	bool does_reduce_pesticide <- false;
 	float current_productivity <- field_initial_productivity min: 0.0;
 	float current_production <- current_productivity * shape.area min: 0.0;
-	float pratice_water_pollution_level;
-	float part_to_canal_of_pollution;
+	float practice_water_pollution_level;
+	float practice_solid_pollution_level;
 	canal closest_canal;
 	farmer the_farmer;
 	list<cell> my_cells;
@@ -30,27 +30,54 @@ species plot {
 	bool use_more_manure_strong <- false;
 	bool use_more_manure_weak <- false;
 	bool does_implement_fallow <- false;
+	float solid_waste_day <-  solid_waste_year_farmers / 365;
+	float water_waste_day <-  water_waste_year_farmers / 365;
+	float part_solid_waste_canal <- part_solid_waste_canal_farmers;
+	float part_water_waste_canal <- part_water_waste_canal_farmers;
+	bool has_dumphole <- false;
+	
 	
 	action pollution_due_to_practice { 
-		//pratice_water_pollution_level <- 
+		
+		practice_solid_pollution_level <- has_dumphole ? (solid_waste_day * (1 - impact_installation_dumpholes)): solid_waste_day;
+		if does_reduce_pesticide {
+			practice_solid_pollution_level <- practice_solid_pollution_level * (1 - impact_pesticide_reducing_waste);
+		}
+		
+		if practice_solid_pollution_level > 0 {
+			float to_the_canal <- practice_solid_pollution_level * part_solid_waste_canal;
+			float to_the_ground <- practice_solid_pollution_level - to_the_canal;
+			if to_the_canal > 0 {
+				closest_canal.solid_waste_level <- closest_canal.solid_waste_level + to_the_canal;
+			}
+			if to_the_ground > 0 {
+				ask one_of(my_cells) {
+					solid_waste_level <- solid_waste_level + to_the_ground ;
+				}
+			}
+		}
+		
+		practice_water_pollution_level <- water_waste_day;
+		
 		if use_more_manure_strong {
-			pratice_water_pollution_level <- pratice_water_pollution_level * (1 + impact_support_manure_buying_waste_strong);
+			practice_water_pollution_level <- practice_water_pollution_level * (1 + impact_support_manure_buying_waste_strong);
 		}
 		if use_more_manure_weak {
-			pratice_water_pollution_level <- pratice_water_pollution_level * (1 + impact_support_manure_buying_waste_weak);
+			practice_water_pollution_level <- practice_water_pollution_level * (1 + impact_support_manure_buying_waste_weak);
 		}
 		if does_reduce_pesticide {
-			pratice_water_pollution_level <- pratice_water_pollution_level * (1 - impact_pesticide_reducing_waste);
+			practice_water_pollution_level <- practice_water_pollution_level * (1 - impact_pesticide_reducing_waste);
 		}
-		if pratice_water_pollution_level > 0 {
-			float to_the_canal <- pratice_water_pollution_level * part_to_canal_of_pollution;
-			float to_the_ground <- pratice_water_pollution_level - to_the_canal;
+		if practice_water_pollution_level > 0 {
+			float to_the_canal <- practice_water_pollution_level * part_water_waste_canal;
+			float to_the_ground <- practice_water_pollution_level - to_the_canal;
 			if to_the_canal > 0 {
 				closest_canal.water_waste_level <- closest_canal.water_waste_level + to_the_canal;
 			}
 			if to_the_ground > 0 {
+				int nb <- length(my_cells);
 				ask my_cells {
-					water_waste_level <- water_waste_level + to_the_ground  ;
+					water_waste_level <- water_waste_level + (to_the_ground / nb)  ;
 				}
 			}
 		}

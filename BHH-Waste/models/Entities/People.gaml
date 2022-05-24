@@ -16,17 +16,9 @@ import "../Global.gaml"
 
 species farmer parent: inhabitant {
 	rgb color <- #orange;
-	float max_agricultural_waste_production <- rnd(1.0, 3.0);
-	float solid_waste_day <-  solid_waste_year_farmers / 365;
-	float water_waste_day <-  water_waste_year_farmers / 365;
-	float part_solid_waste_canal <- part_solid_waste_canal_farmers;
-	float part_water_waste_canal <- part_water_waste_canal_farmers;
-	bool has_dumphole <- false;
 	plot my_plot;
-	float waste_for_a_day {
-		return has_dumphole ? (solid_waste_day * (1 - impact_installation_dumpholes)): solid_waste_day;
-	}
 }
+
 species inhabitant { 
 	rgb color <- #midnightblue;
 	cell my_house;
