@@ -170,7 +170,7 @@ global {
 	float impact_implement_fallow_waste  <- 0.40; //decrease the ground pollution
 	
 	int token_support_manure_buying_strong <- 40; //per year
-	float impact_support_manure_buying_production_strong  <- 0.1; //improvment of the agricultural production
+	float impact_support_manure_buying_production_strong  <- 0.13; //improvment of the agricultural production
 	float impact_support_manure_buying_waste_strong  <- 0.1; //increase wastewater production
 	int token_support_manure_buying_weak <- round(token_support_manure_buying_strong/2); //per year
 	float impact_support_manure_buying_production_weak  <- impact_support_manure_buying_production_strong/2.0; //improvment of the agricultural production
