@@ -161,13 +161,13 @@ global {
 	float impact_implement_fallow_waste  <- 0.40; //decrease the ground pollution
 	
 	int token_support_manure_buying <- 40; //per year
-	float impact_support_manure_buying_production  <- 0.1; //improvment of the agricultural production
+	float impact_support_manure_buying_production  <- 0.125; //improvment of the agricultural production
 	float impact_support_manure_buying_waste  <- 0.1; //increase wastewater production
 	
 	int token_installation_dumpholes <- 40; //
 	float impact_installation_dumpholes  <- 0.4; //decreasse the quantity of solid waste produced by people outside of urban areas (farmers)
 	
 	float sensibilisation_function(float x) { //function that returns the coefficient of solid production according to the environmental_sensibility of inahbitants 'x'
-		return (1 - 2/(1 +exp(x)));
+		return (1 - 2/(1 +exp(x/2)));
 	}
 }
