@@ -25,15 +25,19 @@ species plot {
 	communal_landfill the_communal_landfill;
 	local_landfill the_local_landfill;
 	bool impacted_by_canal <- false;
-	float perimeter_canal_nearby;
+	float perimeter_canal_nearby; 
 	rgb color<-#darkgreen-25;
-	bool use_more_manure <- false;
+	bool use_more_manure_strong <- false;
+	bool use_more_manure_weak <- false;
 	bool does_implement_fallow <- false;
 	
 	action pollution_due_to_practice { 
-		
-		if use_more_manure {
-			pratice_water_pollution_level <- pratice_water_pollution_level * (1 + impact_support_manure_buying_waste);
+		//pratice_water_pollution_level <- 
+		if use_more_manure_strong {
+			pratice_water_pollution_level <- pratice_water_pollution_level * (1 + impact_support_manure_buying_waste_strong);
+		}
+		if use_more_manure_weak {
+			pratice_water_pollution_level <- pratice_water_pollution_level * (1 + impact_support_manure_buying_waste_weak);
 		}
 		if does_reduce_pesticide {
 			pratice_water_pollution_level <- pratice_water_pollution_level * (1 - impact_pesticide_reducing_waste);
@@ -59,12 +63,18 @@ species plot {
 		if does_implement_fallow {
 			current_productivity <- current_productivity * (1 - impact_implement_fallow_production);
 		}
-		if use_more_manure {
-			current_productivity <- current_productivity * (1 + impact_support_manure_buying_production);
+		if use_more_manure_strong {
+			current_productivity <- current_productivity * (1 + impact_support_manure_buying_production_strong);
+		}
+		if use_more_manure_weak {
+			current_productivity <- current_productivity * (1 + impact_support_manure_buying_production_weak);
 		}
 		if does_reduce_pesticide {current_productivity <- current_productivity* (1 - impact_pesticide_reducing_production);}
-		if the_village.is_drained {
-			current_productivity <- current_productivity * (1 + impact_drain_dredge_agriculture);
+		if the_village.is_drained_strong {
+			current_productivity <- current_productivity * (1 + impact_drain_dredge_agriculture_strong);
+		}
+		if the_village.is_drained_weak {
+			current_productivity <- current_productivity * (1 + impact_drain_dredge_agriculture_weak);
 		}
 		if (the_local_landfill != nil) {
 			current_productivity <- current_productivity - the_local_landfill.waste_quantity * local_landfill_waste_pollution_impact_rate;

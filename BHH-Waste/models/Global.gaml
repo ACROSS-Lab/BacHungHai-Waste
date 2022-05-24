@@ -23,7 +23,7 @@ import "Entities/People.gaml"
 
 import "Entities/Agricultural Space.gaml"
 
-import "Entities/Urban Space.gaml"
+import "Entities/Urban Space.gaml" 
 
 import "Entities/Village.gaml"
 
@@ -409,7 +409,8 @@ global {
 			}
 			ask village {
 				actions_done_this_year <- [];
-				is_drained <- false;
+				is_drained_strong <- false;
+				is_drained_weak <- false; 
 			}
 			turn <- turn + 1;
 			do update_display;

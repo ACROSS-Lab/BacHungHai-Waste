@@ -142,15 +142,19 @@ global {
 	float impact_trimestrial_collective_action_strong <- 0.35; //part of the solid and water waste remove from the canal
 	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.0; //part of the solid and water waste remove from the canal
 	
-	int token_drain_dredge <- 50; //per action
-	float impact_drain_dredge_waste <- 0.3; //part of the solid waste remove from the canal
-	float impact_drain_dredge_agriculture <- 0.1; //improvment of the agricultural production
+	int token_drain_dredge_strong <- 50; //per action
+	float impact_drain_dredge_waste_strong <- 0.3; //part of the solid waste remove from the canal
+	float impact_drain_dredge_agriculture_strong <- 0.1; //improvment of the agricultural production
+	int token_drain_dredge_weak <- round(token_drain_dredge_strong/2.0); //per action
+	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.0; //part of the solid waste remove from the canal
+	float impact_drain_dredge_agriculture_weak <- impact_drain_dredge_agriculture_strong/2.0; //improvment of the agricultural production
 	
 	int token_install_filter_for_homes_construction <- 200 ; //construction
 	int token_install_filter_for_homes_maintenance <- 15; //per year	
 	list<float> treatment_facility_decrease <- [0.30,0.50,0.80]; // impact of treatement facility for year 1, year 2, and after
 	
 	int token_sensibilization <- 20; //each time
+	float impact_sensibilization <- 1.0; //add this value to the environmental sensibility of people leaving in urban areas
 	
 	int token_pesticide_reducing <- 40; //
 	float impact_pesticide_reducing_production  <- 0.035; //decrease of the agricultural production
@@ -160,9 +164,13 @@ global {
 	float impact_implement_fallow_production  <- 0.33; //decrease the agricultural production
 	float impact_implement_fallow_waste  <- 0.40; //decrease the ground pollution
 	
-	int token_support_manure_buying <- 40; //per year
-	float impact_support_manure_buying_production  <- 0.125; //improvment of the agricultural production
-	float impact_support_manure_buying_waste  <- 0.1; //increase wastewater production
+	int token_support_manure_buying_strong <- 40; //per year
+	float impact_support_manure_buying_production_strong  <- 0.1; //improvment of the agricultural production
+	float impact_support_manure_buying_waste_strong  <- 0.1; //increase wastewater production
+	int token_support_manure_buying_weak <- round(token_support_manure_buying_strong/2); //per year
+	float impact_support_manure_buying_production_weak  <- impact_support_manure_buying_production_strong/2.0; //improvment of the agricultural production
+	float impact_support_manure_buying_waste_weak  <- impact_support_manure_buying_waste_strong/2.0; //increase wastewater production
+	
 	
 	int token_installation_dumpholes <- 40; //
 	float impact_installation_dumpholes  <- 0.4; //decreasse the quantity of solid waste produced by people outside of urban areas (farmers)

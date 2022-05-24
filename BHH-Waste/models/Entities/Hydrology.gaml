@@ -8,6 +8,8 @@
 
 model Hydrology
 
+import "../Global.gaml"
+
 
 species canal {
 	float width;

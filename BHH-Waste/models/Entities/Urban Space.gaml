@@ -8,10 +8,12 @@
 
 model UrbanSpace
 
+import "../Global.gaml"
+
 
 
 species urban_area { 
-	int population;
+	int population; 
 	list<village> my_villages;
 	list<house> houses;
 }

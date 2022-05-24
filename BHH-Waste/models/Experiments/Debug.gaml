@@ -9,7 +9,7 @@
  
 model Debug
 
-
+  
 import "Abstract experiments.gaml"
   
 experiment abstract_debug virtual: true {

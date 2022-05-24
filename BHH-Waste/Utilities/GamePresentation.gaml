@@ -7,7 +7,7 @@
 
 model GamePresentation
 
-import "../models/Global.gaml" 
+import "../models/Global.gaml"  
 
 global {
 	bool display_water_flow <- false  parameter:"Display water flow" category: "Display" ;

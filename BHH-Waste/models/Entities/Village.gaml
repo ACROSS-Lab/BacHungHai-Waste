@@ -11,7 +11,7 @@ import "../Global.gaml"
 
 
 
-species village {
+species village { 
 	rgb color <- village_color[int(self)];
 	list<string> actions_done_this_year;
 	list<string> actions_done_total;
@@ -30,7 +30,8 @@ species village {
 	list<plot> plots;
 	int population;
 	int target_population;
-	bool is_drained <- false;
+	bool is_drained_strong <- false;
+	bool is_drained_weak <- false;
 	bool weak_collection_policy <- true;
 	bool strong_collection_policy <- true;
 	int treatment_facility_year <- 0 max: 3;
@@ -61,12 +62,23 @@ species village {
 		if (ACT_DRAIN_DREDGE in actions_done_this_year) {
 			do tell("Action " +ACT_DRAIN_DREDGE + " cannot be done twice" );
 		} else {
+			string weak_str <- "Low for " + token_drain_dredge_weak + " tokens";
+			string strong_str <- "High for " + token_drain_dredge_strong + " tokens";
+			list<string> possibilities <- [weak_str];
+			if (budget >= token_drain_dredge_strong) {
+				possibilities << strong_str;
+			}
+			map result <- user_input_dialog("PLAYER " + (index_player + 1)+" - " + ACT_DRAIN_DREDGE  ,[choose("Level",string,weak_str, possibilities)]);
+			bool strong <- result["Level"] = strong_str;
+			int token_drain_dredge <- strong ? token_drain_dredge_strong : token_drain_dredge_weak;
 			if budget >= token_drain_dredge {
 				bool  is_ok <- user_confirm("Action Drain & Dredge","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_DRAIN_DREDGE +  " (Cost: " +  impact_trimestrial_collective_action_weak +" tokens)?");
 				if is_ok {
 					actions_done_total << ACT_DRAIN_DREDGE;
 					actions_done_this_year << ACT_DRAIN_DREDGE;
-					is_drained <- true;
+					is_drained_strong <- strong;
+					is_drained_weak <- not strong;
+					float impact_drain_dredge_waste <- strong ? impact_drain_dredge_waste_strong : impact_drain_dredge_waste_weak;
 					ask canals {
 						solid_waste_level <- solid_waste_level * (1 - impact_drain_dredge_waste);
 						water_waste_level <- water_waste_level * (1 - impact_drain_dredge_waste);
@@ -163,7 +175,7 @@ species village {
 					budget <- budget - token_sensibilization;
 					
 					ask inhabitants {
-						environmental_sensibility <- environmental_sensibility+ 1;
+						environmental_sensibility <- environmental_sensibility+ impact_sensibilization;
 					}
 				}
 			}else {
@@ -224,10 +236,11 @@ species village {
 	}
 	
 	//6:ACT_SUPPORT_MANURE
-	action support_manure_buying {
+	action support_manure_buying(bool strong) {
 		if (ACT_SUPPORT_MANURE in actions_done_this_year) {
 			do tell("Action " +ACT_SUPPORT_MANURE + " cannot be done twice" );
 		} else {
+			int token_support_manure_buying <- strong ? token_support_manure_buying_strong : token_support_manure_buying_weak;
 			if budget >= token_support_manure_buying {
 				bool  is_ok <- user_confirm("Action Support Mature","PLAYER " + (index_player + 1) +", do you confirm that you want to " + ACT_SUPPORT_MANURE + " (Cost: " +  token_support_manure_buying +" tokens)?");
 				if is_ok {
@@ -235,7 +248,8 @@ species village {
 					actions_done_this_year << ACT_SUPPORT_MANURE;
 					budget <- budget - token_support_manure_buying;
 					ask plots {
-						use_more_manure <- true;
+						use_more_manure_strong <- strong;
+						use_more_manure_weak <- not strong;
 					}
 				}
 			}else {
@@ -322,11 +336,12 @@ species village {
 	
 	action start_turn {
 		start_turn_time <- machine_time;
-		
+		 
 		ask world {do update_display;do resume;}
 		
 		ask plots {
-			use_more_manure <- false;
+			use_more_manure_strong <- false;
+			use_more_manure_weak <- false;
 			does_implement_fallow <- false;
 		}
 		do tell("PLAYER " + (index_player + 1) + " TURN");
