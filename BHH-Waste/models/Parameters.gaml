@@ -13,7 +13,9 @@ global {
 	/******************* GENERAL PARAMETERS *************************************/
 	
 	string GAME_NAME <- "EcoGame";
-	string langage <- "tiếng việt";
+	string langage <- "Français";
+	
+	//string langage <- "Tiếng Việt";
 	
 	
 	csv_file translation_game_csv_file <- csv_file("../includes/translation_game.csv", ",", false);

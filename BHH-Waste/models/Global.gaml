@@ -36,7 +36,8 @@ global {
 	/********************** INTERNAL VARIABLES ****************************/
 	
 	bool without_player <- false; //for testing
-	bool without_actions <- true;
+	bool without_actions <- false;
+	bool load_player_actions <- false;
 	list<list<map<string,map>>> players_actions <- nil;
 	list<list<int>> players_collect_policy <- nil;
 	list<list<bool>> players_traitement_facility_maintenance <- nil;
@@ -49,6 +50,7 @@ global {
 	bool display_water_flow <- false;
 	bool draw_territory <- false;
 	
+	map<string,string> to_english;
 	//string type_of_map_display <- MAP_SOLID_WASTE;// category: "Display" among: ["Map of solid waste", "Map of waster waste", "Map of total pollution", "Map of agricultural productivity"] parameter: "Type of map display" ;//on_change: update_display;
 	string stage <-COMPUTE_INDICATORS;
 	
@@ -62,17 +64,7 @@ global {
 	communal_landfill the_communal_landfill;
 	
 	string text_action <- "";
-	map<string,string> actions_name <- [
-		"q"::ACT_DRAIN_DREDGE,
-		"w"::ACT_FACILITY_TREATMENT,
-		"e"::ACT_SENSIBILIZATION,
-		"r"::ACTION_COLLECTIVE_ACTION,
-		"t"::ACT_PESTICIDE_REDUCTION,
-		"y"::ACT_SUPPORT_MANURE,
-		"u"::ACT_IMPLEMENT_FALLOW,
-		"i"::ACT_INSTALL_DUMPHOLES,
-		"o"::ACT_END_OF_TURN
-	]; 
+	map<string,string> actions_name ;
 	
 	
 	int turn <- 0;
@@ -123,6 +115,7 @@ global {
 
 	init {
 		if not without_player{do load_language;}
+		do generate_info_action;
 		name <- GAME_NAME;
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
 		do create_canals;
@@ -137,16 +130,32 @@ global {
 		}
 		
 		if save_log {
-			save "turn,player,productivity,solid_pollution,water_pollution"  to: systeme_evolution_log_path type: text rewrite: true;
+			save "turn,player,productivity,solid_pollution,water_pollution,days_with_ecolabel"  to: systeme_evolution_log_path type: text rewrite: true;
 			save "turn,player,budget,action1,action2,action3,action4,action5,action6" to: village_action_log_path type: text rewrite: true;
 		}
 	}
-	
+	action generate_info_action {
+		actions_name <- [
+		"q"::ACT_DRAIN_DREDGE,
+		"w"::ACT_FACILITY_TREATMENT,
+		"e"::ACT_SENSIBILIZATION,
+		"r"::ACTION_COLLECTIVE_ACTION,
+		"t"::ACT_PESTICIDE_REDUCTION,
+		"y"::ACT_SUPPORT_MANURE,
+		"u"::ACT_IMPLEMENT_FALLOW,
+		"i"::ACT_INSTALL_DUMPHOLES,
+		"o"::ACT_END_OF_TURN
+	]; 
+	}
 	action load_language {
 		matrix mat <- matrix(translation_game_csv_file);
-		int index_col <- max(0, (mat row_at 0) index_of (langage));
+		int index_col <- max(1, (mat row_at 0) index_of (langage));
+		int index_english <- max(1, (mat row_at 0) index_of ("English"));
 		loop i from: 1 to: mat.rows -1 {
+			string word_tlan <- mat[index_col,i];
+			string word_eng <- mat[index_english,i];
 			shape.attributes[mat[0,i]] <- mat[index_col,i];
+			to_english[word_tlan] <-word_eng; 
 		}
 	}
 	
@@ -294,7 +303,7 @@ global {
 				player_actions <- players_actions = nil ? nil : players_actions[id];
 				player_collect_policy <- players_collect_policy = nil ? nil : players_collect_policy[id];
 				player_traitement_facility_maintenance <- players_traitement_facility_maintenance = nil ? nil : players_traitement_facility_maintenance[id];
-			}
+			} 
 		} 
 		village1_production <-  (village[0].plots sum_of each.current_production);	
 		village2_production <-  village[1].plots sum_of each.current_production ;	
@@ -456,11 +465,11 @@ global {
 			}
 			
 			if save_log {
-				save ("" + turn  + ",0," + total_production + ","+ total_solid_pollution + "," + total_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",1," + village1_production + ","+ village1_solid_pollution + "," + village1_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",2," + village2_production + ","+ village2_solid_pollution + "," + village2_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",3," + village3_production + ","+ village3_solid_pollution + "," + village3_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",4," + village4_production + ","+ village4_solid_pollution + "," + village4_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",0," + total_production + ","+ total_solid_pollution + "," + total_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",1," + village1_production + ","+ village1_solid_pollution + "," + village1_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",2," + village2_production + ","+ village2_solid_pollution + "," + village2_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",3," + village3_production + ","+ village3_solid_pollution + "," + village3_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",4," + village4_production + ","+ village4_solid_pollution + "," + village4_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
 			}
 		}
 	}
@@ -577,7 +586,7 @@ global {
 	 	ecolabel_min_production_values << min_production_ecolabel;
 	 	ecolabel_max_pollution_values << max_pollution_ecolabel;
 	 	
-	 	if ((total_solid_pollution + total_water_pollution) <= max_pollution_ecolabel) and (total_production >= min_production_ecolabel) {
+	 	if is_pollution_ok and is_production_ok{
 	 		days_with_ecolabel <- days_with_ecolabel + 1;
 	 	}
 	 }
@@ -598,11 +607,11 @@ global {
 	}
 	
 	reflex playerturn when: stage = PLAYER_ACTION_TURN{
-		if without_player or index_player >= length(village) {
+		if without_player or (index_player >= length(village)) {
 			if (turn >= end_of_game) {
 				do pause;
 			} else {
-				if not without_actions {
+				if without_player and not without_actions {
 					loop i from: 0 to: length(village) - 1 {
 						ask village[i] {
 							do start_turn;

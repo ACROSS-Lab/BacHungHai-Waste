@@ -41,6 +41,7 @@ global {
 	string CONFIRM_END_OF_TURN <- "do you confirm that you want to end the turn?";
 	string NOT_ENOUGH_BUDGET <- "Not enough budget for";
 	
+	
 	string ACT_DRAIN_DREDGE <- "Drain and dredge";
 	string ACT_FACILITY_TREATMENT <- "Install water treatment facilities for every home";
 	string ACT_SENSIBILIZATION <- "Organise sensibilization about waste sorting workshops in schools";
@@ -106,7 +107,8 @@ global {
 	string PLAYER_ACTION_TURN <- "player action turn";
 	string PLAYER_DISCUSSION_TURN <- "player discussion turn";
 	string COMPUTE_INDICATORS <-  "compute indicators";
-	
+	string ACT_FACILITY_TREATMENT_MAINTENANCE <- "Maintenance of water treatment facilities";
+	string ACT_COLLECT <- "Collect frequency";
 		
 	string MAP_SOLID_WASTE <- "Map of solid waste";
 	string MAP_WATER_WASTE <- "Map of waster waste";
