@@ -115,15 +115,18 @@ global {
 	/********************** INITIALIZATION OF THE GAME ****************************/
 
 	init {
-		if not without_player and (players_actions_to_load = nil){do load_language;}
+		if not without_player or (players_actions_to_load != nil){do load_language;}
 		do generate_info_action;
 		name <- GAME_NAME;
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
+		if without_player and  (players_actions_to_load != nil) {do load_actions_file;}
+		
 		do create_canals;
 		create commune from: Limites_commune_shape_file;
 		do create_urban_area;
 		do create_plots;
 		do init_villages;	
+		
 		do create_landfill;
 		do add_data;
 		loop k over: actions_name.keys {
@@ -163,6 +166,62 @@ global {
 	}
 	
 	action load_actions_file {
+		matrix mat <- matrix(players_actions_to_load);
+		end_of_game <- 0;
+		loop j from: 0 to: mat.rows - 1 {
+			int t <- int(mat[0,j]) - 1;
+			end_of_game <- max(end_of_game, t+1);
+			int player_index <- int(mat[1,j]) - 1;
+			ask village[player_index] {
+				if length(player_actions) <= t {
+					if player_actions = nil or empty(player_actions) {
+						player_actions <- [];
+						player_collect_policy <- [];
+						player_traitement_facility_maintenance <- [];
+					}
+					
+					loop times: t - length(player_actions) +1  {
+						player_actions << [];
+						player_collect_policy << 0;
+						player_traitement_facility_maintenance << true;
+					}
+				}
+				loop i from: 3 to: mat.columns -1 {
+					string act_str <- mat[i,j];
+					
+					if act_str != nil and (":" in act_str) {
+						list<string> a_s <- act_str split_with ":";
+						string act_name <- a_s[0];
+						string param <- a_s[1];
+						if act_name = ACT_COLLECT {
+							player_collect_policy[t] <- int(param);
+						}else if act_name = ACT_FACILITY_TREATMENT_MAINTENANCE {
+							player_traitement_facility_maintenance[t] <- bool(param);
+						} else {
+							act_name <- from_english[act_name];
+							if act_name != ACT_FACILITY_TREATMENT {
+								player_actions[t][act_name] <- [LEVEL::param];
+							} else {
+								map<string,int> val_p <- [];
+								list<string> p_v <- param split_with ";";
+								loop v over: p_v {
+									if not empty(v) and ("%" in v) {
+										list<string> vv <- v split_with "%";
+										
+										val_p[vv[0]] <- int(vv[1]);
+									}
+								}
+								player_actions[t][act_name] <- val_p;
+							}
+						}
+					} else {
+						player_actions[t][from_english[act_str]] <- nil;
+					}
+				}
+			}
+				
+		}
+		
 		
 	}
 	

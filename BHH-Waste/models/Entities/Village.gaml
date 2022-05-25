@@ -432,9 +432,9 @@ species village {
 			/*loop act over: actions_done_this_year  {
 				to_save <- to_save+"," + act;
 			}*/
-			to_save <-to_save + ACT_COLLECT + ":" + player_collect_policy[turn -1];
-			to_save <- to_save + ACT_FACILITY_TREATMENT_MAINTENANCE + ":" + player_traitement_facility_maintenance[turn -1];
-			map<string, map> this_turn <- player_actions[turn -1];
+			to_save <-to_save + ACT_COLLECT + ":" + last(player_collect_policy) + ",";
+			to_save <- to_save + ACT_FACILITY_TREATMENT_MAINTENANCE + ":" + last(player_traitement_facility_maintenance);
+			map<string, map> this_turn <- last(player_actions);
 			loop act over: this_turn.keys{
 				map param <- this_turn[act];
 				act <- to_english[act];
