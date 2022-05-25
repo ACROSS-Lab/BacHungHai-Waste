@@ -36,6 +36,11 @@ global {
 	/********************** INTERNAL VARIABLES ****************************/
 	
 	bool without_player <- false; //for testing
+	bool without_actions <- true;
+	list<list<map<string,map>>> players_actions <- nil;
+	list<list<int>> players_collect_policy <- nil;
+	list<list<bool>> players_traitement_facility_maintenance <- nil;
+	
 	bool display_productivity_waste <- false parameter:"Display field productivity" category: "Display" ;
 	
 	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display" ;
@@ -117,7 +122,7 @@ global {
 	/********************** INITIALIZATION OF THE GAME ****************************/
 
 	init {
-		do load_language;
+		if not without_player{do load_language;}
 		name <- GAME_NAME;
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
 		do create_canals;
@@ -284,8 +289,12 @@ global {
 				myself.collection_teams << self;
 			}
 			budget <- world.compute_budget(length(inhabitants), length(farmers), days_with_ecolabel);
-		
-			
+			if without_player and not without_actions {
+				int id <- int(self);
+				player_actions <- players_actions = nil ? nil : players_actions[id];
+				player_collect_policy <- players_collect_policy = nil ? nil : players_collect_policy[id];
+				player_traitement_facility_maintenance <- players_traitement_facility_maintenance = nil ? nil : players_traitement_facility_maintenance[id];
+			}
 		} 
 		village1_production <-  (village[0].plots sum_of each.current_production);	
 		village2_production <-  village[1].plots sum_of each.current_production ;	
@@ -332,7 +341,7 @@ global {
 	}
 	action activate_act8 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do install_gumpholes;}
+			ask village[index_player] {do install_dumpholes;}
 		}
 	}
 	action activate_act9 {
@@ -445,6 +454,7 @@ global {
 				ask world {do update_display;do resume;}
 		
 			}
+			
 			if save_log {
 				save ("" + turn  + ",0," + total_production + ","+ total_solid_pollution + "," + total_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
 				save ("" + turn  + ",1," + village1_production + ","+ village1_solid_pollution + "," + village1_water_pollution)  to: systeme_evolution_log_path type: text rewrite: false;
@@ -570,8 +580,8 @@ global {
 	 	if ((total_solid_pollution + total_water_pollution) <= max_pollution_ecolabel) and (total_production >= min_production_ecolabel) {
 	 		days_with_ecolabel <- days_with_ecolabel + 1;
 	 	}
-	 	
-	}
+	 }
+	
 	
 	
 	reflex indicators_computation when: stage = COMPUTE_INDICATORS {
@@ -589,13 +599,28 @@ global {
 	
 	reflex playerturn when: stage = PLAYER_ACTION_TURN{
 		if without_player or index_player >= length(village) {
-			stage <- COMPUTE_INDICATORS;
-			days_with_ecolabel <- 0;
-			current_day <- 0;
-			step <- #day;
+			if (turn >= end_of_game) {
+				do pause;
+			} else {
+				if not without_actions {
+					loop i from: 0 to: length(village) - 1 {
+						ask village[i] {
+							do start_turn;
+							do play_predefined_actions;
+							do ending_turn;
+						}
+					}
+				}
+				stage <- COMPUTE_INDICATORS;
+				days_with_ecolabel <- 0;
+				current_day <- 0;
+				step <- #day;
+				
+				if not without_player {do tell(INDICATOR_COMPUTATION);}
+				do increase_urban_area;
+			}
 			
-			if not without_player {do tell(INDICATOR_COMPUTATION);}
-			do increase_urban_area;
+			
 		}
 	}
 	
@@ -611,7 +636,7 @@ global {
 			}
 		}
 	}
-	reflex end_of_player_turn when: use_timer_player_turn and stage = PLAYER_ACTION_TURN {
+	reflex end_of_player_turn when: not without_player and  use_timer_player_turn and stage = PLAYER_ACTION_TURN {
 		remaining_time <- int(time_for_player_turn - machine_time/1000.0  + village[index_player].start_turn_time/1000.0);
  
 		if remaining_time <= 0 {

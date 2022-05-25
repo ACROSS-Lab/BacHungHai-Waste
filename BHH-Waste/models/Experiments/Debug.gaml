@@ -12,6 +12,91 @@ model Debug
   
 import "Abstract experiments.gaml"
   
+ 
+ 
+experiment simulation_without_players parent: base_debug type: gui {
+	action _init_ {
+		create simulation with:(
+			without_player : true,
+			without_actions : false,
+			
+			
+	//POSSIBLE ACTIONS : ACTION_COLLECTIVE_ACTION, ACT_DRAIN_DREDGE, ACT_FACILITY_TREATMENT, ACT_IMPLEMENT_FALLOW, ACT_INSTALL_DUMPHOLES, ACT_PESTICIDE_REDUCTION, ACT_SENSIBILIZATION, ACT_SUPPORT_MANURE
+	
+		players_actions : [
+	
+	//PLAYER 1
+	
+	[ 
+		[ACT_DRAIN_DREDGE::[LEVEL::"high"], ACT_FACILITY_TREATMENT::["P1"::80, "P2"::70, "P3"::20, "p4"::30 ]], //year 1
+		[ACT_IMPLEMENT_FALLOW::nil, ACT_INSTALL_DUMPHOLES::nil], //year 2
+		[ACT_SUPPORT_MANURE::[LEVEL::"high"], ACT_SENSIBILIZATION::nil], //year 3
+		[ACT_DRAIN_DREDGE::[LEVEL::"low"]], //year 4
+		[ACTION_COLLECTIVE_ACTION::[LEVEL::"low"]], //year 5
+		map<string,map>([]),//year 6
+		map<string,map>([]), //year 7
+		map<string,map>([])//year 8
+	],
+
+	//PLAYER 2
+	[ 
+		[ACT_DRAIN_DREDGE::[LEVEL::"low"]], //year 1
+		[ACT_IMPLEMENT_FALLOW::nil, ACT_INSTALL_DUMPHOLES::nil], //year 2
+		[ACT_SUPPORT_MANURE::[LEVEL::"high"], ACT_SENSIBILIZATION::nil], //year 3
+		[ACT_DRAIN_DREDGE::[LEVEL::"high"]], //year 4
+		map<string,map>([]), //year 5
+		map<string,map>([]),//year 6
+		map<string,map>([]), //year 7
+		map<string,map>([])//year 8
+	],
+	
+	//PLAYER 3
+	[ 
+		[ACT_DRAIN_DREDGE::[LEVEL::"high"]], //year 1
+		[ACT_IMPLEMENT_FALLOW::nil, ACT_INSTALL_DUMPHOLES::nil], //year 2
+		[ACT_SUPPORT_MANURE::[LEVEL::"high"], ACT_SENSIBILIZATION::nil], //year 3
+		[ACT_DRAIN_DREDGE::[LEVEL::"high"]], //year 4
+		map<string,map>([]), //year 5
+		map<string,map>([]),//year 6
+		map<string,map>([]), //year 7
+		map<string,map>([])//year 8
+	],
+	
+	//PLAYER 4
+	[ 
+		[ACT_DRAIN_DREDGE::[LEVEL::"high"]], //year 1
+		[ACT_IMPLEMENT_FALLOW::nil, ACT_INSTALL_DUMPHOLES::nil], //year 2
+		[ACT_SUPPORT_MANURE::[LEVEL::"high"], ACT_SENSIBILIZATION::nil], //year 3
+		[ACT_DRAIN_DREDGE::[LEVEL::"high"]], //year 4
+		map<string,map>([]), //year 5
+		map<string,map>([]),//year 6
+		map<string,map>([]), //year 7
+		map<string,map>([])//year 8
+	]
+	],
+	
+	
+	players_collect_policy:
+		[
+			[2,2,2,2,4,4,4,4], //for each year, the frequency of collect for Player 1
+			[2,2,2,2,2,2,2,2],//for each year, the frequency of collect for Player 2
+			[2,2,2,2,4,4,4,7],//for each year, the frequency of collect for Player 3
+			[2,2,2,2,4,4,7,7]//for each year, the frequency of collect for Player 4
+		],
+	
+	players_traitement_facility_maintenance:
+		[
+			[true,true,true,true,true,true,true,true], //Player 1: for each year, true: payed for the maintenace of the traitment facility
+			[true,true,true,true,true,true,false,false],//Player 2 
+			[true,true,true,true,true,true,true,true],//Player 3 
+			[true,true,true,true,true,true,true,false]//Player 4 
+		]
+		);		
+	}
+
+	
+}
+
 experiment abstract_debug virtual: true {
 		output {
 			display map_abstract type: opengl  background: #black virtual: true axes: false {//refresh: stage = COMPUTE_INDICATORS{
@@ -239,12 +324,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 	}
 }
 
-
-experiment simulation_without_players parent: base_debug type: gui {
-	action _init_ {
-		create simulation with:(without_player:true);
-	}
-}
+ 
 
 experiment simulation_graphic parent: abstract_debug type: gui {
 	action _init_ {

@@ -42,6 +42,11 @@ species village {
 	int diff_budget;
 	int prev_budget <- -1;
 	
+	list<map<string,map>> player_actions <- nil;
+	
+	list<int> player_collect_policy<- nil;
+	list<bool> player_traitement_facility_maintenance<- nil;
+	
 	
 	action compute_new_budget {
 		budget <- world.compute_budget(length(inhabitants), length(farmers), days_with_ecolabel);
@@ -65,9 +70,9 @@ species village {
 	
 	
 	//1:ACT_DRAIN_DREDGE
-	action drain_dredge {
+	action drain_dredge(bool is_strong <- true) {
 		if (ACT_DRAIN_DREDGE in actions_done_this_year) {
-			do tell_not_twice(ACT_DRAIN_DREDGE);
+			if not without_player {do tell_not_twice(ACT_DRAIN_DREDGE);}
 		} else {
 			string weak_str <- LOW_FOR+ " " + token_drain_dredge_weak + " " + TOKENS;
 			string strong_str <- HIGH_FOR + " " + token_drain_dredge_strong + " " + TOKENS;
@@ -75,12 +80,19 @@ species village {
 			if (budget >= token_drain_dredge_strong) {
 				possibilities << strong_str;
 			}
-			map result <- user_input_dialog(PLAYER + " " + (index_player + 1)+" - " + ACT_DRAIN_DREDGE  ,[choose(LEVEL,string,weak_str, possibilities)]);
-			bool strong <- result[LEVEL] = strong_str;
+			bool strong;
+		
+			if without_player {
+				strong <- is_strong;
+			} else {
+				map result <- user_input_dialog(PLAYER + " " + (index_player + 1)+" - " + ACT_DRAIN_DREDGE  ,[choose(LEVEL,string,weak_str, possibilities)]);
+				strong <- result[LEVEL] = strong_str;
+			}
 			int token_drain_dredge <- strong ? token_drain_dredge_strong : token_drain_dredge_weak;
 			if budget >= token_drain_dredge {
-				bool  is_ok <-confirm_action(ACT_DRAIN_DREDGE, token_drain_dredge);
+				bool  is_ok <-without_player or confirm_action(ACT_DRAIN_DREDGE, token_drain_dredge);
 				if is_ok {
+					
 					actions_done_total << ACT_DRAIN_DREDGE;
 					actions_done_this_year << ACT_DRAIN_DREDGE;
 					is_drained_strong <- strong;
@@ -93,30 +105,40 @@ species village {
 					budget <- budget - token_drain_dredge;
 				}
 			} else {
-				do tell(NOT_ENOUGH_BUDGET + " " +ACT_DRAIN_DREDGE );
+				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_DRAIN_DREDGE );}
 			}
 			
 		}
 	}
 	
 	//2:ACT_FACILITY_TREATMENT
-	action install_facility_treatment_for_homes {
+	action install_facility_treatment_for_homes(map money_paid <- nil) {
 		if (ACT_FACILITY_TREATMENT in actions_done_total) {
-			do tell_not_twice(ACT_FACILITY_TREATMENT);
+			if not without_player {do tell_not_twice(ACT_FACILITY_TREATMENT);}
 		} else {
 				int max_budget_p1 <- village[0].budget;
 				int max_budget_p2 <- village[1].budget -  (index_player < 1 ? token_weak_waste_collection : 0);
 				int max_budget_p3 <- village[2].budget -  (index_player < 2 ? token_weak_waste_collection : 0);
 				int max_budget_p4 <- village[3].budget -  (index_player < 3 ? token_weak_waste_collection : 0);
-				string p1_str <- PLAYER + " 1 (" + MAX_BUDGET + ": " + max_budget_p1 + ")";
-				string p2_str <- PLAYER + " 2 (" + MAX_BUDGET + ": " + max_budget_p2 + ")";
-				string p3_str <- PLAYER + " 3 (" + MAX_BUDGET + ": " + max_budget_p3 + ")";
-				string p4_str <- PLAYER + " 4 (" + MAX_BUDGET + ": " + max_budget_p4 + ")";
-				map results <- user_input_dialog(ACT_FACILITY_TREATMENT + ". " + COST + ": " +token_install_filter_for_homes_construction +" " + TOKENS + ". " + NUMBER_TOKENS_PLAYER,[enter(p1_str,int,0),enter(p2_str,int,0),enter(p3_str,int,0),enter(p4_str,int,0)]);
-				int p1 <- min(int(results[p1_str]), max_budget_p1);
-				int p2 <- min(int(results[p2_str]), max_budget_p2);
-				int p3 <- min(int(results[p3_str]), max_budget_p3);
-				int p4 <- min(int(results[p4_str]), max_budget_p4);
+				int p1; int p2; int p3; int p4;
+				if without_player {
+					p1 <- min(max_budget_p1,int(money_paid["P1"]));
+					p2 <- min(max_budget_p2,int(money_paid["P2"]));
+					p3 <- min(max_budget_p3,int(money_paid["P3"]));
+					p4 <- min(max_budget_p4,int(money_paid["P4"]));
+				} else {
+					string p1_str <- PLAYER + " 1 (" + MAX_BUDGET + ": " + max_budget_p1 + ")";
+					string p2_str <- PLAYER + " 2 (" + MAX_BUDGET + ": " + max_budget_p2 + ")";
+					string p3_str <- PLAYER + " 3 (" + MAX_BUDGET + ": " + max_budget_p3 + ")";
+					string p4_str <- PLAYER + " 4 (" + MAX_BUDGET + ": " + max_budget_p4 + ")";
+					
+					map results <- user_input_dialog(ACT_FACILITY_TREATMENT + ". " + COST + ": " +token_install_filter_for_homes_construction +" " + TOKENS + ". " + NUMBER_TOKENS_PLAYER,[enter(p1_str,int,0),enter(p2_str,int,0),enter(p3_str,int,0),enter(p4_str,int,0)]);
+					p1 <- min(int(results[p1_str]), max_budget_p1);
+					p2 <- min(int(results[p2_str]), max_budget_p2);
+					p3 <- min(int(results[p3_str]), max_budget_p3);
+					p4 <- min(int(results[p4_str]), max_budget_p4);
+				
+				}
 				if p1 + p2 + p3 + p4 >= token_install_filter_for_homes_construction {
 					string cost_str <- "(" + COST + ": "; 
 					bool add_ok <- false;
@@ -135,7 +157,7 @@ species village {
 					if p4 > 0 {
 						cost_str <- cost_str  + (add_ok ? ", " : "")+ PLAYER + " 4:" + p4 +  " " + TOKENS;
 					}
-					bool  is_ok <- user_confirm(ACTION +" " + ACT_FACILITY_TREATMENT, PLAYER +" " + (index_player + 1) +",  " + CONFIRM_ACTION + " " + ACT_FACILITY_TREATMENT + " " + cost_str +"?");
+					bool  is_ok <- without_player or user_confirm(ACTION +" " + ACT_FACILITY_TREATMENT, PLAYER +" " + (index_player + 1) +",  " + CONFIRM_ACTION + " " + ACT_FACILITY_TREATMENT + " " + cost_str +"?");
 					if is_ok {
 						
 						ask village {
@@ -163,7 +185,7 @@ species village {
 					}
 				} else {
 					
-					do tell(NOT_ENOUGH_BUDGET + " " +ACT_FACILITY_TREATMENT );
+					if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_FACILITY_TREATMENT );}
 			
 				}
 			
@@ -173,10 +195,10 @@ species village {
 	//3:ACT_SENSIBILIZATION
 	action sensibilization {
 		if (ACT_SENSIBILIZATION in actions_done_this_year) {
-			do tell_not_twice(ACT_SENSIBILIZATION);
+			if not without_player {do tell_not_twice(ACT_SENSIBILIZATION);}
 		} else {
 			if budget >= token_sensibilization {
-				bool  is_ok <-confirm_action(ACT_SENSIBILIZATION, token_sensibilization);
+				bool  is_ok <-without_player or confirm_action(ACT_SENSIBILIZATION, token_sensibilization);
 			
 				if is_ok {
 					actions_done_total << ACT_SENSIBILIZATION;
@@ -189,15 +211,15 @@ species village {
 				}
 			}else {
 				
-				do tell(NOT_ENOUGH_BUDGET + " " +ACT_SENSIBILIZATION );
+				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_SENSIBILIZATION );}
 			}
 		}
 	}
 	
 	//4:ACTION_COLLECTIVE_ACTION
-	action trimestrial_collective_action{
+	action trimestrial_collective_action (bool is_strong <- true){
 		if (ACTION_COLLECTIVE_ACTION in actions_done_this_year) {
-			do tell_not_twice(ACTION_COLLECTIVE_ACTION);
+			if not without_player {do tell_not_twice(ACTION_COLLECTIVE_ACTION);}
 		} else {
 			string weak_str <- LOW_FOR + " " + token_trimestrial_collective_action_weak + " " + TOKENS;
 			string strong_str <- HIGH_FOR + " " + token_trimestrial_collective_action_strong + " " + TOKENS;
@@ -205,15 +227,19 @@ species village {
 			if (budget >= token_trimestrial_collective_action_strong) {
 				possibilities << strong_str;
 			} 
-			map result <- user_input_dialog(PLAYER +" " + (index_player + 1)+" - " + ACTION_COLLECTIVE_ACTION  ,[choose(LEVEL,string,weak_str, possibilities)]);
-			bool strong <- result[LEVEL] = strong_str;
-		
+			
+			bool strong <- is_strong;
+			if not without_player {
+				map result <- user_input_dialog(PLAYER +" " + (index_player + 1)+" - " + ACTION_COLLECTIVE_ACTION  ,[choose(LEVEL,string,weak_str, possibilities)]);
+				strong <- result[LEVEL] = strong_str;
+			}
+			
 			int token_trimestrial_collective_action <- token_trimestrial_collective_action_strong;
 			if not strong {
 				token_trimestrial_collective_action <- token_trimestrial_collective_action_weak;
 			}
 			if budget >= token_trimestrial_collective_action {
-				bool  is_ok <-confirm_action(ACTION_COLLECTIVE_ACTION, token_trimestrial_collective_action);
+				bool  is_ok <-without_player or confirm_action(ACTION_COLLECTIVE_ACTION, token_trimestrial_collective_action);
 				if is_ok {
 					actions_done_total << ACTION_COLLECTIVE_ACTION;
 					actions_done_this_year << ACTION_COLLECTIVE_ACTION;
@@ -228,7 +254,7 @@ species village {
 				}
 			} else {
 				
-				do tell(NOT_ENOUGH_BUDGET + " " +ACTION_COLLECTIVE_ACTION );
+				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACTION_COLLECTIVE_ACTION );}
 			}
 		}
 		
@@ -237,10 +263,10 @@ species village {
 	//5:ACT_PESTICIDE_REDUCTION
 	action pesticide_reducing {
 		if (ACT_PESTICIDE_REDUCTION in actions_done_total) {
-			do tell_not_twice(ACT_PESTICIDE_REDUCTION);
+			if not without_player {do tell_not_twice(ACT_PESTICIDE_REDUCTION);}
 		} else {
 			if budget >= token_pesticide_reducing {
-				bool  is_ok <-confirm_action(ACT_PESTICIDE_REDUCTION, token_pesticide_reducing);
+				bool  is_ok <-without_player or confirm_action(ACT_PESTICIDE_REDUCTION, token_pesticide_reducing);
 			
 				if is_ok {
 					actions_done_total << ACT_PESTICIDE_REDUCTION;
@@ -251,16 +277,15 @@ species village {
 					}
 				}
 			}else {
-				
-				do tell(NOT_ENOUGH_BUDGET + " " +ACT_PESTICIDE_REDUCTION );
+				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_PESTICIDE_REDUCTION );}
 			}
 		}
 	}
 	
 	//6:ACT_SUPPORT_MANURE
-	action support_manure_buying {
+	action support_manure_buying(bool is_strong <- true) {
 		if (ACT_SUPPORT_MANURE in actions_done_this_year) {
-			do tell_not_twice(ACT_SUPPORT_MANURE);
+			if not without_player {do tell_not_twice(ACT_SUPPORT_MANURE);}
 		} else {
 			string weak_str <- LOW_FOR + " " + token_support_manure_buying_weak + " " + TOKENS;
 			string strong_str <- HIGH_FOR + " " + token_support_manure_buying_strong + " " + TOKENS;
@@ -268,12 +293,15 @@ species village {
 			if (budget >= token_support_manure_buying_strong) {
 				possibilities << strong_str;
 			} 
-			map result <- user_input_dialog(PLAYER +" " + (index_player + 1)+" - " + ACT_SUPPORT_MANURE  ,[choose(LEVEL,string,weak_str, possibilities)]);
-			bool strong <- result[LEVEL] = strong_str;
-		
+			bool strong <- is_strong;
+			if not without_player {
+				map result <- user_input_dialog(PLAYER +" " + (index_player + 1)+" - " + ACT_SUPPORT_MANURE  ,[choose(LEVEL,string,weak_str, possibilities)]);
+				strong <- result[LEVEL] = strong_str;
+			}
+			
 			int token_support_manure_buying <- strong ? token_support_manure_buying_strong : token_support_manure_buying_weak;
 			if budget >= token_support_manure_buying {
-				bool  is_ok <-confirm_action(ACT_SUPPORT_MANURE, token_support_manure_buying);
+				bool  is_ok <-without_player or confirm_action(ACT_SUPPORT_MANURE, token_support_manure_buying);
 				if is_ok {
 					actions_done_total << ACT_SUPPORT_MANURE;
 					actions_done_this_year << ACT_SUPPORT_MANURE;
@@ -284,7 +312,7 @@ species village {
 					}
 				}
 			}else {
-				do tell(NOT_ENOUGH_BUDGET + " " +ACT_SUPPORT_MANURE );
+				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_SUPPORT_MANURE );}
 			}
 		}
 	}
@@ -294,10 +322,10 @@ species village {
 	//7:ACT_IMPLEMENT_FALLOW
 	action implement_fallow {
 		if (ACT_IMPLEMENT_FALLOW in actions_done_this_year) {
-			do tell_not_twice(ACT_IMPLEMENT_FALLOW);
+			if not without_player {do tell_not_twice(ACT_IMPLEMENT_FALLOW);}
 		} else {
 			if budget >= token_implement_fallow {
-			bool  is_ok <-confirm_action(ACT_IMPLEMENT_FALLOW, token_implement_fallow);
+			bool  is_ok <-without_player or confirm_action(ACT_IMPLEMENT_FALLOW, token_implement_fallow);
 			if is_ok {
 				ask plots {
 					does_implement_fallow <- true;
@@ -312,7 +340,7 @@ species village {
 		
 				}
 			}else {
-				do tell(NOT_ENOUGH_BUDGET + " " +ACT_IMPLEMENT_FALLOW );
+				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_IMPLEMENT_FALLOW );}
 			}
 		
 		}
@@ -320,13 +348,13 @@ species village {
 	
 	
 	//8:ACT_INSTALL_DUMPHOLES,
-	action install_gumpholes {
+	action install_dumpholes {
 		if (ACT_INSTALL_DUMPHOLES in actions_done_total) {
-			do tell_not_twice(ACT_INSTALL_DUMPHOLES);
+			if not without_player {do tell_not_twice(ACT_INSTALL_DUMPHOLES);}
 		} else {
 			
 			if budget >= token_installation_dumpholes {
-				bool  is_ok <-confirm_action(ACT_INSTALL_DUMPHOLES, token_installation_dumpholes);
+				bool  is_ok <- without_player or confirm_action(ACT_INSTALL_DUMPHOLES, token_installation_dumpholes);
 				if is_ok {
 					actions_done_total << ACT_PESTICIDE_REDUCTION;
 					actions_done_this_year<< ACT_PESTICIDE_REDUCTION; 
@@ -337,7 +365,40 @@ species village {
 				}
 				
 			}else {
-				do tell(NOT_ENOUGH_BUDGET + " " +ACT_INSTALL_DUMPHOLES );
+				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_INSTALL_DUMPHOLES );}
+			}
+		}
+	}
+	
+	action play_predefined_actions {
+		map<string,map> player_actions_turn <- player_actions[turn - 1];
+		loop act over: player_actions_turn.keys {
+			switch act {
+				match ACT_DRAIN_DREDGE {
+					do drain_dredge(player_actions_turn[act][LEVEL] = "high");
+				}
+				match ACT_FACILITY_TREATMENT {
+					do install_facility_treatment_for_homes(player_actions_turn[act]);
+				}
+				match ACT_IMPLEMENT_FALLOW {
+					do implement_fallow;
+				}
+				match ACT_INSTALL_DUMPHOLES {
+					do install_dumpholes;
+				}
+				match ACT_PESTICIDE_REDUCTION {
+					do pesticide_reducing;
+				}
+				match ACT_SENSIBILIZATION {
+					do sensibilization;
+				}
+				match ACT_SUPPORT_MANURE {
+					do support_manure_buying(player_actions_turn[act][LEVEL] = "high");
+				}
+				match ACTION_COLLECTIVE_ACTION {
+					do trimestrial_collective_action(player_actions_turn[act][LEVEL] = "high");
+				}
+				
 			}
 		}
 	}
@@ -351,11 +412,13 @@ species village {
 			save to_save to: village_action_log_path type: text rewrite: false;
 		}
 		index_player <- index_player + 1;
-		if index_player < length(village) {
-			ask village[index_player] {
-				do start_turn;
-			}
-		} 
+		if not without_player {
+			if index_player < length(village) {
+				ask village[index_player] {
+					do start_turn;
+				}
+			} 
+		}
 	}
 	//9:ACT_END_TURN,
 	action end_of_turn {
@@ -368,41 +431,49 @@ species village {
 	action start_turn {
 		start_turn_time <- machine_time;
 		 
-		ask world {do update_display;do resume;}
+		if not without_player{ask world {do update_display;do resume;}}
 		
 		ask plots {
 			use_more_manure_strong <- false;
 			use_more_manure_weak <- false;
 			does_implement_fallow <- false;
 		}
-		do tell(PLAYER + " " + (index_player + 1) + " " + TURN);
+		string chosen_waste_collection_freq <- "";
 		int collect_per_week_weak <- length(days_collects_weak);
 		int collect_per_week_strong <- length(days_collects_strong);
 		int collect_per_week_ultimate <- length(days_collects_ultimate);
-		string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : (strong_collection_policy ? collect_per_week_strong : collect_per_week_ultimate)) + " " + PER_WEEK;
-		map result;
-		
-		list<string> possibilities <- budget >=  token_ultimate_waste_collection ? [""+collect_per_week_weak +" " + PER_WEEK,""+collect_per_week_strong +" " + PER_WEEK, ""+collect_per_week_ultimate +" " + PER_WEEK] : (budget >=  token_strong_waste_collection ? [""+collect_per_week_weak +" " + PER_WEEK,""+collect_per_week_strong +" " + PER_WEEK] : [""+collect_per_week_weak +" " + PER_WEEK]);
-		if not(current_val in possibilities) {
-			current_val <- first(possibilities);
-		}
-		if treatment_facility_year = 0 {
-			result <- user_input_dialog(PLAYER +" " + (index_player + 1)+" - " + WASTE_MANAGEMENT_POLCITY,[choose(CHOOSE_WASTE_COLLECTION_FREQ,string,current_val, possibilities)]);
-		
+		treatment_facility_is_activated <- false;
+		if not without_player{
+			do tell(PLAYER + " " + (index_player + 1) + " " + TURN);
+			string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : (strong_collection_policy ? collect_per_week_strong : collect_per_week_ultimate)) + " " + PER_WEEK;
+			map result;
+			
+			list<string> possibilities <- budget >=  token_ultimate_waste_collection ? [""+collect_per_week_weak +" " + PER_WEEK,""+collect_per_week_strong +" " + PER_WEEK, ""+collect_per_week_ultimate +" " + PER_WEEK] : (budget >=  token_strong_waste_collection ? [""+collect_per_week_weak +" " + PER_WEEK,""+collect_per_week_strong +" " + PER_WEEK] : [""+collect_per_week_weak +" " + PER_WEEK]);
+			if not(current_val in possibilities) {
+				current_val <- first(possibilities);
+			}
+			if treatment_facility_year = 0 {
+				result <- user_input_dialog(PLAYER +" " + (index_player + 1)+" - " + WASTE_MANAGEMENT_POLCITY,[choose(CHOOSE_WASTE_COLLECTION_FREQ,string,current_val, possibilities)]);
+			
+			} else {
+				result <- user_input_dialog(PLAYER +" " + (index_player + 1)+" - " + WASTE_MANAGEMENT_POLCITY,[
+					choose(CHOOSE_WASTE_COLLECTION_FREQ,string,current_val,possibilities),
+					choose(WISH_PAY_TREATMENT_FACILITY_MAINTENANCE,bool,true, [true,false]) 
+				]);
+				treatment_facility_is_activated <- bool(result[WISH_PAY_TREATMENT_FACILITY_MAINTENANCE]);
+				
+			}
+			chosen_waste_collection_freq <- result[CHOOSE_WASTE_COLLECTION_FREQ];
 		} else {
-			result <- user_input_dialog(PLAYER +" " + (index_player + 1)+" - " + WASTE_MANAGEMENT_POLCITY,[
-				choose(CHOOSE_WASTE_COLLECTION_FREQ,string,current_val,possibilities),
-				choose(WISH_PAY_TREATMENT_FACILITY_MAINTENANCE,bool,true, [true,false]) 
-			]);
-			treatment_facility_is_activated <- bool(result[WISH_PAY_TREATMENT_FACILITY_MAINTENANCE]);
-			if true {actions_done_this_year << PAY_TRAETMENT_FACILITY_MAINTENANCE;}
-		
-			if treatment_facility_is_activated {budget <- budget - token_install_filter_for_homes_maintenance;}
-		
+			chosen_waste_collection_freq <- (""+ player_collect_policy[turn -1] +" " + PER_WEEK);
+			treatment_facility_is_activated <- (treatment_facility_year > 0) and player_traitement_facility_maintenance[turn - 1];
 		}
-		actions_done_this_year << result[CHOOSE_WASTE_COLLECTION_FREQ] ;
-		weak_collection_policy <- result[CHOOSE_WASTE_COLLECTION_FREQ] = ""+collect_per_week_weak +" " + PER_WEEK;
-		strong_collection_policy <- result[CHOOSE_WASTE_COLLECTION_FREQ] = ""+collect_per_week_strong +" " + PER_WEEK;
+		if treatment_facility_is_activated {actions_done_this_year << PAY_TRAETMENT_FACILITY_MAINTENANCE;}
+		if treatment_facility_is_activated {budget <- budget - token_install_filter_for_homes_maintenance;}
+			
+		actions_done_this_year << chosen_waste_collection_freq; 
+		weak_collection_policy <- chosen_waste_collection_freq = (""+collect_per_week_weak +" " + PER_WEEK);
+		strong_collection_policy <-chosen_waste_collection_freq= (""+collect_per_week_strong +" " + PER_WEEK);
 		
 		budget <- budget - (weak_collection_policy ? token_weak_waste_collection :(strong_collection_policy ? token_strong_waste_collection : token_ultimate_waste_collection));
 		ask collection_teams {collection_days <- myself.weak_collection_policy ? days_collects_weak : (myself.strong_collection_policy ? days_collects_strong : days_collects_ultimate);}
