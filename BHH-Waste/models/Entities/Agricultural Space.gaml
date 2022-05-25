@@ -59,9 +59,7 @@ species plot {
 		
 		practice_water_pollution_level <- water_waste_day;
 		
-		if use_more_manure_strong {
-			practice_water_pollution_level <- practice_water_pollution_level * (1 + impact_support_manure_buying_waste_strong);
-		}
+	
 		if use_more_manure_weak {
 			practice_water_pollution_level <- practice_water_pollution_level * (1 + impact_support_manure_buying_waste_weak);
 		}
