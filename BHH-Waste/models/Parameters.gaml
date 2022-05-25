@@ -163,11 +163,11 @@ global {
 	
 	int token_pesticide_reducing <- 40; //
 	float impact_pesticide_reducing_production  <- 0.1; //decrease of the agricultural production
-	float impact_pesticide_reducing_waste  <- 5.0 ; //decrease waste production from farmers
+	float impact_pesticide_reducing_waste  <- 0.1 ; //decrease waste production from farmers
 	
 	int token_implement_fallow <- 40; //per year
-	float impact_implement_fallow_production  <- 0.33; //decrease the agricultural production
-	float impact_implement_fallow_waste  <- 0.40; //decrease the ground pollution
+	float impact_implement_fallow_production  <- 0.25; //decrease the agricultural production
+	float impact_implement_fallow_waste  <- 0.50; //decrease the ground pollution
 	
 	int token_support_manure_buying_strong <- 40; //per year
 	float impact_support_manure_buying_production_strong  <- 0.13; //improvment of the agricultural production
