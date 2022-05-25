@@ -1,94 +1,94 @@
-VAR_NAME,English,Français,Tiếng Việt
-VILLAGE,village,village,thôn
-DISCUSSION_PHASE,DISCUSSION PHASE,PHASE DE DISCUSSION, THỜI GIAN THẢO LUẬN
-PLAYER_TURN,PLAYER TURN,TOUR DES JOUEURS,LƯỢT CHƠI
-INDICATOR_COMPUTATION,INDICATOR COMPUTATION,CALCUL DES INDICATEURS,TÍNH TOÁN CÁC CHỈ SỐ
-TIME_DISCUSSION_FINISHED,Time for discussion finished!,Temps de discussion terminé!,Hết thời gian thảo luận!
-TIME_PLAYER,Time for Player,Temps pour les joueurs,Thời gian cho người chơi
-FINISHED,finished!,terminé!, hoàn thành!
-LOST,lost,perdus,mất
-GAINED,gained,gagnés,thắng
-FARMS,farms,fermiers,nông dân
-URBAN_HOUSEHOLDS,urban households,ménages urbains,hộ thành thị
-AND,and,et,và
-BUDGET_VILLAGE,the budget of village,le budget du village,ngân sách thôn
-THE_BUDGET,the budget,le budget,ngân sách
-INCREASED_BY,increased by,a augmenté de,tăng thêm
-DECREASED_BY,decreased by,a diminué de,giảm đi
-NOT_EVOLVED,has not evolved,n'a pas évolué,không tiến triển
-TOKENS,tokens,jetons,xu
-AGRICULTURAL_PROD_LOW,The agricultural production is too low,La production agricole est trop faible,Sản lượng nông nghiệp quá thấp
-POLLUTION_TOO_HIGH,The pollution is too high,La pollution est trop élevée,Ô nhiễm ở mức quá cao
-PLAYER,Player,Joueur,Người chơi
-CHOOSE_WASTE_COLLECTION_FREQ,Choose a waste collection frenquency,Choisissez une fréquence de collecte des déchets,Lựa chọn tần suất thu gom rác
-PER_WEEK,per week,par semaine,theo tuần
-WISH_PAY_TREATMENT_FACILITY_MAINTENANCE,Do you wish to pay for the home treatment facility maintenance?,Souhaitez-vous payer l'entretien des installations de filtrage à domicile,Quý vị có sằn sàng trả tiền bảo dưỡng cơ sở xử lý chất thải tại nhà không?
-PAY_TRAETMENT_FACILITY_MAINTENANCE,Pay for treatment facility maintenance,Payer pour l'entretien des installations de filtrage,Trả phí bảo dưỡng cơ sở xử lý rác thải
-TURN,turn,tour,lượt
-WASTE_MANAGEMENT_POLCITY,Waste management policy,Politique de gestion des déchets,Chính sách xử lý rác thải
-END_OF_TURN,End of turn,Fin de tour,Hết vòng
-CONFIRM_END_OF_TURN,do you confirm that you want to end the turn?,Confirmez-vous que vous voulez finir ce tour?,Xác nhận kết thúc vòng chơi?
-NOT_ENOUGH_BUDGET,Not enough budget for,Budget insuffisant pour,Ngân sách không đủ để
-ACT_DRAIN_DREDGE,Drain and dredge,Drainer et draguer,Thoát nước và nạo vét
-ACT_FACILITY_TREATMENT,Install water treatment facilities for every home,Installer des installations de filtrage de l'eau pour chaque maison,Lắp đặt cơ sở xử lý nước thải tại từng nhà
-ACT_SENSIBILIZATION,Organise sensibilization events about waste sorting,Organiser des évènements de sensibilisation au tri des déchets,Tổ chức các buổi hội thảo nâng cao ý thức phân loại rác thải tại trường học
-ACTION_COLLECTIVE_ACTION,Trimestrial collective collect of wastes action,Collecte trimestrielle collective des déchets,Thu rác tập thể theo quý
-ACT_PESTICIDE_REDUCTION,Help farmers to reduce pesticides use,Aider les agriculteurs pour réduire l'utilisation des pesticides,Giúp nông dân hạn chế sử dụng thuốc trừ sâu
-ACT_SUPPORT_MANURE,Help farmer buy manure,Aides pour l’achat d'engrais,Giúp nông dân mua phân bón
-ACT_IMPLEMENT_FALLOW,Put part of the fields in fallow,Mettre une partie des terrains agricoles en jachère,Để hoang một phần ruộng 
-ACT_INSTALL_DUMPHOLES,Making farmers participate in the installation of dumpholes for agricultural products,Installer des puits de collecte des emballages de pesticides pour les agriculteurs,Yêu cầu nông dân tham gia xây dựng các hố chôn nông sản
-ACT_END_OF_TURN,end of turn,fin du tour,hết vòng
-CONFIRM_ACTION,do you confirm that you want to,confirmez-vous que vous voulez,xác nhận muốn
-COST,Cost,Coût,Chi phí
-CANNOT_BE_DONE_TWICE,cannot be done twice,ne peut pas être faite deux fois,không thể thực hiện hai lần
-LOW_FOR,Low for,Faible pour,Thấp cho
-HIGH_FOR,High for,Elevé pour,Cao cho
-LEVEL,Level,Niveau,Mức
-MAX_BUDGET,max budget,budget max,ngân sách tối đa
-ACTION,Action,Action,Hành động
-NUMBER_TOKENS_PLAYER,Number of tokens payed by each player,Nombre de jetons payés par chaque joueur,Số lượng xu đã dùng của mỗi người chơi
-WASTE_POLLUTION,Waste pollution,Pollution par les déchets,Ô nhiễm do rác thải
-VILLAGE_NAME,Village name,Nom du village,Tên thôn
-TIME,time,temps,thời gian
-ENVIRONMENT,ENVIRONMENT,ENVIRONNEMENT,MÔI TRƯỜNG
-HOUSE,house,ménage,nhà
-FIELD,field,champ,ruộng
-CANAL,canal,canal,kênh
-PEOPLE,PEOPLE,INDIVIDUS,NGƯỜI
-URBAN_CITIZEN,Urban citizen,Citadin,Dân thành thị
-FARMER,farmer,fermier,nông dân
-LANDFILL,LANDFILL,DECHARGE,BÃI RÁC
-LOCAL_LANDFILL,local landfill,décharge locale,bãi rác địa phương
-COMMUNAL_LANDFILL,Communal  landfill,décharge communale,bãi rác chung
-TIMER,timer,minuteur,hẹn giờ
-REMAINING_TIME_PLAYER,Remaining time for the Player,Temps restant pour le Joueur,Thời gian còn lại của người chơi
-REMAINING_TIME_DISCUSSION,Remaining time for the discussion,Temps restant pour la discussion,Thời gian thảo luận còn lại
-INFO_ECOLABEL,Info Ecolabel,Info sur l'Ecolabel,Thông tin về Ecolabel
-INFO_DATE,Info date,Info sur la date, Thông tin ngày
-INFO_PLAYERS,Info players,Info sur les joueurs,Thông tin người chơi
-INFO_BUDGET,Info budget,Info sur le budget,Thông tin về ngân sách
-INFO_ACTION,Info actions,Info sur les actions,Thông tin về các hoạt động
-ACTIONS,Actions,Actions,Hoạt động
-STANDARD_ECOLABEL,Meets the standards of the ecolabel,Respect des normes de l'écolabel,Đạt tiêu chuẩn Ecolabel
-NOT_STANDARD_ECOLABEL,Does not meet the standards of the ecolabel!,Ne respect pas les normes de l'Ecolabel!,Không đạt tiêu chuẩn Ecolabel!
-COMMUNE_STANDARD_ECOLABEL,The commune meets the standards of the ecolabel,La commune a respecté les normes de l'Ecolabel,Xã đạt tiêu chuẩn Ecolabel
-COMMUNE_NOT_STANDARD_ECOLABEL,The commune does not meet the standards of the ecolabel!,La commune n'a pas respecté les normes de l'Ecolabel!,Xã không đạt tiêu chuẩn Ecolabel!
-YEAR,year,année,năm
-DAY,day,jour,ngày
-TURN_OF_PLAYER,Turn of player,Tour des joueurs,Lượt của người chơi
-DISCUSSION_STAGE,Discussion phase,Phase de discussion,Phần thảo luận
-SIMULATION_STAGE,Simulation phase,Phase de simulation,Phần mô phỏng
-NUM_FARMERS,Num farmer households,Nombre de ménages en zone agricole,Số hộ làm nông
-NUM_URBANS,Num urban households,Nombre de ménages en zone urbaine,Số hộ thành phố
-SOLID_WASTE_POLLUTION,Solid waste pollution,Pollution par les déchets solides,Ô nhiễm rác thải rắn
-WATER_WASTE_POLLUTION,Water waste pollution,Pollution par les eaux usées,Ô nhiễm nước thải
-TOTAL_POLLUTION,Total pollution,Pollution totale,Tổng ô nhiễm
-ECOLABEL_MAX_POLLUTION,Eco-label max pollution,Pollution max Ecolabel,Ô nhiễm tối đa Ecolabel
-PRODUCTION,production,production,sản xuất
-TOTAL_PRODUCTION,Total production,Production totale,Tổng sản xuất
-ECOLABEL_MIN_PRODUCTION,Eco-label min production,Production min Ecolabel,Sản xuất tối thiểu Ecolabel
-LEGEND,legend,légende,ghi chú
-MAP_SOLID_WASTE,Map of solid waste,Carte des déchets solides,Bản đồ rác thải rắn
-MAP_WATER_WASTE,Map of waster waste,Carte des eaux usées,Bản đồ nước thải
-MAP_TOTAL_WASTE,Map of total pollution,Carte de la pollution totale,Bản đồ tổng ở nhiễm
-MAP_PRODUCTIVITY,Map of agricultural productivity,Carte de la productivité agricole,Bản đồ sản lượng nông nghiệp
+VAR_NAME;English;Français;Tiếng Việt
+VILLAGE;village;village;thôn
+DISCUSSION_PHASE;DISCUSSION PHASE;PHASE DE DISCUSSION; THỜI GIAN THẢO LUẬN
+PLAYER_TURN;PLAYER TURN;TOUR DES JOUEURS;LƯỢT CHƠI
+INDICATOR_COMPUTATION;INDICATOR COMPUTATION;CALCUL DES INDICATEURS;TÍNH TOÁN CÁC CHỈ SỐ
+TIME_DISCUSSION_FINISHED;Time for discussion finished!;Temps de discussion terminé!;Hết thời gian thảo luận!
+TIME_PLAYER;Time for Players;Temps pour les joueurs;Thời gian cho người chơi
+FINISHED;finished!;terminé!; hoàn thành!
+LOST;lost;perdus;mất
+GAINED;gained;gagnés;thắng
+FARMS;Farmers;fermiers;nông dân
+URBAN_HOUSEHOLDS;urban households;ménages urbains;hộ thành thị
+AND;and;et;và
+BUDGET_VILLAGE;the budget of village;le budget du village;ngân sách thôn
+THE_BUDGET;the budget;le budget;ngân sách
+INCREASED_BY;increased by;a augmenté de;tăng thêm
+DECREASED_BY;decreased by;a diminué de;giảm đi
+NOT_EVOLVED;has not evolved;n'a pas évolué;không tiến triển
+TOKENS;tokens;jetons;xu
+AGRICULTURAL_PROD_LOW;The agricultural production is too low;La production agricole est trop faible;Sản lượng nông nghiệp quá thấp
+POLLUTION_TOO_HIGH;The pollution is too high;La pollution est trop élevée;Ô nhiễm ở mức quá cao
+PLAYER;Player;Joueur;Người chơi
+CHOOSE_WASTE_COLLECTION_FREQ;Choose a waste collection frequency;Choisissez une fréquence de collecte des déchets;Lựa chọn tần suất thu gom rác
+PER_WEEK;per week;par semaine;theo tuần
+WISH_PAY_TREATMENT_FACILITY_MAINTENANCE;Do you wish to pay for the water treatment facility maintenance?;Souhaitez-vous payer l'entretien des installations de filtrage à domicile;Quý vị có sằn sàng trả tiền bảo dưỡng cơ sở xử lý chất thải cho các hộ dân không?
+PAY_TRAETMENT_FACILITY_MAINTENANCE;Pay for treatment facility maintenance;Payer pour l'entretien des installations de filtrage;Trả phí bảo dưỡng cơ sở xử lý nước thải
+TURN;Turn;tour;lượt
+WASTE_MANAGEMENT_POLCITY;Waste management policy;Politique de gestion des déchets;Chính sách xử lý rác thải
+END_OF_TURN;End of turn;Fin de tour;Hết vòng
+CONFIRM_END_OF_TURN;Do you confirm to end your turn?;Confirmez-vous que vous voulez finir ce tour?;Xác nhận kết thúc vòng chơi?
+NOT_ENOUGH_BUDGET;Not enough budget for;Budget insuffisant pour;Ngân sách không đủ để
+ACT_DRAIN_DREDGE;Drain and dredge;Drainer et draguer;Thoát nước và nạo vét
+ACT_FACILITY_TREATMENT;Install water treatment facilities for every home;Installer des installations de filtrage de l'eau pour chaque maison;Lắp đặt cơ sở xử lý nước thải cho các hộ dân
+ACT_SENSIBILIZATION;Organise sensibilization events about waste sorting;Organiser des évènements de sensibilisation au tri des déchets;Tổ chức các buổi hội thảo nâng cao ý thức phân loại rác thải tại trường học
+ACTION_COLLECTIVE_ACTION;Trimestrial collective waste collection;Collecte trimestrielle collective des déchets;Thu rác tập thể theo quý
+ACT_PESTICIDE_REDUCTION;Help farmers to reduce pesticides use;Aider les agriculteurs pour réduire l'utilisation des pesticides;Giúp nông dân hạn chế sử dụng thuốc trừ sâu
+ACT_SUPPORT_MANURE;Help farmers to buy manure;Aides pour l’achat d'engrais;Giúp nông dân mua phân bón
+ACT_IMPLEMENT_FALLOW;Put part of the fields in fallow;Mettre une partie des terrains agricoles en jachère;Để hoang một phần ruộng 
+ACT_INSTALL_DUMPHOLES;Make farmers participate in building collection pits for pesticide packagings ;Installer des puits de collecte des emballages de pesticides pour les agriculteurs;Yêu cầu nông dân tham gia xây dựng các bể thu gom và bao bì thuốc sâu
+ACT_END_OF_TURN;End of turn;fin du tour;hết vòng
+CONFIRM_ACTION;Do you confirm to ;confirmez-vous que vous voulez;xác nhận muốn
+COST;Cost;Coût;Chi phí
+CANNOT_BE_DONE_TWICE;Cannot be done twice;ne peut pas être faite deux fois;không thể thực hiện hai lần
+LOW_FOR;Low for;Faible pour;Thấp cho
+HIGH_FOR;High for;Elevé pour;Cao cho
+LEVEL;Level;Niveau;Mức
+MAX_BUDGET;max budget;budget max;ngân sách tối đa
+ACTION;Action;Action;Hành động
+NUMBER_TOKENS_PLAYER;Number of tokens payed by each player;Nombre de jetons payés par chaque joueur;Số lượng xu đã dùng của mỗi người chơi
+WASTE_POLLUTION;Waste pollution;Pollution par les déchets;Ô nhiễm do rác thải
+VILLAGE_NAME;Village name;Nom du village;Tên thôn
+TIME;time;temps;thời gian
+ENVIRONMENT;ENVIRONMENT;ENVIRONNEMENT;MÔI TRƯỜNG
+HOUSE;house;ménage;nhà
+FIELD;field;champ;ruộng
+CANAL;canal;canal;kênh
+PEOPLE;PEOPLE;INDIVIDUS;NGƯỜI
+URBAN_CITIZEN;Urban citizen;Citadin;Dân thành thị
+FARMER;Farmer;fermier;nông dân
+LANDFILL;LANDFILL;DECHARGE;BÃI RÁC
+LOCAL_LANDFILL;Local landfill;décharge locale;bãi rác địa phương
+COMMUNAL_LANDFILL;Communal  landfill;décharge communale;bãi rác chung
+TIMER;Timer;minuteur;hẹn giờ
+REMAINING_TIME_PLAYER;Remaining time for the Player;Temps restant pour le Joueur;Thời gian còn lại của người chơi
+REMAINING_TIME_DISCUSSION;Remaining time for the discussion;Temps restant pour la discussion;Thời gian thảo luận còn lại
+INFO_ECOLABEL;Info Ecolabel;Info sur l'Ecolabel;Thông tin về Ecolabel
+INFO_DATE;Info date;Info sur la date; Thông tin ngày
+INFO_PLAYERS;Info players;Info sur les joueurs;Thông tin người chơi
+INFO_BUDGET;Info budget;Info sur le budget;Thông tin về ngân sách
+INFO_ACTION;Info actions;Info sur les actions;Thông tin về các hoạt động
+ACTIONS;Actions;Actions;Hoạt động
+STANDARD_ECOLABEL;Meets the standards of the ecolabel;Respecte les normes de l'écolabel;Đạt tiêu chuẩn Ecolabel
+NOT_STANDARD_ECOLABEL;Does not meet the standards of the ecolabel!;Ne respecte pas les normes de l'Ecolabel!;Không đạt tiêu chuẩn Ecolabel!
+COMMUNE_STANDARD_ECOLABEL;The commune meets the standards of the ecolabel;La commune a respecté les normes de l'Ecolabel;Xã đạt tiêu chuẩn Ecolabel
+COMMUNE_NOT_STANDARD_ECOLABEL;The commune does not meet the standards of the ecolabel!;La commune n'a pas respecté les normes de l'Ecolabel!;Xã không đạt tiêu chuẩn Ecolabel!
+YEAR;year;année;năm
+DAY;day;jour;ngày
+TURN_OF_PLAYER;Turn of player;Tour des joueurs;Lượt của người chơi
+DISCUSSION_STAGE;Discussion phase;Phase de discussion;Phần thảo luận
+SIMULATION_STAGE;Simulation phase;Phase de simulation;Phần mô phỏng
+NUM_FARMERS;Num farmer households;Nombre de ménages en zone agricole;Số hộ làm nông
+NUM_URBANS;Num urban households;Nombre de ménages en zone urbaine;Số hộ thành phố
+SOLID_WASTE_POLLUTION;Solid waste pollution;Pollution par les déchets solides;Ô nhiễm rác thải rắn
+WATER_WASTE_POLLUTION;Waste water pollution;Pollution par les eaux usées;Ô nhiễm nước thải
+TOTAL_POLLUTION;Total pollution;Pollution totale;Tổng ô nhiễm
+ECOLABEL_MAX_POLLUTION;Eco-label max pollution;Pollution max Ecolabel;Ô nhiễm tối đa Ecolabel
+PRODUCTION;production;production;sản lượng
+TOTAL_PRODUCTION;Total production;Production totale;Tổng sản lượng 
+ECOLABEL_MIN_PRODUCTION;Eco-label min production;Production min Ecolabel;Sản lượng tối thiểu Ecolabel
+LEGEND;legend;légende;ghi chú
+MAP_SOLID_WASTE;Map of solid waste;Carte des déchets solides;Bản đồ rác thải rắn
+MAP_WATER_WASTE;Map of waster waste;Carte des eaux usées;Bản đồ nước thải
+MAP_TOTAL_WASTE;Map of total pollution;Carte de la pollution totale;Bản đồ tổng ô nhiễm
+MAP_PRODUCTIVITY;Map of agricultural productivity;Carte de la productivité agricole;Bản đồ sản lượng nông nghiệp
