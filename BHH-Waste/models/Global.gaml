@@ -37,7 +37,7 @@ global {
 	
 	bool without_player <- false; //for testing
 	bool without_actions <- false;
-	bool load_player_actions <- false;
+	file players_actions_to_load <- nil;
 	list<list<map<string,map>>> players_actions <- nil;
 	list<list<int>> players_collect_policy <- nil;
 	list<list<bool>> players_traitement_facility_maintenance <- nil;
@@ -51,6 +51,7 @@ global {
 	bool draw_territory <- false;
 	
 	map<string,string> to_english;
+	map<string,string> from_english;
 	//string type_of_map_display <- MAP_SOLID_WASTE;// category: "Display" among: ["Map of solid waste", "Map of waster waste", "Map of total pollution", "Map of agricultural productivity"] parameter: "Type of map display" ;//on_change: update_display;
 	string stage <-COMPUTE_INDICATORS;
 	
@@ -114,7 +115,7 @@ global {
 	/********************** INITIALIZATION OF THE GAME ****************************/
 
 	init {
-		if not without_player{do load_language;}
+		if not without_player and (players_actions_to_load = nil){do load_language;}
 		do generate_info_action;
 		name <- GAME_NAME;
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
@@ -149,16 +150,21 @@ global {
 	}
 	action load_language {
 		matrix mat <- matrix(translation_game_csv_file);
-		int index_col <- max(1, (mat row_at 0) index_of (langage));
 		int index_english <- max(1, (mat row_at 0) index_of ("English"));
+		int index_col <- max(1, (mat row_at 0) index_of (langage));
+		
 		loop i from: 1 to: mat.rows -1 {
 			string word_tlan <- mat[index_col,i];
 			string word_eng <- mat[index_english,i];
 			shape.attributes[mat[0,i]] <- mat[index_col,i];
 			to_english[word_tlan] <-word_eng; 
+			from_english[word_eng] <-word_tlan; 
 		}
 	}
 	
+	action load_actions_file {
+		
+	}
 	
 	action update_display {
 		if (stage = PLAYER_ACTION_TURN) {
@@ -298,7 +304,7 @@ global {
 				myself.collection_teams << self;
 			}
 			budget <- world.compute_budget(length(inhabitants), length(farmers), days_with_ecolabel);
-			if without_player and not without_actions {
+			if without_player and not without_actions and players_actions_to_load = nil{
 				int id <- int(self);
 				player_actions <- players_actions = nil ? nil : players_actions[id];
 				player_collect_policy <- players_collect_policy = nil ? nil : players_collect_policy[id];

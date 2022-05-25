@@ -14,6 +14,14 @@ import "Abstract experiments.gaml"
   
  
  
+experiment replay_simulation parent: base_debug type: gui {
+	action _init_ {
+		create simulation with:(
+			without_player : true,
+			without_actions : false,
+			players_actions_to_load : csv_file("../../results/2022_5_25-14_53/village_action.csv", ",", true));
+	}
+}
 experiment simulation_without_players parent: base_debug type: gui {
 	action _init_ {
 		create simulation with:(
