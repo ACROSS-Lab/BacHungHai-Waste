@@ -184,7 +184,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 		}
 		display "Player 1"  background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
 			
-			chart WASTE_POLLUTION size:{0.8, 0.4} position: {0.2, 0.0} type: xy background: #black color: #white {
+			chart WASTE_POLLUTION size:{0.8, 0.4} position: {0.2, 0.0} type: xy background: #black color: #white y_range:[0,125000]{
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village1_solid_pollution_values])) color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village1_water_pollution_values])) color: #orange marker: false thickness: 2.0 ;
 		 
@@ -198,7 +198,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 		}
 		
 		display "Player 2"  background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
-			chart WASTE_POLLUTION type: xy size:{0.8, 0.5} position: {0.2, 0.0}  background: #black color: #white {
+			chart WASTE_POLLUTION type: xy size:{0.8, 0.5} position: {0.2, 0.0}  background: #black color: #white  y_range:[0,125000]{
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village2_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village2_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 		 
@@ -212,7 +212,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 		}
 		
 		display "Player 3"  axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
-			chart WASTE_POLLUTION type: xy  size:{0.8, 0.5} position: {0.2, 0.0} background: #black color: #white  {
+			chart WASTE_POLLUTION type: xy  size:{0.8, 0.5} position: {0.2, 0.0} background: #black color: #white  y_range:[0,125000]{
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village3_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village3_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
@@ -224,7 +224,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 			}
 		}
 		display "Player 4" axes: false background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){ 
-			chart WASTE_POLLUTION  type: xy size:{0.8, 0.5} position: {0.2, 0.0} background: #black color: #white  {
+			chart WASTE_POLLUTION  type: xy size:{0.8, 0.5} position: {0.2, 0.0} background: #black color: #white  y_range:[0,125000]{
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village4_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village4_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
