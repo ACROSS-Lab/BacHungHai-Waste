@@ -261,7 +261,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 		 		data TOTAL_POLLUTION value:rows_list(matrix([time_step,total_pollution_values])) color:is_pollution_ok ? #green: #red marker: false thickness: 2.0;
 		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: #white marker: false thickness: 2.0 ;
 			}
-			chart PRODUCTION type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[900,2000]{
+			chart PRODUCTION type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[0,3000]{
 				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: is_production_ok ? #green : #red thickness: 2.0 marker: false; 
 				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: 2.0 color: #white marker: false; 
 			}
@@ -282,7 +282,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village1_water_pollution_values])) color: #orange marker: false thickness: 2.0 ;
 		 
 			} 
-			chart PRODUCTION type: xy position:{0.2, 0.5} size:{0.8, 0.5} background: #black color: #white  y_range:[0,1000]{
+			chart PRODUCTION type: xy position:{0.2, 0.5} size:{0.8, 0.5} background: #black color: #white  y_range:[0,2000]{
 				data PRODUCTION value:rows_list(matrix([time_step,village1_production_values])) color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics LEGEND {	
@@ -296,7 +296,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village2_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 		 
 			}
-			chart PRODUCTION type: xy position:{0.2, 0.5} size:{0.8, 0.5} background: #black color: #white  y_range:[0,1000]{
+			chart PRODUCTION type: xy position:{0.2, 0.5} size:{0.8, 0.5} background: #black color: #white  y_range:[0,2000]{
 				data PRODUCTION value:rows_list(matrix([time_step,village2_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics LEGEND {	
@@ -309,7 +309,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village3_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village3_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
-			chart PRODUCTION type: xy position:{0.2, 0.5}  size:{0.8, 0.5} background: #black color: #white  y_range:[0,1000]{
+			chart PRODUCTION type: xy position:{0.2, 0.5}  size:{0.8, 0.5} background: #black color: #white  y_range:[0,2000]{
 				data PRODUCTION value:rows_list(matrix([time_step,village3_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics LEGEND {	
@@ -321,7 +321,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,village4_solid_pollution_values]))  color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value:rows_list(matrix([time_step,village4_water_pollution_values]))   color: #orange marker: false thickness: 2.0 ;
 			}
-			chart  PRODUCTION type: xy  position:{0.2, 0.5}  size:{0.8, 0.5} background: #black color: #white y_range:[0,1000]{
+			chart  PRODUCTION type: xy  position:{0.2, 0.5}  size:{0.8, 0.5} background: #black color: #white y_range:[0,2000]{
 				data PRODUCTION value:rows_list(matrix([time_step,village4_production_values]))  color: #blue marker: false thickness: 2.0 ; 
 			}
 			graphics LEGEND {	

@@ -63,8 +63,8 @@ global {
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 1380.0;
-	float max_pollution_ecolabel <- 320000.0;
+	float min_production_ecolabel <- 1000.0;
+	float max_pollution_ecolabel <- 260000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
@@ -94,11 +94,11 @@ global {
 	
 	float factor_productivity <- 1000000.0;
 	
-	float field_initial_productivity <- 100/factor_productivity; // initial productivity of fields;
+	float field_initial_productivity <- 150/factor_productivity; // initial productivity of fields;
 	float distance_to_canal_for_pollution_impact <- 50 #m; //all the fields at this distance are impacted by the canal pollution
-	float canal_solid_waste_pollution_impact_rate <- 0.008 / factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
-	float canal_water_waste_pollution_impact_rate <- 0.015/ factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
-	float ground_solid_waste_pollution_impact_rate <- 0.04 / factor_productivity; //production (yield) = production  - (sum solid pollution on cell * pollution_impact_rate)
+	float canal_solid_waste_pollution_impact_rate <- 0.1 / factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
+	float canal_water_waste_pollution_impact_rate <- 0.1/ factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
+	float ground_solid_waste_pollution_impact_rate <- 0.1 / factor_productivity; //production (yield) = production  - (sum solid pollution on cell * pollution_impact_rate)
 	float ground_water_waste_pollution_impact_rate <- 0.1/ factor_productivity; //production (yield) = production  - (sum water pollution on cell * pollution_impact_rate)
 	
 	float quantity_from_local_to_communal_landfill <- 350.0; //quantity of solid waste transfert to communal landfill every day for each local landfill 
@@ -117,10 +117,10 @@ global {
 	float ground_solid_pollution_reducing_day <- 0.001; //quantity of the solid water pollution that disapear every day
 	
 	float water_waste_filtering_inhabitants <- 0.2 min: 0.0 max: 1.0; // part of the water waste produced per inhabitants that are filtered
-	float water_waste_year_inhabitants <- 90000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
-	float solid_waste_year_inhabitants <-  200.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
+	float water_waste_year_inhabitants <- 150000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
+	float solid_waste_year_inhabitants <-  125.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
-	float water_waste_year_farmers <- 30000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
+	float water_waste_year_farmers <- 50000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
 	float solid_waste_year_farmers <-  50.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
 	
 	float part_solid_waste_canal_inhabitants <- 0.6; // proportion of solid waste throw in the canal per people living in urban area; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
@@ -137,7 +137,7 @@ global {
 	int token_weak_waste_collection <- 30; //tokens/year - cost of "weak collection"
 	int token_strong_waste_collection <- 50; //tokens/year - cost of "strong collection"
 	int token_ultimate_waste_collection <- 90; //tokens/year - cost of "ultimate collection"
-	float collection_team_collection_capacity_day <- 420.0; //quantity of solid waste remove during 1 day of work
+	float collection_team_collection_capacity_day <- 300.0; //quantity of solid waste remove during 1 day of work
 	
 	list<int> days_collects_weak <- [2,5] ; //day of collects - 1 = monday, 7 = sunday
 	list<int> days_collects_strong <- [1, 3, 5,  7] ; //day of collects - 1 = monday, 7 = sunday
@@ -169,7 +169,7 @@ global {
 	
 	int token_implement_fallow <- 40; //per year
 	float impact_implement_fallow_production  <- 0.25; //decrease the agricultural production
-	float impact_implement_fallow_waste  <- 0.50; //decrease the ground pollution
+	float impact_implement_fallow_waste  <- 100.0; //decrease the ground pollution
 	
 	int token_support_manure_buying_strong <- 40; //per year
 	float impact_support_manure_buying_production_strong  <- 0.13; //improvment of the agricultural production
