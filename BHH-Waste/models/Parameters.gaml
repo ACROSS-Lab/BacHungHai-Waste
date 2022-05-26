@@ -118,10 +118,10 @@ global {
 	
 	float water_waste_filtering_inhabitants <- 0.2 min: 0.0 max: 1.0; // part of the water waste produced per inhabitants that are filtered
 	float water_waste_year_inhabitants <- 150000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
-	float solid_waste_year_inhabitants <-  125.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
+	float solid_waste_year_inhabitants <-  100.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
 	float water_waste_year_farmers <- 50000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
-	float solid_waste_year_farmers <-  50.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
+	float solid_waste_year_farmers <-  80.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
 	
 	float part_solid_waste_canal_inhabitants <- 0.6; // proportion of solid waste throw in the canal per people living in urban area; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
 	float part_water_waste_canal_inhabitants <- 1.0;// proportion of water waste throw in the canal per people living in urban area; (1 - part_water_waste_canal_inhabitants) is throw on the ground
@@ -165,7 +165,7 @@ global {
 	
 	int token_pesticide_reducing <- 40; //
 	float impact_pesticide_reducing_production  <- 0.1 min: 0.0 max: 1.0; //decrease of the agricultural production
-	float impact_pesticide_reducing_waste  <- 0.1 min: 0.0 max: 1.0; //decrease waste production from farmers
+	float impact_pesticide_reducing_waste  <- 0.50 min: 0.0 max: 1.0; //decrease waste production from farmers
 	
 	int token_implement_fallow <- 40; //per year
 	float part_of_plots_in_fallow  <- 0.25 min: 0.0 max: 1.0; //decrease the agricultural production
@@ -179,7 +179,7 @@ global {
 	
 	
 	int token_installation_dumpholes <- 40; //
-	float impact_installation_dumpholes  <- 0.7 min: 0.0 max: 1.0; //decreasse the quantity of solid waste produced by people outside of urban areas (farmers)
+	float impact_installation_dumpholes  <- 0.50 min: 0.0 max: 1.0; //decreasse the quantity of solid waste produced by people outside of urban areas (farmers)
 	
 	float sensibilisation_function(float x) { //function that returns the coefficient of solid production according to the environmental_sensibility of inahbitants 'x'
 		return (1 - 2/(1 +exp(x/2)));

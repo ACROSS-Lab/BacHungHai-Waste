@@ -83,6 +83,14 @@ species plot {
 		
 	}
 	
+	float impact_lf;
+	float impact_cl;
+	
+	float impact_sg;
+	float impact_wg;
+	
+	float impact_cs;
+	float impact_cw;
 
 	action compute_production {
 		current_productivity <- base_productivity;
@@ -103,20 +111,28 @@ species plot {
 			current_productivity <- current_productivity * (1 + impact_drain_dredge_agriculture_weak);
 		}
 		if (the_local_landfill != nil) {
+			impact_lf <- the_local_landfill.waste_quantity * local_landfill_waste_pollution_impact_rate;
 			current_productivity <- current_productivity - the_local_landfill.waste_quantity * local_landfill_waste_pollution_impact_rate;
 		}
 		if (the_communal_landfill != nil) {
+			impact_lf <- 100/ base_productivity * the_communal_landfill.waste_quantity * communal_landfill_waste_pollution_impact_rate;
 			current_productivity <- current_productivity - the_communal_landfill.waste_quantity * communal_landfill_waste_pollution_impact_rate;
 		}
 		float solid_ground_pollution <- my_cells sum_of each.solid_waste_level;
 		if (solid_ground_pollution > 0) {
+			impact_sg <-  100/ base_productivity * solid_ground_pollution * ground_solid_waste_pollution_impact_rate;
+			
 			current_productivity <- current_productivity - solid_ground_pollution * ground_solid_waste_pollution_impact_rate;
 		}
 		float water_ground_pollution <- my_cells sum_of each.water_waste_level;
-		if (solid_ground_pollution > 0) {
+		if (water_ground_pollution > 0) {
+			impact_wg <-  100/ base_productivity * water_ground_pollution * ground_water_waste_pollution_impact_rate;
 			current_productivity <- current_productivity - water_ground_pollution * ground_water_waste_pollution_impact_rate;
 		}
 		if impacted_by_canal {
+			 impact_cs <- 100/ base_productivity * closest_canal.solid_waste_level * canal_solid_waste_pollution_impact_rate;
+			 impact_cw <- 100/ base_productivity * closest_canal.water_waste_level * canal_water_waste_pollution_impact_rate;
+			
 			current_productivity <- current_productivity - closest_canal.solid_waste_level * canal_solid_waste_pollution_impact_rate; 
 			current_productivity <- current_productivity - closest_canal.water_waste_level * canal_water_waste_pollution_impact_rate; 
 		}
