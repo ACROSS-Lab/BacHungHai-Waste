@@ -8,12 +8,11 @@
 
  
 model Debug
-
   
-import "Abstract experiments.gaml"
+import "Abstract experiments.gaml" 
   
  
- 
+  
 experiment replay_simulation parent: base_debug type: gui {
 	action _init_ {
 		create simulation with:(
@@ -26,7 +25,7 @@ experiment simulation_without_players parent: base_debug type: gui {
 	action _init_ {
 		create simulation with:(
 			without_player : true,
-			without_actions : false,
+			without_actions : true,
 			
 			
 	//POSSIBLE ACTIONS : ACTION_COLLECTIVE_ACTION, ACT_DRAIN_DREDGE, ACT_FACILITY_TREATMENT, ACT_IMPLEMENT_FALLOW, ACT_INSTALL_DUMPHOLES, ACT_PESTICIDE_REDUCTION, ACT_SENSIBILIZATION, ACT_SUPPORT_MANURE
@@ -261,7 +260,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 		 		data TOTAL_POLLUTION value:rows_list(matrix([time_step,total_pollution_values])) color:is_pollution_ok ? #green: #red marker: false thickness: 2.0;
 		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: #white marker: false thickness: 2.0 ;
 			}
-			chart PRODUCTION type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[0,3000]{
+			chart PRODUCTION type: xy position:{0.0, 0.5}  size:{1.0, 0.5} background: #black color: #white y_range:[0,6000]{
 				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: is_production_ok ? #green : #red thickness: 2.0 marker: false; 
 				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: 2.0 color: #white marker: false; 
 			}
@@ -336,7 +335,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 
 experiment simulation_graphic parent: abstract_debug type: gui {
 	action _init_ {
-		create simulation with:(without_player:true);
+		create simulation with:(without_player:true, without_actions:true);
 	}
 	output{
 		display map type: opengl parent: map_abstract  background: #black axes: false refresh: stage = COMPUTE_INDICATORS or to_refresh {}

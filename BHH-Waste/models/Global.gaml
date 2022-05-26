@@ -255,9 +255,9 @@ global {
 		ask urban_area {
 			list<geometry> geoms <- to_squares (shape,house_size);
 			int nb <- 0;
-			village v <- first(village overlapping self);
+			village v <- first(village overlapping location);
 			if v = nil{
-				v <- village closest_to self;
+				v <- village closest_to location;
 			}
 				
 			v.urban_areas << self;
@@ -362,7 +362,7 @@ global {
 			create collection_team with:(my_village:self) {
 				myself.collection_teams << self;
 			}
-			budget <- world.compute_budget(length(inhabitants), length(farmers), days_with_ecolabel);
+			budget <- world.compute_budget(length(inhabitants), length(farmers), production_level, days_with_ecolabel);
 			if without_player and not without_actions and players_actions_to_load = nil{
 				int id <- int(self);
 				player_actions <- players_actions = nil ? nil : players_actions[id];
@@ -592,25 +592,27 @@ global {
 						create_inhabitant_day <- rnd(2,363);	
 					}
 					list<plot> neighbors_plot <- myself.plots at_distance 0.1;
+					
 					if not empty(neighbors_plot) {
 						int target_pop <- round(population *(1 + min_increase_urban_area_population_year)) -  (houses count each.inhabitant_to_create);
+						
 						loop while: not empty(neighbors_plot) and population <target_pop {
 							plot p <- one_of(neighbors_plot);
-							p >> neighbors_plot;
+							neighbors_plot >> p;
 							if (dead(p)) {break;}
 							geometry shape_plot <- copy(p.shape);
 							ask my_villages {farmers >> p.the_farmer; plots >> p;}
 							shape <- shape + shape_plot;
 							ask p.the_farmer {do die;}
 							ask p {do die;}
-							list<geometry> geoms <- to_squares (p,house_size);
+							list<geometry> geoms <- to_squares (shape_plot,house_size);
 							create house from: geoms {
 								inhabitant_to_create <- true;
 								create_inhabitant_day <- rnd(2,363);
-								my_village <- first(village overlapping self);
+								my_village <- first(village overlapping location);
 								myself.houses << self;
 								if my_village = nil{
-									my_village <- village closest_to self;
+									my_village <- village closest_to location;
 								}
 							}
 							population <- population - 1 ;
