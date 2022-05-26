@@ -63,13 +63,13 @@ global {
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 1500.0;
+	float min_production_ecolabel <- 1450.0;
 	float max_pollution_ecolabel <- 285000.0;
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
 	int base_budget_year_per_village <- 90; // total buget per year for a village (in token):
-	float min_increase_urban_area_population_year <- 0.20 ; //min increase of urban area per year (in terms of number of people)
+	float min_increase_urban_area_population_year <- 0.30 ; //min increase of urban area per year (in terms of number of people)
 	
 	int compute_budget(int urban_pop, int agricultural_pop, float production_level, int day_ecolabel) {
 		//return  base_budget_year_per_village + round((urban_pop + agricultural_pop) / 30) ;
@@ -97,9 +97,9 @@ global {
 	
 	float field_initial_productivity <- 300/factor_productivity; // initial productivity of fields;
 	float distance_to_canal_for_pollution_impact <- 50 #m; //all the fields at this distance are impacted by the canal pollution
-	float canal_solid_waste_pollution_impact_rate <- 0.07 / factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
-	float canal_water_waste_pollution_impact_rate <- 0.07/ factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
-	float ground_solid_waste_pollution_impact_rate <- 0.6 / factor_productivity; //production (yield) = production  - (sum solid pollution on cell * pollution_impact_rate)
+	float canal_solid_waste_pollution_impact_rate <- 0.1/ factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
+	float canal_water_waste_pollution_impact_rate <- 0.1/ factor_productivity; //production (yield) = production  - (pollution of the surrounding canal * pollution_impact_rate)
+	float ground_solid_waste_pollution_impact_rate <- 0.6/ factor_productivity; //production (yield) = production  - (sum solid pollution on cell * pollution_impact_rate)
 	float ground_water_waste_pollution_impact_rate <- 0.6/ factor_productivity; //production (yield) = production  - (sum water pollution on cell * pollution_impact_rate)
 	
 	float quantity_from_local_to_communal_landfill <- 350.0; //quantity of solid waste transfert to communal landfill every day for each local landfill 
@@ -151,7 +151,7 @@ global {
 	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.0  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	
 	int token_drain_dredge_strong <- 50; //per action
-	float impact_drain_dredge_waste_strong <- 0.25 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
+	float impact_drain_dredge_waste_strong <- 0.30 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
 	float impact_drain_dredge_agriculture_strong <- 0.0 min: 0.0 max: 1.0; //improvment of the agricultural production
 	int token_drain_dredge_weak <- round(token_drain_dredge_strong/2.0) ; //per action
 	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.0 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
@@ -175,7 +175,7 @@ global {
 	float part_of_plots_in_fallow  <- 0.25 min: 0.0 max: 1.0; //decrease the agricultural production
 	
 	int token_support_manure_buying_strong <- 40; //per year
-	float impact_support_manure_buying_production_strong  <- 0.13 min: 0.0 max: 1.0; //improvment of the agricultural production
+	float impact_support_manure_buying_production_strong  <- 0.30 min: 0.0 max: 1.0; //improvment of the agricultural production
 	float impact_support_manure_buying_waste_strong  <- 0.1 min: 0.0 max: 1.0; //increase wastewater production
 	int token_support_manure_buying_weak <- round(token_support_manure_buying_strong/2); //per year
 	float impact_support_manure_buying_production_weak  <- impact_support_manure_buying_production_strong/2.0 min: 0.0 max: 1.0; //improvment of the agricultural production

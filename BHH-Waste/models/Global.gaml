@@ -591,13 +591,13 @@ global {
 					ask (houses where each.inhabitant_to_create) {
 						create_inhabitant_day <- rnd(2,363);	
 					}
-					list<plot> neighbors_plot <- myself.plots at_distance 0.1;
+					list<plot> neighbors_plot <- (myself.plots at_distance 0.1) sort_by each.shape.area;
 					
 					if not empty(neighbors_plot) {
 						int target_pop <- round(population *(1 + min_increase_urban_area_population_year)) -  (houses count each.inhabitant_to_create);
-						
+						write sample(population) + " " + sample(target_pop);
 						loop while: not empty(neighbors_plot) and population <target_pop {
-							plot p <- one_of(neighbors_plot);
+							plot p <- first(neighbors_plot);
 							neighbors_plot >> p;
 							if (dead(p)) {break;}
 							geometry shape_plot <- copy(p.shape);
@@ -607,6 +607,7 @@ global {
 							ask p {do die;}
 							list<geometry> geoms <- to_squares (shape_plot,house_size);
 							create house from: geoms {
+								target_pop <- target_pop - 1;
 								inhabitant_to_create <- true;
 								create_inhabitant_day <- rnd(2,363);
 								my_village <- first(village overlapping location);
