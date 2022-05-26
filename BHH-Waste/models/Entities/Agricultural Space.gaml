@@ -35,7 +35,7 @@ species plot {
 	float part_solid_waste_canal <- part_solid_waste_canal_farmers;
 	float part_water_waste_canal <- part_water_waste_canal_farmers;
 	bool has_dumphole <- false;
-	
+	float water_waste_pollution;
 	
 	action pollution_due_to_practice { 
 		
@@ -79,6 +79,7 @@ species plot {
 				}
 			}
 		}
+		water_waste_pollution <- my_cells sum_of each.water_waste_level;
 		
 	}
 	
@@ -86,7 +87,7 @@ species plot {
 	action compute_production {
 		current_productivity <- base_productivity;
 		if does_implement_fallow {
-			current_productivity <- current_productivity * (1 - impact_implement_fallow_production);
+			current_productivity <- current_productivity * (1 - part_of_plots_in_fallow);
 		}
 		if use_more_manure_strong {
 			current_productivity <- current_productivity * (1 + impact_support_manure_buying_production_strong);

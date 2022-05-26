@@ -351,9 +351,18 @@ species village {
 					does_implement_fallow <- true;
 				}
 				budget <- budget - token_implement_fallow;
-				ask cells {
-					water_waste_level <- water_waste_level - impact_implement_fallow_waste;
+				list<plot> plot_s <- plot sort_by (-1 * each.water_waste_pollution);
+				float area_t <- (plot_s sum_of each.shape.area) * part_of_plots_in_fallow;
+				loop p over: plot_s {
+					ask p.my_cells {
+						water_waste_level <- 0.0;
+					}
+					area_t <- area_t - p.shape.area;
+					if area_t < 0 {
+						break;
+					}
 				}
+				
 				actions_done_total << ACT_IMPLEMENT_FALLOW;
 				actions_done_this_year << ACT_IMPLEMENT_FALLOW;
 				

@@ -13,7 +13,7 @@ global {
 	/******************* GENERAL PARAMETERS *************************************/
 	
 	string GAME_NAME <- "EcoGame";
-	string langage <- "English";
+	string langage <- "Français";
 	
 	//string langage <- "Tiếng Việt";
 	
@@ -146,41 +146,40 @@ global {
 	int token_trimestrial_collective_action_strong <- 35; //per year
 	int token_trimestrial_collective_action_weak <- round(token_trimestrial_collective_action_strong / 2.0); //per year
 	
-	float impact_trimestrial_collective_action_strong <- 0.25; //part of the solid and water waste remove from the canal
-	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.0; //part of the solid and water waste remove from the canal
+	float impact_trimestrial_collective_action_strong <- 0.25  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
+	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.0  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	
 	int token_drain_dredge_strong <- 50; //per action
-	float impact_drain_dredge_waste_strong <- 0.25; //part of the solid waste remove from the canal
-	float impact_drain_dredge_agriculture_strong <- 0.035; //improvment of the agricultural production
-	int token_drain_dredge_weak <- round(token_drain_dredge_strong/2.0); //per action
-	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.0; //part of the solid waste remove from the canal
-	float impact_drain_dredge_agriculture_weak <- impact_drain_dredge_agriculture_strong/2.0; //improvment of the agricultural production
+	float impact_drain_dredge_waste_strong <- 0.25 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
+	float impact_drain_dredge_agriculture_strong <- 0.035 min: 0.0 max: 1.0; //improvment of the agricultural production
+	int token_drain_dredge_weak <- round(token_drain_dredge_strong/2.0) ; //per action
+	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.0 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
+	float impact_drain_dredge_agriculture_weak <- impact_drain_dredge_agriculture_strong/2.0 min: 0.0 max: 1.0; //improvment of the agricultural production
 	
 	int token_install_filter_for_homes_construction <- 200 ; //construction
 	int token_install_filter_for_homes_maintenance <- 15; //per year	
 	list<float> treatment_facility_decrease <- [0.30,0.50,0.80]; // impact of treatement facility for year 1, year 2, and after
 	
 	int token_sensibilization <- 20; //each time
-	float impact_sensibilization <- 1.0; //add this value to the environmental sensibility of people leaving in urban areas
+	float impact_sensibilization <- 1.0 min: 0.0; //add this value to the environmental sensibility of people leaving in urban areas
 	
 	int token_pesticide_reducing <- 40; //
-	float impact_pesticide_reducing_production  <- 0.1; //decrease of the agricultural production
-	float impact_pesticide_reducing_waste  <- 0.1 ; //decrease waste production from farmers
+	float impact_pesticide_reducing_production  <- 0.1 min: 0.0 max: 1.0; //decrease of the agricultural production
+	float impact_pesticide_reducing_waste  <- 0.1 min: 0.0 max: 1.0; //decrease waste production from farmers
 	
 	int token_implement_fallow <- 40; //per year
-	float impact_implement_fallow_production  <- 0.25; //decrease the agricultural production
-	float impact_implement_fallow_waste  <- 100.0; //decrease the ground pollution
+	float part_of_plots_in_fallow  <- 0.25 min: 0.0 max: 1.0; //decrease the agricultural production
 	
 	int token_support_manure_buying_strong <- 40; //per year
-	float impact_support_manure_buying_production_strong  <- 0.13; //improvment of the agricultural production
-	float impact_support_manure_buying_waste_strong  <- 0.1; //increase wastewater production
+	float impact_support_manure_buying_production_strong  <- 0.13 min: 0.0 max: 1.0; //improvment of the agricultural production
+	float impact_support_manure_buying_waste_strong  <- 0.1 min: 0.0 max: 1.0; //increase wastewater production
 	int token_support_manure_buying_weak <- round(token_support_manure_buying_strong/2); //per year
-	float impact_support_manure_buying_production_weak  <- impact_support_manure_buying_production_strong/2.0; //improvment of the agricultural production
-	float impact_support_manure_buying_waste_weak  <- impact_support_manure_buying_waste_strong/2.0; //increase wastewater production
+	float impact_support_manure_buying_production_weak  <- impact_support_manure_buying_production_strong/2.0 min: 0.0 max: 1.0; //improvment of the agricultural production
+	float impact_support_manure_buying_waste_weak  <- impact_support_manure_buying_waste_strong/2.0 min: 0.0 max: 1.0; //increase wastewater production
 	
 	
 	int token_installation_dumpholes <- 40; //
-	float impact_installation_dumpholes  <- 0.7; //decreasse the quantity of solid waste produced by people outside of urban areas (farmers)
+	float impact_installation_dumpholes  <- 0.7 min: 0.0 max: 1.0; //decreasse the quantity of solid waste produced by people outside of urban areas (farmers)
 	
 	float sensibilisation_function(float x) { //function that returns the coefficient of solid production according to the environmental_sensibility of inahbitants 'x'
 		return (1 - 2/(1 +exp(x/2)));
