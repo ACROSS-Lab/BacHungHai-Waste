@@ -13,8 +13,8 @@ global {
 	/******************* GENERAL PARAMETERS *************************************/
 	
 	string GAME_NAME <- "EcoGame";
-	string langage <- "Français";
-	
+	string langage <- "Tiếng Việt";
+
 	//string langage <- "Tiếng Việt";
 	
 	
