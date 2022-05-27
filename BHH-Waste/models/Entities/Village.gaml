@@ -49,7 +49,7 @@ species village {
 	
 	
 	action compute_new_budget {
-		budget <- world.compute_budget(length(inhabitants), length(farmers), days_with_ecolabel);
+		budget <- world.compute_budget(length(inhabitants), length(farmers), production_level, days_with_ecolabel);
 		diff_budget <- prev_budget = -1 ? 0 : (budget - prev_budget);
 		prev_budget  <- copy(budget);
 	}
@@ -102,7 +102,7 @@ species village {
 					is_drained_weak <- not strong;
 					float impact_drain_dredge_waste <- strong ? impact_drain_dredge_waste_strong : impact_drain_dredge_waste_weak;
 					ask canals {
-						solid_waste_level <- solid_waste_level * (1 - impact_drain_dredge_waste);
+						//solid_waste_level <- solid_waste_level * (1 - impact_drain_dredge_waste);
 						water_waste_level <- water_waste_level * (1 - impact_drain_dredge_waste);
 					}
 					budget <- budget - token_drain_dredge;
@@ -496,19 +496,18 @@ species village {
 		ask plots {
 			use_more_manure_strong <- false;
 			use_more_manure_weak <- false;
-			does_implement_fallow <- false;
+			does_implement_fallow <- false; 
 		}
 		string chosen_waste_collection_freq <- "";
 		int collect_per_week_weak <- length(days_collects_weak);
 		int collect_per_week_strong <- length(days_collects_strong);
 		int collect_per_week_ultimate <- length(days_collects_ultimate);
-		//treatment_facility_is_activated <- false;
 		if not without_player{
 			do tell(PLAYER + " " + (index_player + 1) + " " + TURN);
 			string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : (strong_collection_policy ? collect_per_week_strong : collect_per_week_ultimate)) + " " + PER_WEEK;
 			map result;
 			
-			list<string> possibilities <- budget >=  token_ultimate_waste_collection ? [""+collect_per_week_weak +" " + PER_WEEK,""+collect_per_week_strong +" " + PER_WEEK, ""+collect_per_week_ultimate +" " + PER_WEEK] : (budget >=  token_strong_waste_collection ? [""+collect_per_week_weak +" " + PER_WEEK,""+collect_per_week_strong +" " + PER_WEEK] : [""+collect_per_week_weak +" " + PER_WEEK]);
+			list<string> possibilities <- (proposed_ultimate and (budget >=  token_ultimate_waste_collection)) ? [""+collect_per_week_weak +" " + PER_WEEK,""+collect_per_week_strong +" " + PER_WEEK, ""+collect_per_week_ultimate +" " + PER_WEEK] : (budget >=  token_strong_waste_collection ? [""+collect_per_week_weak +" " + PER_WEEK,""+collect_per_week_strong +" " + PER_WEEK] : [""+collect_per_week_weak +" " + PER_WEEK]);
 			if not(current_val in possibilities) {
 				current_val <- first(possibilities);
 			}

@@ -40,7 +40,7 @@ species house {
 			my_village.inhabitants << self;
 			closest_canal <- canal closest_to self;
 			my_village.population <- my_village.population  + 1;
-			environmental_sensibility <- first(my_village.inhabitants).environmental_sensibility;
+			environmental_sensibility <- 0.0;//first(my_village.inhabitants).environmental_sensibility;
 			
 			my_village.diff_urban_inhabitants <- my_village.diff_urban_inhabitants + 1;
 		}
