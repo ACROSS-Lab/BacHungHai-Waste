@@ -134,6 +134,7 @@ global {
 	
 	/********************** PARAMETERS RELATED ACTIONS ****************************/
 	
+	bool collect_only_urban_area <- true;
 	bool proposed_ultimate <- false;
 	int token_weak_waste_collection <- 30; //tokens/year - cost of "weak collection"
 	int token_strong_waste_collection <- 50; //tokens/year - cost of "strong collection"
