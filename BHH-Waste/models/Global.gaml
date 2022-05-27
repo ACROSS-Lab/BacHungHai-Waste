@@ -313,6 +313,17 @@ global {
 		ask village {
 			plots <- plots where not dead(each);
 		}
+		using topology(world) {
+			ask plot {
+				the_communal_landfill <- (communal_landfill at_distance distance_to_communal_landfill_for_pollution_impact) closest_to self;
+				the_local_landfill <-   (local_landfill at_distance distance_to_local_landfill_for_pollution_impact) closest_to self;
+				the_communal_landfill_dist <-the_communal_landfill != nil ? location distance_to the_communal_landfill : 1.0;
+				the_local_landfill_dist <-the_local_landfill != nil ? location distance_to the_local_landfill : 1.0;
+				
+			 
+			 
+			}
+		}
 	}
 	
 	action create_plots {
@@ -340,9 +351,7 @@ global {
 				my_house <- cell(location);
 				my_cells <- myself.my_cells;	
 			}
-			the_communal_landfill <- first(communal_landfill at_distance distance_to_communal_landfill_for_pollution_impact);
-			the_local_landfill <- first(local_landfill at_distance distance_to_local_landfill_for_pollution_impact);
-		 	impacted_by_canal <- (self distance_to closest_canal) <= distance_to_canal_for_pollution_impact;
+			impacted_by_canal <- (self distance_to closest_canal) <= distance_to_canal_for_pollution_impact;
 		}
 		
 	}
