@@ -34,7 +34,7 @@ species collection_team {
 				}
 			}
 		}
-		//write sample(waste_collected);
+		write sample(waste_collected);
 		ask my_village.my_local_landfill {
 			waste_quantity <- waste_quantity + waste_collected;
 		}
