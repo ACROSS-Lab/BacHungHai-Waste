@@ -111,8 +111,8 @@ species plot {
 			current_productivity <- current_productivity * (1 + impact_drain_dredge_agriculture_weak);
 		}
 		if (the_local_landfill != nil) {
-			impact_lf <- the_local_landfill.waste_quantity * local_landfill_waste_pollution_impact_rate;
-			current_productivity <- current_productivity - the_local_landfill.waste_quantity * local_landfill_waste_pollution_impact_rate;
+			impact_lf <- ((the_local_landfill.waste_quantity*10) * (local_landfill_waste_pollution_impact_rate));
+			current_productivity <- current_productivity - ((the_local_landfill.waste_quantity*10) * (local_landfill_waste_pollution_impact_rate));
 		}
 		if (the_communal_landfill != nil) {
 			impact_lf <- 100/ base_productivity * the_communal_landfill.waste_quantity * communal_landfill_waste_pollution_impact_rate;
