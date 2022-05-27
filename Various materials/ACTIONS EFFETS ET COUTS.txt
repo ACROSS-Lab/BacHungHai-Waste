@@ -1,22 +1,49 @@
 COUT ET EFFET DES ACTIONS :
-- Collection team : 30 ; 50 ; 90
-	Reduce solid waste
+
+- Collection team : 30 ; 50
+	Reduce solid waste in urban areas
+
 - Trimestrial collective action : 18 ; 35
-	Reduce solid waste
+	Reduce solid waste in canals
+
 - Drain and dredge : 25 ; 50
-	Reduce solid waste and wastewater
-- Home filters : 200 (+15 each year) (ONCE)
-	Reduce wastewater
+	Reduce wastewater in canals
+
+- Home filters : 280 (+10 each year) (ONCE)
+	Reduce wastewater from inhabitants
+
 - Sensibilization : 20
-	Reduce solid waste
+	Reduce solid waste everywhere (long term)
+
 - Pesticides : 40 (ONCE)
-	Reduce solid waste
+	Reduce wastewater in fields
 	Decreases production
+
 - Fallow : 40 
-	Reduce soil pollution 
+	Reduce fields pollution 
 	Decreases production for this year then increases it
+
 - Manure : 20 ; 40
 	Increases production 
-	Increases wastewater
+	Increases wastewater in fields
+
 - Dumpholes : 40 (ONCE)
-	Decreases solid waste
+	Decreases solid waste in fields
+
+
+RENUMEROTATION DES ACTIONS TEMPORALITE D'IMPACT
+
+ACTIONS OBLIGATOIRES
+- Collection teams
+- Maintenance for filters
+
+LONG TERM ACTIONS (taken only once per game)
+- Dumpholes
+- Pesticides
+- Filters for every home
+
+YEARLY ACTIONS (can be chosen every year)
+- Trimestrial collective action
+- Drain and dredge
+- Fallow
+- Support manure
