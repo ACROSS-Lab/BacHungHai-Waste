@@ -40,9 +40,9 @@ species plot {
 	action pollution_due_to_practice { 
 		
 		practice_solid_pollution_level <- has_dumphole ? (solid_waste_day * (1 - impact_installation_dumpholes)): solid_waste_day;
-		if does_reduce_pesticide {
+		/*if does_reduce_pesticide {
 			practice_solid_pollution_level <- practice_solid_pollution_level * (1 - impact_pesticide_reducing_waste);
-		}
+		}*/
 		
 		if practice_solid_pollution_level > 0 {
 			float to_the_canal <- practice_solid_pollution_level * part_solid_waste_canal;
