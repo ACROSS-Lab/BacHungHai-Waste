@@ -81,7 +81,7 @@ global {
 	int data_frequency <- 5;
 	list<rgb> village_color <- [#magenta, #gold, #violet,#orange]; // color for the 4 villages
 	float min_display_waste_value <- 0.2; //just use for display all the pollution cell 
-	float coeff_cell_pollution_display <- 10.0;  //coeff used to define the color of the cell according to the pollution
+	float coeff_cell_pollution_display <- 1000000.0;  //coeff used to define the color of the cell according to the pollution
 	float coeff_visu_canal <- 3.0;  //coeff used to define the color of the canal according to the pollution
 	float coeff_visu_productivity <- 150 /factor_productivity;
 	
