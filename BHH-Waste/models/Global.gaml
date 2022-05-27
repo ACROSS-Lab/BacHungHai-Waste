@@ -253,6 +253,7 @@ global {
 	action create_urban_area {
 		create urban_area from: Limites_urban_areas_shape_file;
 		ask urban_area {
+			my_cells <- cell overlapping self;
 			list<geometry> geoms <- to_squares (shape,house_size);
 			int nb <- 0;
 			village v <- first(village overlapping location);
@@ -312,6 +313,17 @@ global {
 		ask village {
 			plots <- plots where not dead(each);
 		}
+		using topology(world) {
+			ask plot {
+				the_communal_landfill <- (communal_landfill at_distance distance_to_communal_landfill_for_pollution_impact) closest_to self;
+				the_local_landfill <-   (local_landfill at_distance distance_to_local_landfill_for_pollution_impact) closest_to self;
+				the_communal_landfill_dist <-the_communal_landfill != nil ? location distance_to the_communal_landfill : 1.0;
+				the_local_landfill_dist <-the_local_landfill != nil ? location distance_to the_local_landfill : 1.0;
+				
+			 
+			 
+			}
+		}
 	}
 	
 	action create_plots {
@@ -339,9 +351,7 @@ global {
 				my_house <- cell(location);
 				my_cells <- myself.my_cells;	
 			}
-			the_communal_landfill <- first(communal_landfill at_distance distance_to_communal_landfill_for_pollution_impact);
-			the_local_landfill <- first(local_landfill at_distance distance_to_local_landfill_for_pollution_impact);
-		 	impacted_by_canal <- (self distance_to closest_canal) <= distance_to_canal_for_pollution_impact;
+			impacted_by_canal <- (self distance_to closest_canal) <= distance_to_canal_for_pollution_impact;
 		}
 		
 	}
@@ -420,7 +430,8 @@ global {
 	}
 	action activate_act9 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do end_of_turn;}
+			
+
 		}if stage = PLAYER_DISCUSSION_TURN {
 			stage <- PLAYER_ACTION_TURN;
 		 	ask village[0] {do start_turn;}
@@ -574,9 +585,15 @@ global {
 		
 		ask village {
 			int d <- (current_day mod 7) + 1;
+			list<cell> cells_to_clean;
+			if collect_only_urban_area {
+				cells_to_clean <- remove_duplicates(urban_areas accumulate each.my_cells);  
+			} else {
+				cells_to_clean <-  cells;
+			}
+			cells_to_clean <-  cells where (each.solid_waste_level > 0);
 			ask collection_teams {
 				if (d in collection_days) {
-					list<cell> cells_to_clean <-  myself.cells where (each.solid_waste_level > 0);
 					do collect_waste(cells_to_clean);
 				}
 			}
@@ -595,7 +612,7 @@ global {
 					
 					if not empty(neighbors_plot) {
 						int target_pop <- round(population *(1 + min_increase_urban_area_population_year)) -  (houses count each.inhabitant_to_create);
-						write sample(population) + " " + sample(target_pop);
+						//write sample(population) + " " + sample(target_pop);
 						loop while: not empty(neighbors_plot) and population <target_pop {
 							plot p <- first(neighbors_plot);
 							neighbors_plot >> p;
@@ -620,6 +637,8 @@ global {
 							myself.diff_farmers<- myself.diff_farmers - 1;
 						}
 					}
+					my_cells <- cell overlapping self;
+			
 				}
 			}
 		}

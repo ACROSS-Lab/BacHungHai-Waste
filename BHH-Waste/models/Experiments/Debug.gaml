@@ -229,7 +229,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 	                draw text_action at: { 40#px,  340#px } color: #white font: font("Helvetica", 20, #plain);
 	          }
 	          
-			}
+			} 
 			event "q" action: activate_act1;
 			event "w" action: activate_act2;
 			event "e" action: activate_act3;

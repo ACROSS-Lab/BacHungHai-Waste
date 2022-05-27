@@ -13,9 +13,10 @@ import "../Global.gaml"
 
 
 species urban_area { 
-	int population; 
+	int population;  
 	list<village> my_villages;
 	list<house> houses;
+	list<cell> my_cells; 
 }
 species house {
 	bool inhabitant_to_create <- false;

@@ -23,7 +23,9 @@ species plot {
 	farmer the_farmer;
 	list<cell> my_cells;
 	communal_landfill the_communal_landfill;
-	local_landfill the_local_landfill;
+	local_landfill the_local_landfill;	
+	float the_communal_landfill_dist min: 1.0;
+	float the_local_landfill_dist min: 1.0;
 	bool impacted_by_canal <- false;
 	float perimeter_canal_nearby; 
 	rgb color<-#darkgreen-25;
@@ -40,9 +42,9 @@ species plot {
 	action pollution_due_to_practice { 
 		
 		practice_solid_pollution_level <- has_dumphole ? (solid_waste_day * (1 - impact_installation_dumpholes)): solid_waste_day;
-		if does_reduce_pesticide {
+		/*if does_reduce_pesticide {
 			practice_solid_pollution_level <- practice_solid_pollution_level * (1 - impact_pesticide_reducing_waste);
-		}
+		}*/
 		
 		if practice_solid_pollution_level > 0 {
 			float to_the_canal <- practice_solid_pollution_level * part_solid_waste_canal;
@@ -74,8 +76,8 @@ species plot {
 			}
 			if to_the_ground > 0 {
 				int nb <- length(my_cells);
-				ask my_cells {
-					water_waste_level <- water_waste_level + (to_the_ground / nb)  ;
+				ask one_of(my_cells) {
+					water_waste_level <- water_waste_level + to_the_ground  ;
 				}
 			}
 		}
@@ -111,12 +113,12 @@ species plot {
 			current_productivity <- current_productivity * (1 + impact_drain_dredge_agriculture_weak);
 		}
 		if (the_local_landfill != nil) {
-			impact_lf <- ((the_local_landfill.waste_quantity*10) * (local_landfill_waste_pollution_impact_rate));
-			current_productivity <- current_productivity - ((the_local_landfill.waste_quantity*10) * (local_landfill_waste_pollution_impact_rate));
+			impact_lf <- ((the_local_landfill.waste_quantity) * (local_landfill_waste_pollution_impact_rate) / the_local_landfill_dist);
+			current_productivity <- current_productivity - ((the_local_landfill.waste_quantity) / the_local_landfill_dist * (local_landfill_waste_pollution_impact_rate));
 		}
 		if (the_communal_landfill != nil) {
-			impact_lf <- 100/ base_productivity * the_communal_landfill.waste_quantity * communal_landfill_waste_pollution_impact_rate;
-			current_productivity <- current_productivity - the_communal_landfill.waste_quantity * communal_landfill_waste_pollution_impact_rate;
+			impact_lf <- 100/ base_productivity * the_communal_landfill.waste_quantity  / the_communal_landfill_dist * communal_landfill_waste_pollution_impact_rate;
+			current_productivity <- current_productivity - the_communal_landfill.waste_quantity / the_communal_landfill_dist * communal_landfill_waste_pollution_impact_rate;
 		}
 		float solid_ground_pollution <- my_cells sum_of each.solid_waste_level;
 		if (solid_ground_pollution > 0) {
