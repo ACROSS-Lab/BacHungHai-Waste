@@ -1,7 +1,7 @@
 /**
 * Name: Shortversion
 * Based on the internal empty template. 
-* Author: admin_ptaillandie
+* Author: Patrick Taillandier
 * Tags: 
 */
 
