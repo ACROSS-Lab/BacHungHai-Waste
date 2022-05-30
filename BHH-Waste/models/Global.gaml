@@ -430,8 +430,7 @@ global {
 	}
 	action activate_act9 {
 		if stage = PLAYER_ACTION_TURN {
-			
-
+			ask village[index_player] {do end_of_turn;}
 		}if stage = PLAYER_DISCUSSION_TURN {
 			stage <- PLAYER_ACTION_TURN;
 		 	ask village[0] {do start_turn;}
