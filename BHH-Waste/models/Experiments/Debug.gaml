@@ -185,7 +185,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 			
 			graphics TIMER {
 				if use_timer_player_turn and stage = PLAYER_ACTION_TURN {
-					draw REMAINING_TIME_PLAYER + " " + (index_player + 1) + ":" at: world.location  anchor: #center color: #white font: font("Helvetica", 100, #bold);
+					draw REMAINING_TIME_PLAYER + " " + (int(villages_order[index_player]) + 1) + ":" at: world.location  anchor: #center color: #white font: font("Helvetica", 100, #bold);
 				
 					draw "" + remaining_time +" s" at: world.location + {0,200#px} anchor: #center color: #white font: font("Impact", 200, #bold);
 				}

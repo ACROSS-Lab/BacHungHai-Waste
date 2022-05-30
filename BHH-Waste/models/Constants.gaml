@@ -20,7 +20,7 @@ global {
 	string LOST <- "lost";
 	string GAINED <- "gained";
 	string FARMS <- "farms";
-	string  URBAN_HOUSEHOLDS<- "urban households";
+	string URBAN_HOUSEHOLDS<- "urban households";
 	string AND <- "and"; 
 	string BUDGET_VILLAGE <-"the budget of village";
 	string THE_BUDGET <-"the budget";
@@ -36,6 +36,7 @@ global {
 	string WISH_PAY_TREATMENT_FACILITY_MAINTENANCE <- "Do you wish to pay for the home treatment facility maintenance?";
 	string PAY_TRAETMENT_FACILITY_MAINTENANCE <- "Pay for treatment facility maintenance";
 	string TURN<- "turn"; 
+	string TURN_OF <- "Turn of";
 	string WASTE_MANAGEMENT_POLCITY <- "Waste management policy";
 	string END_OF_TURN <- "End of turn";
 	string CONFIRM_END_OF_TURN <- "do you confirm that you want to end the turn?";

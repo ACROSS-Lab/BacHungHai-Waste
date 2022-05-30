@@ -13,11 +13,13 @@ global {
 	/******************* GENERAL PARAMETERS *************************************/
 	bool parallel_computation <- true;
 	string GAME_NAME <- "EcoGame";
-	string langage <- "Tiếng Việt";
+	string langage <- "Français";
 
 	//string langage <- "Tiếng Việt";
 	
-	
+	bool confirmation_popup <- true;
+	bool no_starting_actions <- false;
+	bool random_turn <- true;
 	csv_file translation_game_csv_file <- csv_file("../includes/translation_game.csv", ",", false);
 
 	

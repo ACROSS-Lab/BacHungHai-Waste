@@ -34,7 +34,7 @@ global {
 	
 	
 	/********************** INTERNAL VARIABLES ****************************/
-	
+	list<village> villages_order;
 	bool without_player <- false; //for testing
 	bool without_actions <- false;
 	file players_actions_to_load <- nil;
@@ -431,17 +431,17 @@ global {
 	}
 	action activate_act9 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do end_of_turn;}
+			ask villages_order[index_player] {do end_of_turn;}
 		}if stage = PLAYER_DISCUSSION_TURN {
 			stage <- PLAYER_ACTION_TURN;
-		 	ask village[0] {do start_turn;}
+		 	ask villages_order[0] {do start_turn;}
 		}
 	}
 	
 	
 	action act_management {
 		switch action_type {
-			match 2 {ask village[index_player] {do end_of_turn;}}
+			match 2 {ask villages_order[index_player] {do end_of_turn;}}
 		}
 	}
 	
@@ -500,7 +500,7 @@ global {
 	}
 	
 	action end_of_discussion_phase {
-		ask village[0] {do start_turn;}
+		ask villages_order[0] {do start_turn;}
 	}
 	
 	action manage_end_of_indicator_computation {
@@ -516,6 +516,8 @@ global {
 				is_drained_strong <- false;
 				is_drained_weak <- false; 
 			}
+			villages_order <-  random_turn ? shuffle(village): list(village);
+			
 			turn <- turn + 1;
 			do update_display;
 			if turn > end_of_game {
@@ -730,7 +732,7 @@ global {
 			do tell(TIME_DISCUSSION_FINISHED);
 			do pause;
 			if not timer_just_for_warning {
-				ask village[0] {
+				ask villages_order[0] {
 					do start_turn;
 				}
 			}
@@ -740,10 +742,10 @@ global {
 		remaining_time <- int(time_for_player_turn - machine_time/1000.0  + village[index_player].start_turn_time/1000.0);
  
 		if remaining_time <= 0 {
-			do tell(TIME_PLAYER + " " + (index_player + 1) +" " + FINISHED);
+			do tell(TIME_PLAYER + " " + (int(villages_order[index_player]) + 1) +" " + FINISHED);
 			do pause;
 			if not timer_just_for_warning {
-				ask village[index_player] {
+				ask villages_order[index_player] {
 					do ending_turn;
 				}
 			}
