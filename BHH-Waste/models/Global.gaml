@@ -446,19 +446,19 @@ global {
 	}
 	
 	action manage_flow_canal {
-		ask canal {
+		ask canal parallel: parallel_computation{
 			do init_flow;
 		}
-		ask canal {
+		ask canal parallel: parallel_computation{
 			do flow;
 		}
-		ask canal {
+		ask canal parallel: parallel_computation{
 			do update_waste;
 		}	
 	}
 	
 	action manage_individual_pollution {
-		ask village {
+		ask village parallel: parallel_computation{
 			list<float> typical_values_inhabitants <- first(inhabitants).typical_values_computation();
 			list<float> typical_values_farmers <- first(farmers).typical_values_computation();
 			float s_to_c <- typical_values_inhabitants[0];
@@ -477,17 +477,17 @@ global {
 				do domestic_waste_production(s_to_c,s_to_g,w_to_c,w_to_g);
 			}
 		}
-		ask plot {
+		ask plot parallel: parallel_computation{
 			do pollution_due_to_practice;
 		}
 	}
 	
 	action manage_daily_indicator {
-		ask plot {
+		ask plot parallel: parallel_computation{
 			do compute_production;
 		}
 		
-		ask village {do compute_indicators;}
+		ask village parallel: parallel_computation{do compute_indicators;}
 	}
 	
 	action manage_landfill {
