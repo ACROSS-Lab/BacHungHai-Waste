@@ -176,7 +176,7 @@ global {
 	float part_of_plots_in_fallow  <- 0.25 min: 0.0 max: 1.0; //decrease the agricultural production
 	
 	int token_support_manure_buying_strong <- 40; //per year
-	float impact_support_manure_buying_production_strong  <- 0.30 min: 0.0 max: 1.0; //improvment of the agricultural production
+	float impact_support_manure_buying_production_strong  <- 0.40 min: 0.0 max: 1.0; //improvment of the agricultural production
 	float impact_support_manure_buying_waste_strong  <- 0.1 min: 0.0 max: 1.0; //increase wastewater production
 	int token_support_manure_buying_weak <- round(token_support_manure_buying_strong/2); //per year
 	float impact_support_manure_buying_production_weak  <- impact_support_manure_buying_production_strong/2.0 min: 0.0 max: 1.0; //improvment of the agricultural production

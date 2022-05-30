@@ -18,11 +18,11 @@ global {
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
 	float min_production_ecolabel <- 2200.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
-	float max_pollution_ecolabel <- 325000.0;// maximum threshold of production to get ecolabel, unities are converted in 
+	float max_pollution_ecolabel <- 335000.0;// maximum threshold of production to get ecolabel, unities are converted in 
 	
 /************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
-	float min_increase_urban_area_population_year <- 0.65 ; //min increase of urban area per year (in terms of number of people)
+	float min_increase_urban_area_population_year <- 0.70 ; //min increase of urban area per year (in terms of number of people)
 	
 
 /******* PARAMETERS RELATED TO THE IMPACT OF POLLUTION ON FIELD YIELD *************/
@@ -60,11 +60,11 @@ global {
 	int token_trimestrial_collective_action_strong <- 35; //per year
 	int token_trimestrial_collective_action_weak <- round(token_trimestrial_collective_action_strong / 2.0); //per year
 	
-	float impact_trimestrial_collective_action_strong <- 0.35  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
+	float impact_trimestrial_collective_action_strong <- 0.45  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.0  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	
 	int token_drain_dredge_strong <- 50; //per action
-	float impact_drain_dredge_waste_strong <- 0.50 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
+	float impact_drain_dredge_waste_strong <- 0.55 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
 	float impact_drain_dredge_agriculture_strong <- 0.0 min: 0.0 max: 1.0; //improvment of the agricultural production
 	int token_drain_dredge_weak <- round(token_drain_dredge_strong/2.0) ; //per action
 	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.0 min: 0.0 max: 1.0; //part of the solid waste remove from the canal

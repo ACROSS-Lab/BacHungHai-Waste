@@ -238,7 +238,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 			event "y" action: activate_act6;
 			event "u" action: activate_act7;
 			event "i" action: activate_act8;
-			event "o" action: activate_act9;	
+			event "o" action: activate_act9;	 
 		}
 		display map type: opengl parent: map_abstract  background: #black axes: false{//} refresh: stage = COMPUTE_INDICATORS or to_refresh {
 			event "q" action: activate_act1;
