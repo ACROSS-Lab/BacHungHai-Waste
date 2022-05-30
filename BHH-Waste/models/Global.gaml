@@ -71,6 +71,7 @@ global {
 	int turn <- 0;
 	int current_day <- 0;
 	int days_with_ecolabel <- 0;
+	list<int> days_with_ecolabel_year <- [0];
 	
 	float village1_solid_pollution update: village[0].canals sum_of each.solid_waste_level + village[0].cells sum_of each.solid_waste_level ;
 	float village1_water_pollution update: convertion_from_l_water_waste_to_kg_solid_waste * (village[0].canals sum_of each.water_waste_level + village[0].cells  sum_of each.water_waste_level)  ;
@@ -646,6 +647,16 @@ global {
 		}
 	}
 	
+	action compute_indicators {
+		
+	 	is_pollution_ok <- (total_solid_pollution + total_water_pollution) <= max_pollution_ecolabel ;
+	 	is_production_ok <- total_production >= min_production_ecolabel;
+	 	
+	 	if is_pollution_ok and is_production_ok{
+	 		days_with_ecolabel <- days_with_ecolabel + 1;
+	 		days_with_ecolabel_year[length(days_with_ecolabel_year) - 1] <- days_with_ecolabel_year[length(days_with_ecolabel_year) - 1]  + 1;
+	 	}
+	}
 	action add_data {
 		int time_s <- turn * 365 + current_day;
 		time_step << time_s;
@@ -665,21 +676,15 @@ global {
 	 	total_water_pollution_values << total_water_pollution;
 	 	total_pollution_values << (total_solid_pollution + total_water_pollution);
 	 	total_production_values << total_production;
-	 	
-	 	is_pollution_ok <- (total_solid_pollution + total_water_pollution) <= max_pollution_ecolabel ;
-	 	is_production_ok <- total_production >= min_production_ecolabel;
-	 	
 	 	ecolabel_min_production_values << min_production_ecolabel;
 	 	ecolabel_max_pollution_values << max_pollution_ecolabel;
 	 	
-	 	if is_pollution_ok and is_production_ok{
-	 		days_with_ecolabel <- days_with_ecolabel + 1;
-	 	}
 	 }
 	
 	
 	
 	reflex indicators_computation when: stage = COMPUTE_INDICATORS {
+		do compute_indicators;
 		if (current_day mod data_frequency) = 0 {
 			do add_data;
 		}
@@ -707,7 +712,7 @@ global {
 					}
 				}
 				stage <- COMPUTE_INDICATORS;
-				days_with_ecolabel <- 0;
+				days_with_ecolabel_year << 0;
 				current_day <- 0;
 				step <- #day;
 				

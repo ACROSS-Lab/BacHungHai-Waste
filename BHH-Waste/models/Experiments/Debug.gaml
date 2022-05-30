@@ -201,8 +201,15 @@ experiment base_debug parent: abstract_debug virtual: true {
 		display "Informations" background: (is_production_ok and is_pollution_ok) ? #darkgreen : #darkred type: opengl axes: false toolbar: false {
 			graphics INFO_ECOLABEL {
 				draw  (is_production_ok and is_pollution_ok)  ? STANDARD_ECOLABEL :NOT_STANDARD_ECOLABEL  at: { 0, -600 } color: #white font: font("Helvetica", 40, #bold);
+				string level_year <- " (" + YEAR + " 0: " + days_with_ecolabel_year[0];
+				if length(days_with_ecolabel_year) > 1 {
+					loop i from: 1 to: length(days_with_ecolabel_year) - 1 {
+						level_year <- level_year + ", " + YEAR + " " + i + ": " + days_with_ecolabel_year[i];
+					}
+				}
+				level_year <- level_year + ")";
+				draw  NUMBER_DAY_ECOLABEL + ":" + days_with_ecolabel + level_year  at: { 0, -300 } color: #white font: font("Helvetica", 30, #bold);
 			}
-		
 			graphics INFO_DATE {
 				draw YEAR+": " + turn + " - " + DAY + ": " + current_day  at: { 40#px, 0#px } color: #white font: font("Helvetica", 40, #bold);
 			}
@@ -238,7 +245,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 			event "y" action: activate_act6;
 			event "u" action: activate_act7;
 			event "i" action: activate_act8;
-			event "o" action: activate_act9;	 
+			event "o" action: activate_act9;	
 		}
 		display map type: opengl parent: map_abstract  background: #black axes: false{//} refresh: stage = COMPUTE_INDICATORS or to_refresh {
 			event "q" action: activate_act1;

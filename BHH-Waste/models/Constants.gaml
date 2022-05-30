@@ -86,6 +86,7 @@ global {
 	string NOT_STANDARD_ECOLABEL <- "Does not meet the standards of the ecolabel!";
 	string COMMUNE_STANDARD_ECOLABEL <- "The commune meets the standards of the ecolabel";
 	string COMMUNE_NOT_STANDARD_ECOLABEL <- "The commune does not meet the standards of the ecolabel!";
+	string NUMBER_DAY_ECOLABEL <- "Total number of days with ecolabel";
 	
 	string YEAR <- "year";
 	string DAY <- "day";
