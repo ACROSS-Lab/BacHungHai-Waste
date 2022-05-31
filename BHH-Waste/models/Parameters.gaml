@@ -75,7 +75,12 @@ global {
 	
 	int compute_budget(int urban_pop, int agricultural_pop, float production_level, int day_ecolabel) {
 		//return  base_budget_year_per_village + round((urban_pop + agricultural_pop) / 30) ;
-		return base_budget_year_per_village + round((production_level)/46);
+		int v <-  base_budget_year_per_village + round((production_level)/46);
+		write sample(v);
+		int r <- v - (int(v/5) * 5);
+	 	if r = 0 {return v;}
+	 	if r > 5 -r {return (int(v/5) * 5);}
+	 	else {return ((int(v/5) + 1) * 5);}
 	}
 	
 	/*************** PARAMETERS RELATED TO VISUALIZATION ****************************/
@@ -150,11 +155,11 @@ global {
 	int token_trimestrial_collective_action_strong <- 35; //per year
 	int token_trimestrial_collective_action_weak <- round(token_trimestrial_collective_action_strong / 2.0); //per year
 	
-	float impact_trimestrial_collective_action_strong <- 0.35  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
+	float impact_trimestrial_collective_action_strong <- 0.37  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.0  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	
 	int token_drain_dredge_strong <- 50; //per action
-	float impact_drain_dredge_waste_strong <- 0.45 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
+	float impact_drain_dredge_waste_strong <- 0.47 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
 	float impact_drain_dredge_agriculture_strong <- 0.0 min: 0.0 max: 1.0; //improvment of the agricultural production
 	int token_drain_dredge_weak <- round(token_drain_dredge_strong/2.0) ; //per action
 	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.0 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
