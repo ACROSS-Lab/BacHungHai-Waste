@@ -392,43 +392,43 @@ global {
 	}
 	action activate_act1 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do drain_dredge;}
+			ask villages_order[index_player] {do drain_dredge;}
 		}
 	}
 	action activate_act2 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do install_facility_treatment_for_homes;}
+			ask villages_order[index_player] {do install_facility_treatment_for_homes;}
 		}
 	}
 	action activate_act3 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do sensibilization;}
+			ask villages_order[index_player] {do sensibilization;}
 		}
 	}
 	action activate_act4 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do trimestrial_collective_action;}
+			ask villages_order[index_player] {do trimestrial_collective_action;}
 		}
 	}
 	action activate_act5 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do pesticide_reducing;}
+			ask villages_order[index_player] {do pesticide_reducing;}
 		} 
 	}
 	action activate_act6 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do support_manure_buying;}
+			ask villages_order[index_player] {do support_manure_buying;}
 		}
 			
 	}
 	action activate_act7 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do implement_fallow;}
+			ask villages_order[index_player] {do implement_fallow;}
 		}
 	}
 	action activate_act8 {
 		if stage = PLAYER_ACTION_TURN {
-			ask village[index_player] {do install_dumpholes;}
+			ask villages_order[index_player] {do install_dumpholes;}
 		}
 	}
 	action activate_act9 {
