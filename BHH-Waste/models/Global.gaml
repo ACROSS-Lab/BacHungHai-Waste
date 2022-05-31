@@ -41,6 +41,8 @@ global {
 	list<list<map<string,map>>> players_actions <- nil;
 	list<list<int>> players_collect_policy <- nil;
 	list<list<bool>> players_traitement_facility_maintenance <- nil;
+	list<village> village_ordered_by_production;
+	list<village> village_ordered_by_pollution;
 	
 	bool display_productivity_waste <- false parameter:"Display field productivity" category: "Display" ;
 	
@@ -488,6 +490,9 @@ global {
 		}
 		
 		ask village parallel: parallel_computation{do compute_indicators;}
+		village_ordered_by_production <- village sort_by (-1 * each.production_level);
+		village_ordered_by_pollution <- village sort_by (each.solid_pollution_level + each.water_pollution_level * convertion_from_l_water_waste_to_kg_solid_waste );
+	
 	}
 	
 	action manage_landfill {

@@ -198,6 +198,24 @@ experiment base_debug parent: abstract_debug virtual: true {
 			}
 			
 		}
+		
+		display "Player ranking" background: #black type: opengl axes: false toolbar: false {
+			graphics WASTE_POLLUTION {
+				draw WASTE_POLLUTION + " " + RANKING at: { 0, 0 } color: #white font: font("Helvetica", 40, #bold);
+				loop i from: 0 to: length(village) - 1 {
+					draw "" + (i+1) + ": " + PLAYER + " " + (int(village_ordered_by_production[i]) + 1) at: { 20#px, (1 + i) * 50#px } color: #white font: font("Helvetica", 40, #bold);
+				}			
+			}
+			
+			graphics POLLUTION {
+				draw "Pollution" + " " + RANKING at: { world.location.x , 0 } color: #white font: font("Helvetica", 40, #bold);
+				loop i from: 0 to: length(village) - 1 {
+					draw "" + (i+1) + ": " + PLAYER + " " + (int(village_ordered_by_pollution[i]) + 1) at:{ world.location.x + 20#px, (1 + i) * 50#px } color: #white font: font("Helvetica", 40, #bold);
+				}			
+			}
+			
+				
+		}
 		display "Informations" background: (is_production_ok and is_pollution_ok) ? #darkgreen : #darkred type: opengl axes: false toolbar: false {
 			graphics INFO_ECOLABEL {
 				draw  (is_production_ok and is_pollution_ok)  ? STANDARD_ECOLABEL :NOT_STANDARD_ECOLABEL  at: { 0, -600 } color: #white font: font("Helvetica", 40, #bold);

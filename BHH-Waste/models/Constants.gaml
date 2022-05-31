@@ -104,7 +104,7 @@ global {
 	string TOTAL_PRODUCTION <- "Total production";
 	string ECOLABEL_MIN_PRODUCTION <- "Ecol labal min production";
 	string LEGEND <- "legend";
-	
+	string RANKING <- "ranking";
 	
 	string PLAYER_ACTION_TURN <- "player action turn";
 	string PLAYER_DISCUSSION_TURN <- "player discussion turn";
