@@ -500,6 +500,7 @@ global {
 	}
 	
 	action end_of_discussion_phase {
+		stage <- PLAYER_ACTION_TURN;
 		ask villages_order[0] {do start_turn;}
 	}
 	

@@ -101,6 +101,7 @@ species village {
 					actions_done_this_year << ACT_DRAIN_DREDGE;
 					if not without_player {
 						player_actions[turn -1][ACT_DRAIN_DREDGE] <- map([LEVEL::(strong ? "high":"low")]);
+						if display_info_action_console{write "ACTION : " +ACT_DRAIN_DREDGE + " " +  (strong ? "high":"low");}
 					}
 					is_drained_strong <- strong;
 					is_drained_weak <- not strong;
@@ -167,7 +168,12 @@ species village {
 					bool  is_ok <- (not confirmation_popup) or without_player or user_confirm(ACTION +" " + ACT_FACILITY_TREATMENT, PLAYER +" " + (int(self) + 1) +",  " + CONFIRM_ACTION + " " + ACT_FACILITY_TREATMENT + " " + cost_str +"?");
 					if is_ok {
 						if not without_player {
+							if (empty(player_actions)) {
+								player_actions << [];
+							}
 							player_actions[turn -1][ACT_FACILITY_TREATMENT] <- map(["P1"::p1, "P2"::p2, "P3"::p3, "P4"::p4]);
+							
+							if display_info_action_console{write "ACTION : " +ACT_FACILITY_TREATMENT ;}
 						}
 						ask village {
 							actions_done_total << ACT_FACILITY_TREATMENT;
@@ -212,6 +218,7 @@ species village {
 				if is_ok {
 					if not without_player {
 						player_actions[turn -1][ACT_SENSIBILIZATION] <-nil;
+						if display_info_action_console{write "ACTION : " +ACT_SENSIBILIZATION ;}
 					}
 					actions_done_total << ACT_SENSIBILIZATION;
 					actions_done_this_year << ACT_SENSIBILIZATION;
@@ -255,6 +262,7 @@ species village {
 				if is_ok {
 					if not without_player {
 						player_actions[turn -1][ACTION_COLLECTIVE_ACTION] <- map([LEVEL::(strong ? "high":"low")]);
+						if display_info_action_console{write "ACTION : " +ACTION_COLLECTIVE_ACTION + " " + (strong ? "high":"low");}
 					}
 					actions_done_total << ACTION_COLLECTIVE_ACTION;
 					actions_done_this_year << ACTION_COLLECTIVE_ACTION;
@@ -286,6 +294,7 @@ species village {
 				if is_ok {
 					if not without_player {
 						player_actions[turn -1][ACT_PESTICIDE_REDUCTION] <- nil;
+						if display_info_action_console{write "ACTION : " +ACT_PESTICIDE_REDUCTION;}
 					}
 					actions_done_total << ACT_PESTICIDE_REDUCTION;
 					actions_done_this_year << ACT_PESTICIDE_REDUCTION;
@@ -324,6 +333,8 @@ species village {
 				if is_ok {
 					if not without_player {
 						player_actions[turn -1][ACT_SUPPORT_MANURE] <- map([LEVEL::(strong ? "high":"low")]);
+						if display_info_action_console{write "ACTION : " +ACT_SUPPORT_MANURE + " " + (strong ? "high":"low");}
+				
 					}
 					actions_done_total << ACT_SUPPORT_MANURE;
 					actions_done_this_year << ACT_SUPPORT_MANURE;
@@ -351,20 +362,23 @@ species village {
 			if is_ok {
 				if not without_player {
 					player_actions[turn -1][ACT_IMPLEMENT_FALLOW] <- nil;
+					if display_info_action_console{write "ACTION : " +ACT_IMPLEMENT_FALLOW;}
+				
 				}
+				
 				ask plots {
 					does_implement_fallow <- true;
 				}
 				budget <- budget - token_implement_fallow;
 				list<plot> plot_s <- plots sort_by (-1 * each.water_waste_pollution);
 				float area_t <- (plot_s sum_of each.shape.area) * part_of_plots_in_fallow;
-				float pp <- 0.0;
+				/*float pp <- 0.0;
 				loop p over: plot_s {
 					loop ppp over: p.my_cells {
 						pp <- pp + ppp.water_waste_level;
 					}
 				}
-				write "pollution avant: " + pp;
+				write "pollution avant: " + pp;*/
 				loop p over: plot_s {
 					ask p.my_cells {
 						water_waste_level <- 0.0;
@@ -374,13 +388,13 @@ species village {
 						break;
 					}
 				}
-				 pp <- 0.0;
+				/* pp <- 0.0;
 				loop p over: plot_s {
 					loop ppp over: p.my_cells {
 						pp <- pp + ppp.water_waste_level;
 					}
 				}
-				write "pollution apres: " + pp;
+				write "pollution apres: " + pp;*/
 				actions_done_total << ACT_IMPLEMENT_FALLOW;
 				actions_done_this_year << ACT_IMPLEMENT_FALLOW;
 				
@@ -405,6 +419,8 @@ species village {
 				if is_ok {
 					if not without_player {
 						player_actions[turn -1][ACT_INSTALL_DUMPHOLES] <- nil;
+						
+						if display_info_action_console{write "ACTION : " +ACT_INSTALL_DUMPHOLES;}
 					}
 					actions_done_total << ACT_INSTALL_DUMPHOLES;
 					actions_done_this_year<< ACT_INSTALL_DUMPHOLES; 
@@ -412,6 +428,7 @@ species village {
 					ask plots {
 						has_dumphole <- true;
 					}
+				
 				}
 				
 			}else {
@@ -502,38 +519,44 @@ species village {
 	}
 	
 	action install_fiter_maintenance {
-		
-		if (budget >= token_install_filter_for_homes_maintenance ) {
-			treatment_facility_is_activated <- (treatment_facility_year > 0) ;
-			if treatment_facility_year > 0 and treatment_facility_is_activated {
-				budget <- budget - token_install_filter_for_homes_maintenance;
-				actions_done_this_year << PAY_TRAETMENT_FACILITY_MAINTENANCE;
-				player_traitement_facility_maintenance << treatment_facility_is_activated;
-				
-			}	
-			if treatment_facility_is_activated {
-				treatment_facility_year <- treatment_facility_year + 1;
+		if (treatment_facility_year > 0) {
+			if (budget >= token_install_filter_for_homes_maintenance ) {
+				treatment_facility_is_activated <- (treatment_facility_year > 0) ;
+				if treatment_facility_year > 0 and treatment_facility_is_activated {
+					budget <- budget - token_install_filter_for_homes_maintenance;
+					actions_done_this_year << PAY_TRAETMENT_FACILITY_MAINTENANCE;
+					player_traitement_facility_maintenance << treatment_facility_is_activated;
+					
+				}
+				if display_info_action_console{write "ACTION : " +PAY_TRAETMENT_FACILITY_MAINTENANCE;}
+					
+				if treatment_facility_is_activated {
+					treatment_facility_year <- treatment_facility_year + 1;
+				}
+			} else {
+				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +PAY_TRAETMENT_FACILITY_MAINTENANCE );}
 			}
-		} else {
-			if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +PAY_TRAETMENT_FACILITY_MAINTENANCE );}
 		}
 		
 	}
 	
 	action collection_team_action(bool is_strong) {
-		weak_collection_policy <- not is_strong;
-		strong_collection_policy <-  is_strong;
-		ultimate_collection_policy <- false;
-		int collect_per_week_weak <- length(days_collects_weak);
-		int collect_per_week_strong <- length(days_collects_strong);
-			
-			
-		actions_done_this_year << ACT_COLLECT; 
-		player_collect_policy << weak_collection_policy ? collect_per_week_weak : collect_per_week_strong  ;
-		budget <- budget - (weak_collection_policy ? token_weak_waste_collection :token_strong_waste_collection);
-		ask collection_teams {collection_days <- myself.weak_collection_policy ? days_collects_weak : (myself.strong_collection_policy ? days_collects_strong : days_collects_ultimate);}
+		if (not weak_collection_policy and not strong_collection_policy) {
+			weak_collection_policy <- not is_strong;
+			strong_collection_policy <-  is_strong;
+			ultimate_collection_policy <- false;
+			int collect_per_week_weak <- length(days_collects_weak);
+			int collect_per_week_strong <- length(days_collects_strong);
+			int cost <-  (weak_collection_policy ? token_weak_waste_collection :token_strong_waste_collection);
+			if (budget >= cost ) {
+				actions_done_this_year << ACT_COLLECT; 
+				player_collect_policy << weak_collection_policy ? collect_per_week_weak : collect_per_week_strong  ;
+				budget <- budget - cost;
+				if display_info_action_console{write "ACTION : " + ACT_COLLECT + " " +(is_strong ? collect_per_week_strong : collect_per_week_weak);}
+				ask collection_teams {collection_days <- myself.weak_collection_policy ? days_collects_weak : (myself.strong_collection_policy ? days_collects_strong : days_collects_ultimate);}
+			}
+		}
 	}
-	
 	
 	action start_turn {
 		start_turn_time <- machine_time;

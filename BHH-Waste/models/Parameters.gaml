@@ -21,7 +21,7 @@ global {
 	bool no_starting_actions <- false;
 	bool random_turn <- true;
 	csv_file translation_game_csv_file <- csv_file("../includes/translation_game.csv", ",", false);
-
+	bool display_info_action_console <- true;
 	
 	/******************* USE TIMERS *************************************/
 	bool use_timer_player_turn <- false;	

@@ -8,13 +8,14 @@
 
 model TangibleInteraction
 
-import "Short version.gaml"
+import "Debug.gaml"
+
 
 
 global {
 	
 	bool confirmation_popup <- false;
-	bool no_starting_actions <- false;
+	bool no_starting_actions <- true;
 	
 	
 	string A_DUMPHOLES <- "Dumpholes";
@@ -39,102 +40,118 @@ global {
  	];
 	
 	int webcam <- 1;
-	float delay_between_actions<- 2#s;
+	float delay_between_actions<- 1#s;
 	int image_width <- 640;
 	int image_height <- 480;
 	bool ready_action <- true;
 	float last_action_time <- machine_time;
 	string latest_action <- "";
 	
+	reflex detect_interaction_discussion_phase when: stage = PLAYER_DISCUSSION_TURN {
+		string result <- string(decodeQR(image_width, image_height,webcam));
+		if result = nil { 
+			ready_action <- true;
+		}
+		if ready_action and machine_time > (last_action_time + (1000.0 * 2 * delay_between_actions)) {
+			latest_action <- "";
+		}
+		if result != latest_action and result = A_END_TURN {
+			ready_action <- false;
+			latest_action <- result;
+			last_action_time <- machine_time;
+			do end_of_discussion_phase;	
+		}
+	}
+	
 	reflex detect_interaction when: stage = PLAYER_ACTION_TURN and (machine_time > (last_action_time + (1000.0 * delay_between_actions))){
 		string result <- string(decodeQR(image_width, image_height,webcam));
 		if result = nil {
 			ready_action <- true;
 		}
-		//write sample(result);
 		if ready_action and machine_time > (last_action_time + (1000.0 * 2 * delay_between_actions)) {
 			latest_action <- "";
 		}
 		if result != latest_action {
 			if ((result in actions_name_short) and not(result in village[index_player].actions_done_this_year) and not(result in village[index_player].actions_done_total)) {
+				ready_action <- false;
 				latest_action <- result;
 				last_action_time <- machine_time;
 				//village[index_player].actions_done_this_year <<result;
 				switch result {
 					match A_DRAIN_DREDGES_LOW{
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do drain_dredge(false, false);
 						}
 					} 
 					match A_DRAIN_DREDGES_HIGH{
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do drain_dredge(true, false);
 						}
 					} 
 					match A_FILTERS {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do install_facility_treatment_for_homes ;
 						}
 					}
 					match A_SENSIBILIZATION {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do sensibilization ;
 						}
 					}
 					match A_COLLECTIVE_HIGH {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do trimestrial_collective_action(true, false) ;
 						}
 					}
 					match A_COLLECTIVE_LOW {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do trimestrial_collective_action(false, false) ;
 						}
 					}
 					match A_COLLECTION_HIGH {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do collection_team_action(true) ;
 						}
 					}
 					match A_COLLECTION_LOW {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do collection_team_action(false) ;
 						}
 					}
 					match A_PESTICIDES {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do pesticide_reducing ;
 						}
 					}
 					match A_MATURES_HIGH {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do support_manure_buying(true, false) ;
 						}
 					}
 					match A_MATURES_LOW {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do support_manure_buying(false, false) ;
 						}
 					}
 					match A_FALLOW {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do implement_fallow ;
 						}
 					}
 					match A_DUMPHOLES {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do install_dumpholes ;
 						}
 					}
 					
 					match A_FILTER_MAINTENANCE {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do install_fiter_maintenance ;
 						}
 					}
 					
 					match A_END_TURN {
-						ask village[index_player] {
+						ask villages_order[index_player] {
 							do end_of_turn ;
 						}
 					}
