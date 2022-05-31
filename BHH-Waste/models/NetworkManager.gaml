@@ -13,13 +13,7 @@ global {
 	}
 }
 
-species Sender skills:[network] {
-	
-}
 
-species Receiver skills:[network] {
-	
-}
 
 species NetworkManager skills:[network]{
 
@@ -39,33 +33,76 @@ species NetworkManager skills:[network]{
 	string kw_send_action			<- "_ACTIONS_";
 	string kw_player_name			<- "player_name";
 	string kw_budget				<- "budget";
+	string kw_actions				<- "actions";
 	
 	int state; 
 	
 	list<string> 		player_names;
-	list<string> 		players;
+	list<unknown> 		players;
 	list<int>			player_budgets;
 	map<string,string> 	players_actions;
+	list<map<string,unknown>>	available_actions;
 	
 	
+	action map_to_json(map<string,unknown> m) {
+		string ret <- '';
+		loop key_val over:m.pairs {
+			if ret != '' {
+				ret <- ret + ',';
+			}
+			ret <- ret + '"' + key_val.key + '":"' + key_val.value + '"';
+		}
+		return '{' + ret + '}';
+	}
+	
+	action list_of_map_to_json(list<map<string,unknown>> l) {
+		string ret <- '';
+		loop m over:l {
+			if ret != '' {
+				ret <- ret + ',';
+			}
+			ret <- ret + map_to_json(m);
+		}
+		return '[' + ret + ']';
+	}
 	
 	init {
 		
-		state <- st_none;
-		player_names <- [];
-		players <- [];
+		state 			<- st_none;
+		player_names 	<- [];
+		players 		<- [];
 		
 		do connect protocol:"tcp_server" port:port raw:true;
 		
-		do start_waiting_for_players_to_connect(["Village fictif numéro 1"],[128]);
+		
+		
+		do start_waiting_for_players_to_connect([	
+													"Village fictif numéro 1" 
+													//"Village fictif numéro 2"
+												],
+												[	
+													128
+												//	132
+												],
+												[
+													['id'::1,'name'::'Drain and dredge', 'cost'::20,'once_per_game'::false,'grouped'::true,'mandatory'::false],
+													['id'::2,'name'::'Drain and dredge', 'cost'::50,'once_per_game'::false,'grouped'::true,'mandatory'::false],
+													['id'::3,'name'::'Sensibilization',  'cost'::25,'once_per_game'::false,'grouped'::false,'mandatory'::false],
+													['id'::4,'name'::'Collect_waste',    'cost'::25,'once_per_game'::false,'grouped'::true,'mandatory'::true],
+													['id'::5,'name'::'Collect_waste',    'cost'::50,'once_per_game'::false,'grouped'::true,'mandatory'::true],
+													['id'::6,'name'::'Install facility treatments', 'cost'::50,'once_per_game'::true,'grouped'::false,'mandatory'::false]
+													
+												]
+		);
 	}
 	
 	
-	action start_waiting_for_players_to_connect(list<string> _player_names, list<int> _player_budgets){
+	action start_waiting_for_players_to_connect(list<string> _player_names, list<int> _player_budgets, list<map> actions){
 		
 		player_names 	<- _player_names;
 		player_budgets 	<- _player_budgets;
 		state 			<- st_wait_players_connect;
+		available_actions <- actions;
 		
 	}
 	
@@ -77,11 +114,12 @@ species NetworkManager skills:[network]{
 			if content contains kw_ask_for_connection {
 				string ip <- (content split_with ':')[1];
 				write "new player: " + ip;
-				do send to:ip contents:kw_initial_data + ":{"  
+				do send to:mess.sender contents:kw_initial_data + ":{"  
 						+ '"' + kw_player_name 	+ '":"' + player_names[length(players)] + '",' 
-						+ '"' + kw_budget 		+ '":' + player_budgets[length(players)]
+						+ '"' + kw_budget 		+ '":' 	+ player_budgets[length(players)] +","
+						+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
 						+ '}';
-				players <- players + ip;//TODO: sender quand ça marchera
+				players <- players + mess.sender;
 			}
 			
 		}
@@ -94,8 +132,9 @@ species NetworkManager skills:[network]{
 	
 	
 	reflex send_data_to_players when:state=st_send_players_data{
-		let fake_data <- [2,3,4,5,6,7,8];
-		let fake_data2 <- [200,300,400,500,600,700,800];
+		let fake_data 	<- [2,3,4,5,6,7,8];
+		let fake_data2 	<- [200,300,400,500,600,700,800];
+		
 		do send contents:kw_water_pollution + ":" + fake_data;
 		do send contents:kw_solid_pollution + ":" + fake_data2;
 		
