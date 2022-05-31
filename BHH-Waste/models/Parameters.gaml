@@ -173,7 +173,7 @@ global {
 	float impact_sensibilization <- 1.0 min: 0.0 max: 1.0; //add this value to the environmental sensibility of people leaving in urban areas
 	
 	float sensibilisation_function(float x) { //function that returns the coefficient of solid production according to the environmental_sensibility of inahbitants 'x'
-		return (1 - 2/(1 +exp(x/2.5)));
+		return (1 - 2/(1 +exp(x/4)));
 	}
 	int token_pesticide_reducing <- 40; // 
 	float impact_pesticide_reducing_production  <- 0.1 min: 0.0 max: 1.0; //decrease of the agricultural production
@@ -184,7 +184,7 @@ global {
 	
 	int token_support_manure_buying_strong <- 40; //per year
 	float impact_support_manure_buying_production_strong  <- 0.40 min: 0.0 max: 1.0; //improvment of the agricultural production
-	float impact_support_manure_buying_waste_strong  <- 0.1 min: 0.0 max: 1.0; //increase wastewater production
+	float impact_support_manure_buying_waste_strong  <- 0.6 min: 0.0 max: 1.0; //increase wastewater production
 	int token_support_manure_buying_weak <- round(token_support_manure_buying_strong/2); //per year
 	float impact_support_manure_buying_production_weak  <- impact_support_manure_buying_production_strong/2.0 min: 0.0 max: 1.0; //improvment of the agricultural production
 	float impact_support_manure_buying_waste_weak  <- impact_support_manure_buying_waste_strong/2.0 min: 0.0 max: 1.0; //increase wastewater production
