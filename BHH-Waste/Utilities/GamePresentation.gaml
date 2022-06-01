@@ -61,10 +61,10 @@ species waste_on_canal skills: [moving]{
 	}
 }
 
-experiment GamePresentation type: gui autorun: true{
+experiment GamePresentation type: gui autorun: true {
 	float minimum_cycle_duration <- 0.03;
-	output {
-			display map_abstract type: opengl  background: #black  axes: false synchronized: true  {
+	output synchronized: true {
+			display map_abstract type: opengl  background: #black  axes: false  {
 				species commune;
 				species house;
 				species plot;
