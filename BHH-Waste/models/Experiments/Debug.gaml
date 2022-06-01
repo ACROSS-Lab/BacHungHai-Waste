@@ -112,8 +112,9 @@ experiment abstract_debug virtual: true {
 				species plot;
 				species canal;
 				species cell transparency: 0.5;
-				species inhabitant;
-				species farmer;
+				species urban_area;
+				//species inhabitant;
+				//species farmer;
 				species collection_team;
 				species local_landfill;
 				species communal_landfill;

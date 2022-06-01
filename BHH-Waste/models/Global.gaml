@@ -256,6 +256,7 @@ global {
 	action create_urban_area {
 		create urban_area from: Limites_urban_areas_shape_file;
 		ask urban_area {
+			geometry_history << shape;
 			my_cells <- cell overlapping self;
 			list<geometry> geoms <- to_squares (shape,house_size);
 			int nb <- 0;
@@ -284,34 +285,40 @@ global {
 		
 	}
 	
+	action manage_landfill_geom(geometry geom_landfill) {
+		ask plot overlapping geom_landfill {
+			geometry geom <- clean(shape - (geom_landfill + 5.0));
+			if geom = nil or geom.area = 0 {
+				ask the_farmer {
+					my_village.farmers >> self;
+					do die;
+				}
+				do die;
+			} else {
+				shape <- geom;
+				
+				the_farmer.location <- (shape.geometries with_max_of each.area).location;
+				
+				
+			}
+		}
+	}
 	action create_landfill {
 		loop s over: Dumpyards_shape_file.contents {
 			string type <- s get ("TYPE");
 			if type = "Commune" {
 				create communal_landfill with: (shape: s){
 					the_communal_landfill <- self;
-					ask plot overlapping self {
-						ask the_farmer {
-							my_village.farmers >> self;
-							
-							do die;
-						}
-						do die;
-					}
+					ask world {do manage_landfill_geom(s);}
 				}
 			} else {
 				create local_landfill with:(shape:s){
 					my_village <- first(village overlapping self);
 					my_village.my_local_landfill <- self;
-					ask plot overlapping self {
-						ask the_farmer {
-							my_village.farmers >> self;
-							do die;
-						}
-						do die;
-					}
+					ask world {do manage_landfill_geom(s);}
 				}
 			}
+			
 		}
 		ask village {
 			plots <- plots where not dead(each);
@@ -322,9 +329,6 @@ global {
 				the_local_landfill <-   (local_landfill at_distance distance_to_local_landfill_for_pollution_impact) closest_to self;
 				the_communal_landfill_dist <-the_communal_landfill != nil ? location distance_to the_communal_landfill : 1.0;
 				the_local_landfill_dist <-the_local_landfill != nil ? location distance_to the_local_landfill : 1.0;
-				
-			 
-			 
 			}
 		}
 	}
@@ -613,6 +617,7 @@ global {
 			target_population <- round(population *(1 + min_increase_urban_area_population_year));
 			using topology(world) {
 				ask urban_areas {
+					geometry prev_geom <- copy(shape);
 					ask (houses where each.inhabitant_to_create) {
 						create_inhabitant_day <- rnd(2,363);	
 					}
@@ -646,6 +651,9 @@ global {
 						}
 					}
 					my_cells <- cell overlapping self;
+					if prev_geom.area < shape.area {
+						geometry_history << (shape - prev_geom);
+					}
 			
 				}
 			}

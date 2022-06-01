@@ -14,9 +14,18 @@ import "../Global.gaml"
 
 species urban_area { 
 	int population;  
+	list<geometry> geometry_history;
 	list<village> my_villages;
 	list<house> houses;
 	list<cell> my_cells; 
+	
+	aspect default {
+		int nb <- length(geometry_history) - 1;
+		loop i from: 0 to: nb {
+			float val <- 100 + (i/end_of_game) * 50; 
+			draw geometry_history[i] depth: 1  color: rgb(val,val,val);
+		}
+	}
 }
 species house {
 	bool inhabitant_to_create <- false;

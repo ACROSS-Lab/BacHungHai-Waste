@@ -15,6 +15,8 @@ import "../Global.gaml"
 
 
 
+
+
 experiment base_display virtual: true {
 	output {
 		
@@ -92,6 +94,9 @@ experiment base_display virtual: true {
 	}
 }
 
+experiment abstract_display virtual: true {
+	
+}
 
 experiment base_display_layout_test virtual: true {
 	output {
@@ -103,13 +108,7 @@ experiment base_display_layout_test virtual: true {
 		}
 		
 		display "Player 1"  type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 
-			rotation "rotation" angle: -90;
-			chart "Waste pollution " size:{0.5, 1.0} background: #black color: #white{
-				data "Water waste pollution" value: village[0].canals sum_of each.water_waste_level + village[0].cells sum_of each.water_waste_level  color: #red marker: false;
-			}
-			chart "Waste pollution " position:{0.5, 0.0} size:{0.5,1.0} background: #black color: #white{
-				data "Solid waste pollution" value: village[0].canals sum_of each.solid_waste_level + village[0].cells  sum_of each.solid_waste_level  color: #red marker: false;
-			}
+			
 		}
 		
 		display "Fake 2"  type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS{ 

@@ -12,7 +12,7 @@ import "Debug.gaml"
 
 
 
-global {
+global skills: [music] {
 	
 	bool confirmation_popup <- false;
 	bool no_starting_actions <- true;
@@ -56,6 +56,7 @@ global {
 			latest_action <- "";
 		}
 		if result != latest_action and result = A_END_TURN {
+			bool is_ok <- play_sound("../../includes/BEEP.wav");
 			ready_action <- false;
 			latest_action <- result;
 			last_action_time <- machine_time;
@@ -73,9 +74,13 @@ global {
 		}
 		if result != latest_action {
 			if ((result in actions_name_short) and not(result in village[index_player].actions_done_this_year) and not(result in village[index_player].actions_done_total)) {
+				bool is_ok <- play_sound("../../includes/BEEP.wav");
+			
 				ready_action <- false;
 				latest_action <- result;
 				last_action_time <- machine_time;
+				//start_sound source: "../../includes/BEEP.wav";
+
 				//village[index_player].actions_done_this_year <<result;
 				switch result {
 					match A_DRAIN_DREDGES_LOW{
