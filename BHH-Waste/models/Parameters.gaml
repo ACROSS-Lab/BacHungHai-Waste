@@ -165,7 +165,7 @@ global {
 	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.0 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
 	float impact_drain_dredge_agriculture_weak <- impact_drain_dredge_agriculture_strong/2.0 min: 0.0 max: 1.0; //improvment of the agricultural production
 	
-	int token_install_filter_for_homes_construction <- 280 ; //construction
+	int token_install_filter_for_homes_construction <- 240 ; //construction
 	int token_install_filter_for_homes_maintenance <- 10; //per year	
 	list<float> treatment_facility_decrease <- [0.20,0.40,0.80] ; // impact of treatement facility for year 1, year 2, and after. Comprised between 0 and 1
 	
