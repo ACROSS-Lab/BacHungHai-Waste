@@ -35,7 +35,7 @@ species village {
 	bool weak_collection_policy <- false;
 	bool strong_collection_policy <- false;
 	bool ultimate_collection_policy <- false;
-	int treatment_facility_year <- 0 max: 3;
+	int treatment_facility_year <- 0 max: length(treatment_facility_decrease);
 	bool treatment_facility_is_activated <- false;
 	float start_turn_time;
 	int diff_farmers;
