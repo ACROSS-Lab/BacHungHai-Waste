@@ -18,6 +18,7 @@ species canal {
 	float solid_waste_level_tmp;
 	float water_waste_level_tmp;
 	list<canal> downtream_canals;
+	float pollution_density;
 	
 	
 	action init_flow {
@@ -42,6 +43,7 @@ species canal {
 	action update_waste {
 		solid_waste_level <- solid_waste_level + solid_waste_level_tmp;
 		water_waste_level <- water_waste_level + water_waste_level_tmp ;
+		pollution_density <- (solid_waste_level  + solid_waste_level * convertion_from_l_water_waste_to_kg_solid_waste) / shape.perimeter ;
 	}
 	aspect default {
 		if display_water_flow {
