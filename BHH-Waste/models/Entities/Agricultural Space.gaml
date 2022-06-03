@@ -38,6 +38,7 @@ species plot {
 	float part_water_waste_canal <- part_water_waste_canal_farmers;
 	bool has_dumphole <- false;
 	float water_waste_pollution;
+	list<float> productitivy_improvement;
 	
 	action pollution_due_to_practice { 
 		
@@ -100,6 +101,10 @@ species plot {
 		current_productivity <- base_productivity;
 		if does_implement_fallow {
 			current_productivity <- current_productivity * (1 - part_of_plots_in_fallow);
+			productitivy_improvement <- copy(improve_of_fallow_on_productivity);
+		} else if not empty(productitivy_improvement) {
+			current_productivity <- current_productivity * (1 + first(productitivy_improvement));
+			productitivy_improvement >> first(productitivy_improvement);
 		}
 		if use_more_manure_strong {
 			current_productivity <- current_productivity * (1 + impact_support_manure_buying_production_strong);
@@ -108,6 +113,7 @@ species plot {
 			current_productivity <- current_productivity * (1 + impact_support_manure_buying_production_weak);
 		}
 		if does_reduce_pesticide {current_productivity <- current_productivity* (1 - impact_pesticide_reducing_production);}
+		
 		if the_village.is_drained_strong {
 			current_productivity <- current_productivity * (1 + impact_drain_dredge_agriculture_strong);
 		}

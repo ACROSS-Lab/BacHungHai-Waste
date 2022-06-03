@@ -181,6 +181,7 @@ global {
 	
 	int token_implement_fallow <- 40; //per year
 	float part_of_plots_in_fallow  <- 0.25 min: 0.0 max: 1.0; //decrease the agricultural production
+	list<float> improve_of_fallow_on_productivity <- [0.5, 0.25]; //at T+1 -> Improve the productivity of 50 % at T+1, then of 25 % at T+2, and 0% after
 	
 	int token_support_manure_buying_strong <- 40; //per year
 	float impact_support_manure_buying_production_strong  <- 0.40 min: 0.0 max: 1.0; //improvment of the agricultural production
