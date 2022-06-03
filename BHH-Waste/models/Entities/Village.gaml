@@ -366,9 +366,7 @@ species village {
 				
 				}
 				
-				ask plots {
-					does_implement_fallow <- true;
-				}
+				
 				budget <- budget - token_implement_fallow;
 				list<plot> plot_s <- plots sort_by (-1 * each.water_waste_pollution);
 				float area_t <- (plot_s sum_of each.shape.area) * part_of_plots_in_fallow;
@@ -383,6 +381,7 @@ species village {
 					ask p.my_cells {
 						water_waste_level <- 0.0;
 					}
+					p.does_implement_fallow <- true;
 					area_t <- area_t - p.shape.area;
 					if area_t < 0 {
 						break;
@@ -579,7 +578,12 @@ species village {
 		ask plots {
 			use_more_manure_strong <- false;
 			use_more_manure_weak <- false;
-			does_implement_fallow <- false; 
+			if not does_implement_fallow and not empty(productitivy_improvement) {
+				productitivy_improvement >> first(productitivy_improvement);
+			} else if does_implement_fallow{
+				productitivy_improvement <- copy(improve_of_fallow_on_productivity);
+			}
+ 			does_implement_fallow <- false; 
 		}
 		if no_starting_actions {
 			if not without_player{
