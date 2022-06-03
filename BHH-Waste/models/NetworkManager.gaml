@@ -17,6 +17,7 @@ species fake_simulation {
 	
 	NetworkManager networkManager;
 	
+	
 	list<string> villages_names <- [
 		"Village 1" 
 		//"Village fictif numéro 2"
@@ -94,22 +95,34 @@ species fake_simulation {
 	}
 	
 	reflex collect_players_actions {
-		if length(networkManager.players_actions) = length(networkManager.players) {
-			loop player_actions over:networkManager.players_actions {
-				
-			}
-			
-			ask networkManager{
+		ask networkManager {
+			if length(players_actions.keys) = length(player_names) {
+				write "end of the turn " + turn;
+				loop player over:players {
+					write "player " + player + " plays:" + players_actions[player];
+				}
 				do new_turn;
 			}
 		}
 	}
 	
 	
+	
+	
+	
 }
 
 
 species NetworkManager skills:[network]{
+
+
+	action add_player_action(unknown player, string action_list_message) {
+		let action_list <- (action_list_message split_with(kw_player_actions + ":", true))[1];
+		
+		write "player " + player_names[players index_of player] + " plays: " + action_list;
+		players_actions[player] <- action_list;
+	}
+
 
 	int port	<- 8989; //Default to 8989
 
@@ -128,11 +141,13 @@ species NetworkManager skills:[network]{
 	list<string> 				player_names;
 	list<unknown> 				players;
 	list<int>					player_budgets;
-	list<map<string,string>> 	players_actions;
+	map<unknown,string> 		players_actions;
 	list<map<string,unknown>>	available_actions;
 	
+	int turn <- 0;
+	
 	init {
-		
+		players_actions	<- [];
 		player_names 	<- [];
 		players 		<- [];
 		
@@ -149,10 +164,7 @@ species NetworkManager skills:[network]{
 		
 	}
 	
-	action add_player_action(unknown player, string action_list) {
-		//TODO
-	}
-	
+
 	action send_data(unknown player,string flag, list<float> data) {
 		do send to:player contents:flag + ":" + data;
 	}
@@ -178,7 +190,8 @@ species NetworkManager skills:[network]{
 	}
 	
 	action new_turn {
-		players_actions <- players_actions + [];
+		turn <- turn + 1;
+		players_actions <- [];
 	}
 	
 	action kick_player_out(unknown player) {
