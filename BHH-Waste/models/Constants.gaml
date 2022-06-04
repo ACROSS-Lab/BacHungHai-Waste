@@ -11,7 +11,7 @@ model Constants
 /********************** CONSTANTS ****************************/
 global {
 	string VILLAGE <- "village";
-	string DISCUSSION_PHASE <- "DISCUSSION PHASE";
+	string DISCUSSION_PHASE <- "DISCUSSION PHASE"; // Used in messages
 	string PLAYER_TURN <- "PLAYER TURN";
 	string INDICATOR_COMPUTATION <- "INDICATOR COMPUTATION";
 	string TIME_DISCUSSION_FINISHED <- "Time for discussion finished!";
@@ -92,7 +92,7 @@ global {
 	string YEAR <- "year";
 	string DAY <- "day";
 	string TURN_OF_PLAYER <- "Turn of player";
-	string DISCUSSION_STAGE <- "Discussion phase";
+	string DISCUSSION_STAGE <- "Discussion phase"; // In Debug UI
 	string SIMULATION_STAGE <- "Simulation phase";
 	string NUM_FARMERS <- "Num farmer households";
 	string NUM_URBANS <- "Num urban households";
