@@ -2,6 +2,9 @@
 * Name: LFAY
 * The model used for the LFAY 2-days demonstrations  
 * Author: A. Drogoul
+* 
+* This model has been designed using resources (icons) from Flaticon.com
+* 
 * Tags: 
 */
 
@@ -104,14 +107,21 @@ global {
 	image_file next_icon <- image_file("../../includes/icons/fast-forward.png");
 	image_file garbage_icon <- image_file("../../includes/icons/garbage.png");
 	image_file city_icon <- image_file("../../includes/icons/office.png");
+	image_file score_icon <- image_file("../../includes/icons/score.png");
 	
 	list<image_file> village_icon <- 4 among faces; 
-	
+	pie_chart day_timer;
 	stacked_chart global_chart;
 	int cycle_count;
 	
 	
 	init {
+		create pie_chart {
+			radius <- 5000.0;
+			do add("Days", 80.0, #green);
+			do add("Total", 285, #darkred);
+		}
+		day_timer <- pie_chart[0];
 		write world.shape.width;
 		write world.shape.height;		
 		create stacked_chart {
@@ -330,17 +340,19 @@ experiment Open {
 		display "CENTER TOP" type: opengl axes: false background: timer_background /*refresh: stage = COMPUTE_INDICATORS*/ {
 			light #ambient intensity: ambient_intensity;
 			
-			graphics "Jauge for the turns" {
-				float y <- 0.0;
-				draw ""+turn  color: #white font: font("Impact", 50, #bold) anchor: #left_center at: {2*shape.width + 500,y};
-				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
-				float width <- cycle_count * 2 * shape.width / (8 * 365);
-				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkred;
-				draw calendar_icon at: {width - shape.width,y} size: shape.height/3;
+			species commune visible: false;
+			agents "Turn" value: [day_timer] position: {-world.shape.width , 0};
+			graphics "Turn#" position: {-world.shape.width , 0, 0.01} {
+				draw ""+80  color: #white font: font("Impact", 80, #bold) anchor: #center border: #black;
 			}
-			graphics "Label" size: {0.7, 0.7} position: {0.15, 0.2} transparency: flip(0.5) ? 0.1 : 0.8 {
+			graphics "Label" size: {1,1} position: {0,0} transparency: flip(0.5) ? 0.1 : 0.8 {
 				draw label_icon;
+
 			}
+			graphics "Score" size: {1,1} position: {0, shape.height/2}  {
+				draw score_icon at: {2*shape.width, 0};
+			}
+			
 		}
 
 		/********************** MAIN MAP DISPLAY ***************************************************/
@@ -374,9 +386,28 @@ experiment Open {
 		display "TIMER" type: opengl axes: false background: timer_background  {
 			light #ambient intensity: ambient_intensity;
 			
+			graphics "Jauge for the turns" {
+				float y <- shape.height - 500;
+				draw ""+turn  color: #white font: font("Impact", 50, #bold) anchor: #left_center at: {2*shape.width + 500,y};
+				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
+				float width <- cycle_count * 2 * shape.width / (8 * 365);
+				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkred;
+				draw calendar_icon at: {width - shape.width,y} size: shape.height/3;
+			}
+			
+			graphics "Jauge for the discussion" visible: stage = PLAYER_DISCUSSION_TURN {
+				float y <- 0.0;
+				draw ""+int(remaining_time)+"s"  color: #white font: font("Impact", 50, #bold) anchor: #left_center at: {2*shape.width + 500,y};
+				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
+				float width <-( 180 -remaining_time)* 2 * shape.width / (180);
+				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkgreen;
+				draw sandclock_icon rotate: (180 - remaining_time)*3 at: {width - shape.width,y} size: shape.height/3;
+			}
+			
+			
 			graphics "Stage" position: {0,-500}{
 				image_file icon <- (stage = PLAYER_DISCUSSION_TURN) ? discussion_icon : ((stage = PLAYER_ACTION_TURN) ? village_icon[int(villages_order[index_player])] : computer_icon);
-				draw icon size: {2*shape.width/3, 2*shape.width/3};
+				draw icon size: {3*shape.width/5, 3*shape.width/5};
 				if (stage = PLAYER_ACTION_TURN) {
 					draw ""+(int(villages_order[index_player])+1) color: #black font: font("Impact", 50, #bold) anchor: #center ;
 				}
@@ -405,15 +436,6 @@ experiment Open {
 						}
 					}
 				}
-			}
-			
-			graphics "Jauge for the discussion" visible: stage = PLAYER_DISCUSSION_TURN {
-				float y <- shape.height - 500;
-				draw ""+int(remaining_time)+"s"  color: #white font: font("Impact", 50, #bold) anchor: #left_center at: {2*shape.width + 500,y};
-				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
-				float width <-( 180 -remaining_time)* 2 * shape.width / (180);
-				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkgreen;
-				draw sandclock_icon rotate: (180 - remaining_time)*3 at: {width - shape.width,y} size: shape.height/3;
 			}
 		}
 
