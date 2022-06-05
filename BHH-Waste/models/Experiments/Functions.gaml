@@ -91,9 +91,9 @@ global {
 	int production_class_current(plot p) {
 		float w <- field_initial_productivity; // TODO this is an example
 		switch(w) {
-			match_between [0, 0.000049] {return 0;}
-			match_between [0.000050, 0.00009] {return 1;}
-			match_between [0.0001, 0.00019] {return 2;}
+			match_between [0, 0.000079] {return 0;}
+			match_between [0.00008, 0.000012] {return 1;}
+			match_between [0.00013, 0.00019] {return 2;}
 			match_between [0.0002, 0.00029] {return 3;}
 			default {return 4;}	
 		}
