@@ -75,6 +75,7 @@ global {
 	int days_with_ecolabel <- 0;
 	list<int> days_with_ecolabel_year <- [0];
 	
+	
 	float village1_solid_pollution update: village[0].canals sum_of each.solid_waste_level + village[0].cells sum_of each.solid_waste_level ;
 	float village1_water_pollution update: convertion_from_l_water_waste_to_kg_solid_waste * (village[0].canals sum_of each.water_waste_level + village[0].cells  sum_of each.water_waste_level)  ;
 	float village2_solid_pollution update: village[1].canals sum_of each.solid_waste_level + village[1].cells sum_of each.solid_waste_level ;
@@ -86,12 +87,17 @@ global {
 	
 	float total_solid_pollution update: village1_solid_pollution + village2_solid_pollution + village3_solid_pollution + village4_solid_pollution  ;
 	float total_water_pollution update:  village1_water_pollution + village2_water_pollution + village3_water_pollution + village4_water_pollution   ;
+	
 	 
 	float village1_production update: village[0].plots sum_of each.current_production ;	
 	float village2_production update: village[1].plots sum_of each.current_production ;
 	float village3_production update: village[2].plots sum_of each.current_production ;
 	float village4_production update: village[3].plots sum_of each.current_production ;
 	float total_production update: (village1_production + village2_production + village3_production + village4_production) ;
+	
+	list<float> village_solid_pollution <- [0.0, 0.0,0.0,0.0] update:[village1_solid_pollution,village2_solid_pollution,village3_solid_pollution,village4_solid_pollution] ;
+	list<float> village_water_pollution <- [0.0, 0.0,0.0,0.0] update:[village1_water_pollution,village2_water_pollution,village3_water_pollution,village4_water_pollution] ;
+	list<float> village_production <- [0.0, 0.0,0.0,0.0] update:[village1_production,village2_production,village3_production,village4_production] ;
 	
 	list<int> time_step;
 	list<float> village1_solid_pollution_values;

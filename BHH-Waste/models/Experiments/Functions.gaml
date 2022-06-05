@@ -21,12 +21,12 @@ global {
 	// Class supposed to be between 0 (low) to 4 (high) for the villages
 	
 	int soil_pollution_class_last_year (village v) {
-		int w <- soil_pollution_value_last_year(v);
+		float w <- village_solid_pollution[int(v)];
 		switch(w) {
-			match_between [] {return 0;}
-			match_between [] {return 1;}
-			match_between [] {return 2;}
-			match_between [] {return 3;}
+			match_between [0, 24999] {return 0;}
+			match_between [25000, 39999] {return 1;}
+		match_between [40000, 64999] {return 2;}
+			match_between [65000, 90000] {return 3;}
 			default {return 4;}
 		}
 	}
@@ -35,41 +35,53 @@ global {
 	
 	
 	int production_class_last_year (village v) {
-		int w <- production_value_last_year(v);
-		switch(w) {
-			match_between [] {return 0;}
-			match_between [] {return 1;}
-			match_between [] {return 2;}
-			match_between [] {return 3;}
-			default {return 4;}
+		float w <- village_production[int(v)];
+		if (int(v) = 0) {
+			switch(w) {
+				match_between [0, 349] {return 0;}
+				match_between [350, 699] {return 1;}
+				match_between [700, 899] {return 2;}
+				match_between [900, 1149] {return 3;}
+				default {return 4;}
+			}
+		} else {
+			switch(w) {
+				match_between [0, 499] {return 0;}
+				match_between [500, 799] {return 1;}
+				match_between [800, 1099] {return 2;}
+				match_between [1100, 1499] {return 3;}
+				default {return 4;}
+			}
 		}
+		
 	}
 	
 	// Class supposed to be between 0 (low) to 4 (high) for the villages
 	
 	int water_pollution_class_last_year (village v) {
-		int w <- water_pollution_value_last_year(v);
+		
+		float w <- village_water_pollution[int(v)];
 		switch(w) {
-			match_between [] {return 0;}
-			match_between [] {return 1;}
-			match_between [] {return 2;}
-			match_between [] {return 3;}
+			match_between [0, 9999] {return 0;}
+			match_between [10000, 19999] {return 1;}
+			match_between [20000, 29999] {return 2;}
+			match_between [30000, 44999] {return 3;}
 			default {return 4;}
 		}
 	}
 	
 	
 
-	int soil_pollution_value_last_year(village v) {
-		return 0;
+	float soil_pollution_value_last_year(village v) {
+		return village_solid_pollution[int(v)];
 	}
 	
-	int water_pollution_value_last_year(village v) {
-		return 0;
+	float water_pollution_value_last_year(village v) {
+		return village_water_pollution[int(v)];
 	}
 	
-	int production_value_last_year(village v) {
-		return 0;
+	float production_value_last_year(village v) {
+		return village_production[int(v)];
 	}
 	
 	// Indicators for the map
@@ -77,19 +89,19 @@ global {
 	// Class supposed to be between 0 (low) to 4 (high) for the plots
 	
 	int production_class_current(plot p) {
-		float w <- p.current_production; // TODO this is an example
+		float w <- field_initial_productivity; // TODO this is an example
 		switch(w) {
-			match_between [] {return 0;}
-			match_between [] {return 1;}
-			match_between [] {return 2;}
-			match_between [] {return 3;}
-			default {return 4;}
+			match_between [0, 0.000049] {return 0;}
+			match_between [0.000050, 0.00009] {return 1;}
+			match_between [0.0001, 0.00019] {return 2;}
+			match_between [0.0002, 0.00029] {return 3;}
+			default {return 4;}	
 		}
 	}
 	
 	// Class supposed to be between 0 (low) to 4 (high) for the plots
 	
-	int soil_pollution_class_current(plot p) {
+	/*int soil_pollution_class_current(plot p) {
 		float w <- p; // TODO this is an example
 		switch(w) {
 			match_between [] {return 0;}
@@ -98,17 +110,17 @@ global {
 			match_between [] {return 3;}
 			default {return 4;}
 		}
-	}
+	}*/
 	
 	// Class supposed to be between 0 (low) to 4 (high) for the canals
 	
 	int water_pollution_class_current(canal p) {
-		float w <- p.pollution_density; // TODO this is an example
+		float w <- pollution_density; // TODO this is an example
 		switch(w) {
-			match_between [] {return 0;}
-			match_between [] {return 1;}
-			match_between [] {return 2;}
-			match_between [] {return 3;}
+			match_between [0, 0.9] {return 0;}
+			match_between [1, 9] {return 1;}
+			match_between [10, 19] {return 2;}
+			match_between [20, 39] {return 3;}
 			default {return 4;}
 		}
 	}
