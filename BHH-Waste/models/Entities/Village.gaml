@@ -587,7 +587,7 @@ species village {
 		}
 		if no_starting_actions {
 			if not without_player{
-				do tell(TURN_OF + " " + PLAYER + " " + (int(self) + 1));
+				ask world { do tell(TURN_OF + " " + PLAYER + " " + (int(self) + 1));}
 			}
 		} else {
 			string chosen_waste_collection_freq <- "";
@@ -595,7 +595,7 @@ species village {
 			int collect_per_week_strong <- length(days_collects_strong);
 			int collect_per_week_ultimate <- length(days_collects_ultimate);
 			if not without_player{
-				do tell(TURN_OF + " " + PLAYER + " " + (int(self) + 1));
+				ask world { do tell(TURN_OF + " " + PLAYER + " " + (int(self) + 1));}
 				string current_val <- "" +(weak_collection_policy ? collect_per_week_weak : (strong_collection_policy ? collect_per_week_strong : collect_per_week_ultimate)) + " " + PER_WEEK;
 				map result;
 				
