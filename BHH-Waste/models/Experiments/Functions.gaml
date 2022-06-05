@@ -115,7 +115,7 @@ global {
 	// Class supposed to be between 0 (low) to 4 (high) for the canals
 	
 	int water_pollution_class_current(canal p) {
-		float w <- pollution_density; // TODO this is an example
+		float w <- p.pollution_density; // TODO this is an example
 		switch(w) {
 			match_between [0, 0.9] {return 0;}
 			match_between [1, 9] {return 1;}
