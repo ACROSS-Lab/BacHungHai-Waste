@@ -12,6 +12,7 @@ model LFAY
 
 import "../Global.gaml"
 import "../Charts.gaml"
+import "Functions.gaml"
  
 global {
 	
@@ -361,9 +362,7 @@ experiment Open {
 			light #ambient intensity: 100;
 			
 			camera 'default' location: {3213.0194,2444.8489,6883.1631} target: {3213.0194,2444.7288,0.0};
-			species house {
-				draw shape color: city_color;
-			}
+			species urban_area ;
 			species plot {
 				draw shape color: soil_on ? one_of(reds) : (production_on ? one_of(greens) : map_background) border: false;
 			}
