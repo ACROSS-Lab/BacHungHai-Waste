@@ -94,15 +94,16 @@ species stacked_chart {
  				float v <- data[col][c];
  				float height <- v * ratio;
  				//draw  ""+v at:{col_index * col_width + x_margin,location.y + size/2 - height/2} font: font('Helvetica',32,#bold) color: c anchor: #center;
- 				draw rectangle(col_width,height) color: c wireframe: false border: #black width: 2 at: {col_index * col_width + x_margin,current_y + location.y + size/2 - height/2};
+ 				draw rectangle(col_width,height) color: c at: {col_index * col_width + x_margin,current_y + location.y + size/2 - height/2};
+ 				draw rectangle(col_width,height) wireframe: true border: #black width: 5 at: {col_index * col_width + x_margin,current_y + location.y + size/2 - height/2};
  				current_y <- current_y + - height;
  			}
  			if (icons[col] != nil) {
- 				draw icons[col] at: {col_index * col_width + x_margin, size} size: {col_width/2, col_width/2};
+ 				draw icons[col] at: {col_index * col_width + x_margin, size-size/10} size: {col_width/2, col_width/2};
  			}
  			col_index <- col_index + 1;
  		}
- 		draw line({location.x - 2*size/3, location.y + size/2 - desired_value*ratio},{location.x + 2*size/3, location.y + size/2 - desired_value*ratio}) color: #white width: 3;
+ 		draw line({location.x - 2*size/3, location.y + size/2 - desired_value*ratio},{location.x + 2*size/3, location.y + size/2 - desired_value*ratio}) color: #white width: 5;
  		if (desired_icon != nil) {
  			draw desired_icon at: {location.x - 2*size/3, location.y + size/2 - desired_value*ratio} size: 2*col_width/3;
  		}
