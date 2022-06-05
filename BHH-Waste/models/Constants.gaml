@@ -43,6 +43,28 @@ global {
 	string NOT_ENOUGH_BUDGET <- "Not enough budget for";
 	
 	
+	string A_DUMPHOLES <- "Dumpholes";
+	string A_PESTICIDES <- "Pesticides";
+	string A_END_TURN <- "End of turn";
+	string A_SENSIBILIZATION <- "Sensibilization";
+	string A_FILTERS <- "Filters for every home";
+	string A_COLLECTIVE_LOW <- "Trimestrial collective action low";
+	string A_COLLECTIVE_HIGH <- "Trimestrial collective action high";
+	string A_DRAIN_DREDGES_HIGH <- "Drain and dredge high";
+	string A_DRAIN_DREDGES_LOW <- "Drain and dredge low";
+	string A_FALLOW <- "Fallow";
+	string A_MATURES_LOW <- "Support manure low";
+	string A_MATURES_HIGH <- "Support manure high";
+	string A_FILTER_MAINTENANCE <- "Maintenance for filters";
+	
+	string A_COLLECTION_LOW <- "Collection teams low";
+	string A_COLLECTION_HIGH <- "Collection teams high";
+	
+ 	list<string> actions_name_short <- [A_DUMPHOLES, A_PESTICIDES, A_SENSIBILIZATION, A_FILTERS, A_COLLECTIVE_HIGH, A_COLLECTIVE_LOW, 
+ 		A_DRAIN_DREDGES_HIGH, A_DRAIN_DREDGES_LOW, A_FALLOW, A_MATURES_HIGH, A_MATURES_LOW, A_FILTER_MAINTENANCE, A_COLLECTION_LOW, A_COLLECTION_HIGH, A_END_TURN
+ 	];
+	// Old
+	
 	string ACT_DRAIN_DREDGE <- "Drain and dredge";
 	string ACT_FACILITY_TREATMENT <- "Install water treatment facilities for every home";
 	string ACT_SENSIBILIZATION <- "Organise sensibilization about waste sorting workshops in schools";
@@ -52,6 +74,10 @@ global {
 	string ACT_IMPLEMENT_FALLOW <- "Put part of the fields in fallow ";
 	string ACT_INSTALL_DUMPHOLES <- "Making farmers participate in the installation of dumpholes for agricultural products";
 	string ACT_END_OF_TURN <- "end of turn";
+	
+	
+	// 
+	
 	string CONFIRM_ACTION <- "do you confirm that you want to";
 	string COST <- "Cost";
 	string CANNOT_BE_DONE_TWICE <- "cannot be done twice";
