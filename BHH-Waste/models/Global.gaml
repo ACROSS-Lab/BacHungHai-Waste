@@ -160,6 +160,9 @@ global {
 		"o"::ACT_END_OF_TURN
 	]; 
 	}
+	
+	action before_start_turn{}
+	
 	action load_language {
 		matrix mat <- matrix(translation_game_csv_file);
 		int index_english <- max(1, (mat row_at 0) index_of ("English"));

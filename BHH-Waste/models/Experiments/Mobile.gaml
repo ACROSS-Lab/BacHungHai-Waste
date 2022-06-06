@@ -74,10 +74,10 @@ global skills: [music] {
 	
 	
 	action before_start_turn{
-//		do	send_players_pollution_levels;
-//		ask networkManager{
-//			do send_start_turn(players[index_player], village[index_player].budget, turn);			
-//		}
+		do	send_players_pollution_levels;
+		ask networkManager{
+			do send_start_turn(players[index_player], village[index_player].budget, turn);			
+		}
 	}
 	
 	

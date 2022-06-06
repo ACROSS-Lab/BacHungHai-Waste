@@ -9,7 +9,7 @@ model NetworkManager
 
 global {
 	init {
-		create fake_simulation number:1;
+	//	create fake_simulation number:1;
 	}
 }
 
@@ -253,6 +253,4 @@ species NetworkManager skills:[network]{
 	
 }
 
-experiment test {
-	
-}
+
