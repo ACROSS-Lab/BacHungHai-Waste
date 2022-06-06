@@ -23,25 +23,29 @@ species fake_simulation {
 		//"Village fictif numéro 2"
 	];
 	
-	list<int>	init_budgets	<- [	
-		128
-	//	132
+	list<list<int>>	init_budgets	<- [	
+		[128], 
+		[130],
+		[132],
+		[134],
+		[136] //player 1's budget for the game
 	];
 	
 	list<map<string,unknown>>	init_actions <- [
-		['id'::1,'name'::'Drain and dredge', 'cost'::20,'once_per_game'::false,'mandatory'::false, 'asset_name'::'drain-dredge.png', 'description'::"🠓Solid waste\n🠓Waste water"],
+		['id'::1,'name'::'Drain and dredge', 'cost'::20,'once_per_game'::false,'mandatory'::false, 'asset_name'::'drain-dredge.png', 'description'::"↓Solid waste\n↓Waste water"],
 		['id'::2,'name'::'Drain and dredge', 'cost'::50,'once_per_game'::false,'mandatory'::false, 'asset_name'::'drain-dredge.png'],
 		['id'::3,'name'::'Sensibilization',  'cost'::25,'once_per_game'::false,'mandatory'::false, 'asset_name'::'nexistepas'],
 		['id'::4,'name'::'Collect waste',    'cost'::25,'once_per_game'::false,'mandatory'::true, 'asset_name'::'drain-dredge.png'],
 		['id'::5,'name'::'Collect waste',    'cost'::50,'once_per_game'::false,'mandatory'::true, 'asset_name'::'drain-dredge.png'],
 		['id'::7,'name'::'Install facility treatments', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'build-collection-pits.png'],
 		['id'::8,'name'::'a', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'fallow.png'],
-		['id'::9,'name'::'b', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'purchase-fertilizers.png', "description"::"🠑Waste water\n🠑Productivity"],
+		['id'::9,'name'::'b', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'purchase-fertilizers.png', "description"::"↑Waste water\n↑Productivity"],
 		['id'::10,'name'::'c', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'raise-awareness.png'],
 		['id'::11,'name'::'d', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'reduce-pesticide-use.png'],
 		['id'::11,'name'::'e', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'trimestriel-waste-collection.png'],
-		['id'::12,'name'::'f', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'wastewater-treatment.png']
-	];
+		['id'::12,'name'::'f', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'wastewater-treatment.png'],
+		['id'::13,'name'::'Action collective', 'cost'::0,'once_per_game'::true,'mandatory'::false, 'asset_name'::'collective-action.png']
+];
 	
 	init {
 		
@@ -136,10 +140,13 @@ species NetworkManager skills:[network]{
 	string kw_budget				<- "budget";
 	string kw_actions				<- "actions";
 	string kw_player_actions		<- "_AFEOT_";
+	string kw_start_turn			<- "_START_TURN_";
+	string kw_turn_number			<- "turn";
+	
 	
 	list<string> 				player_names;
 	list<unknown> 				players;
-	list<int>					player_budgets;
+	list<list<int>>				player_budgets;
 	map<unknown,string> 		players_actions;
 	list<map<string,unknown>>	available_actions;
 	
@@ -150,10 +157,15 @@ species NetworkManager skills:[network]{
 		player_names 	<- [];
 		players 		<- [];
 		
-		do connect protocol:"tcp_server" port:port raw:true size_packet:10000;
+		do connect protocol:"tcp_server" port:port raw:true size_packet:100000;
 		
 	}
 	
+	action send_start_turn(unknown player, int turn_budget, int turn_number) {
+		let mess <- kw_start_turn +':{"' +kw_budget +'":' + turn_budget + ',"' + kw_turn_number+ '":' + turn_number +"}";
+		write "sending: " + mess + " to: " + player;
+		do send to:player contents:mess;
+	}
 	
 	action add_player_action(unknown player, string action_list_message) {
 		let action_list <- (action_list_message split_with(kw_player_actions + ":", true))[1];
@@ -163,7 +175,7 @@ species NetworkManager skills:[network]{
 	}
 	
 	
-	action init_game(int _port, list<string> _player_names, list<int> _player_budgets, list<map<string,unknown>> actions){
+	action init_game(int _port, list<string> _player_names, list<list<int>> _player_budgets, list<map<string,unknown>> actions){
 		port				<- _port;
 		player_names 		<- _player_names;
 		player_budgets		<- _player_budgets;
@@ -184,7 +196,7 @@ species NetworkManager skills:[network]{
 		write "new player: " + sender;
 		do send to:sender contents:kw_initial_data + ":{"  
 				+ '"' + kw_player_name 	+ '":"' + player_names[length(players)] 	+ '",' 
-				+ '"' + kw_budget 		+ '":' 	+ player_budgets[length(players)] 	+ ","
+				+ '"' + kw_budget 		+ '":' 	+ player_budgets[turn][length(players)] 	+ ","
 				+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
 				+ '}';
 				
@@ -196,9 +208,14 @@ species NetworkManager skills:[network]{
 		
 	}
 	
-	action new_turn {
+	action new_turn  {
 		turn <- turn + 1;
 		players_actions <- [];
+		int i <- 0;
+		loop player over:players {
+			do send_start_turn(player, player_budgets[turn][i], turn + 1);
+			i <- i + 1;
+		}
 	}
 	
 	action kick_player_out(unknown player) {
