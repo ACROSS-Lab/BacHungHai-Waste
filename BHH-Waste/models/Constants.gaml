@@ -91,6 +91,33 @@ global {
 	
  	list<map<string,unknown>>	mobile_actions <- 
 	[
+			[
+			'id'::A_COLLECTION_LOW,
+			'name'::'Collecte trimestriel de déchets dans les canaux',
+			'cost'::18,
+			'once_per_game'::false,
+			'mandatory'::false,
+			'asset_name'::IMAGE_WASTE_COLLECTION,
+			'description'::"↓Déchets solides dans les canaux\n"
+		],
+		[
+			'id'::A_COLLECTION_HIGH,
+			'name'::'Collecte trimestriel de déchets dans les canaux',
+			'cost'::35,
+			'once_per_game'::false,
+			'mandatory'::false,
+			'asset_name'::IMAGE_WASTE_COLLECTION,
+			'description'::"↓Déchets solides dans les canaux\n"
+		],
+		[
+			'id'::A_FILTERS,
+			'name'::'Système de traitement de eaux usées',
+   			'cost'::0,
+			'once_per_game'::true,
+			'mandatory'::false,
+			'asset_name':: IMAGE_COLLECTIVE_ACTION,
+			'description'::"↓Eaux usées des habitants\n"
+		],
 		[
 			'id'::A_DUMPHOLES,
 			'name'::'Construction de puits de collecte',
@@ -108,24 +135,6 @@ global {
 			'mandatory'::false,
 			'asset_name':: IMAGE_REDUCE_PESTICIDES,
 			'description'::"↓Déchets solides dans les champs\n↓Productivité"
-		],
-		[
-			'id'::A_SENSIBILIZATION,
-			'name'::'Sensibilisation au tri des déchets',
-			'cost'::20,
-			'once_per_game'::false,
-			'mandatory'::false,
-			'asset_name'::IMAGE_RAISE_AWAReNESS,
-			'description'::"↓Déchets solides dans le village\n"
-		],
-		[
-			'id'::A_FILTERS,
-			'name'::'Système de traitement de eaux usées',
-   			'cost'::0,
-			'once_per_game'::true,
-			'mandatory'::false,
-			'asset_name':: IMAGE_COLLECTIVE_ACTION,
-			'description'::"↓Eaux usées des habitants\n"
 		],
 		[	
 			'id'::A_COLLECTIVE_HIGH,
@@ -145,6 +154,15 @@ global {
 			'asset_name'::IMAGE_COLLECT_WASTE_WEEK,
 			'description'::"↓Déchets solides dans les zones urbaines\n"
 		],
+		[
+			'id'::A_SENSIBILIZATION,
+			'name'::'Sensibilisation au tri des déchets',
+			'cost'::20,
+			'once_per_game'::false,
+			'mandatory'::false,
+			'asset_name'::IMAGE_RAISE_AWAReNESS,
+			'description'::"↓Déchets solides dans le village\n"
+		],
 		[	
 			'id'::A_DRAIN_DREDGES_HIGH,
 			'name'::'Drainer et draguer',
@@ -162,15 +180,6 @@ global {
 			'mandatory'::false,
 			'asset_name'::IMAGE_DRAIN_DREDGE,
 			"description"::"↓Eaux usées dans les canaux\n"
-		],
-		[
-			'id'::A_FALLOW,
-			'name'::'Jachère',
-			'cost'::40,
-			'once_per_game'::false,
-			'mandatory'::false,
-			'asset_name'::IMAGE_FALLOW,
-			'description'::"↓Pollutions des terres\n ↓Productivité ce tour-ci\n ↑Production le prochain tour"
 		],
 		[
 			'id'::A_MATURES_HIGH,
@@ -198,26 +207,17 @@ global {
 			'mandatory'::false,
 			'asset_name'::IMAGE_COLLECTIVE_ACTION,
 			'description'::"↓Eaux usées des habitants\n"
-		],
-		[
-			'id'::A_COLLECTION_LOW,
-			'name'::'Collecte trimestriel de déchets dans les canaux',
-			'cost'::18,
+			],
+			[
+			'id'::A_FALLOW,
+			'name'::'Jachère',
+			'cost'::40,
 			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::IMAGE_WASTE_COLLECTION,
-			'description'::"↓Déchets solides dans les canaux\n"
-		],
-		[
-			'id'::A_COLLECTION_HIGH,
-			'name'::'Collecte trimestriel de déchets dans les canaux',
-			'cost'::35,
-			'once_per_game'::false,
-			'mandatory'::false,
-			'asset_name'::IMAGE_WASTE_COLLECTION,
-			'description'::"↓Déchets solides dans les canaux\n"
-		]
-	];
+			'asset_name'::IMAGE_FALLOW,
+			'description'::"↓Pollutions des terres\n↓Productivité ce tour-ci\n↑Production le prochain tour"
+			]
+		];
  	
  	
 	// Old
