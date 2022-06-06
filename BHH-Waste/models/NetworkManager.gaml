@@ -29,12 +29,18 @@ species fake_simulation {
 	];
 	
 	list<map<string,unknown>>	init_actions <- [
-		['id'::1,'name'::'Drain and dredge', 'cost'::20,'once_per_game'::false,'mandatory'::false, 'asset_name'::'drain-dredge.png'],
+		['id'::1,'name'::'Drain and dredge', 'cost'::20,'once_per_game'::false,'mandatory'::false, 'asset_name'::'drain-dredge.png', 'description'::"🠓Solid waste\n🠓Waste water"],
 		['id'::2,'name'::'Drain and dredge', 'cost'::50,'once_per_game'::false,'mandatory'::false, 'asset_name'::'drain-dredge.png'],
 		['id'::3,'name'::'Sensibilization',  'cost'::25,'once_per_game'::false,'mandatory'::false, 'asset_name'::'nexistepas'],
 		['id'::4,'name'::'Collect waste',    'cost'::25,'once_per_game'::false,'mandatory'::true, 'asset_name'::'drain-dredge.png'],
 		['id'::5,'name'::'Collect waste',    'cost'::50,'once_per_game'::false,'mandatory'::true, 'asset_name'::'drain-dredge.png'],
-		['id'::6,'name'::'Install facility treatments', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'drain-dredge.png']
+		['id'::7,'name'::'Install facility treatments', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'build-collection-pits.png'],
+		['id'::8,'name'::'a', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'fallow.png'],
+		['id'::9,'name'::'b', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'purchase-fertilizers.png', "description"::"🠑Waste water\n🠑Productivity"],
+		['id'::10,'name'::'c', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'raise-awareness.png'],
+		['id'::11,'name'::'d', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'reduce-pesticide-use.png'],
+		['id'::11,'name'::'e', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'trimestriel-waste-collection.png'],
+		['id'::12,'name'::'f', 'cost'::50,'once_per_game'::true,'mandatory'::false, 'asset_name'::'wastewater-treatment.png']
 	];
 	
 	init {
@@ -116,13 +122,6 @@ species fake_simulation {
 species NetworkManager skills:[network]{
 
 
-	action add_player_action(unknown player, string action_list_message) {
-		let action_list <- (action_list_message split_with(kw_player_actions + ":", true))[1];
-		
-		write "player " + player_names[players index_of player] + " plays: " + action_list;
-		players_actions[player] <- action_list;
-	}
-
 
 	int port	<- 8989; //Default to 8989
 
@@ -151,8 +150,16 @@ species NetworkManager skills:[network]{
 		player_names 	<- [];
 		players 		<- [];
 		
-		do connect protocol:"tcp_server" port:port raw:true;
+		do connect protocol:"tcp_server" port:port raw:true size_packet:10000;
 		
+	}
+	
+	
+	action add_player_action(unknown player, string action_list_message) {
+		let action_list <- (action_list_message split_with(kw_player_actions + ":", true))[1];
+		
+		write "player " + player_names[players index_of player] + " plays: " + action_list;
+		players_actions[player] <- action_list;
 	}
 	
 	
