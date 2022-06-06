@@ -169,7 +169,7 @@ global {
 	bool use_timer_for_discussion <- true;
 	
 	bool timer_just_for_warning <- false; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player - for the moment, some issue with the automatic change of step
-	float initial_time_for_discussion <- 3 #mn const: true; // time before the player turns
+	float initial_time_for_discussion <- 2 #mn const: true; // time before the player turns
 	//float time_for_discussion <- initial_time_for_discussion;
 	
 	
@@ -609,7 +609,7 @@ experiment Open {
 				float y <- 0.0;
 				draw ""+int(remaining_time)+"s"  color: #white font: base_font anchor: #left_center at: {2*shape.width + 500,y};
 				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
-				float width <-( 180 -remaining_time)* 2 * shape.width / (180);
+				float width <-( initial_time_for_discussion -remaining_time)* 2 * shape.width / (initial_time_for_discussion);
 				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkgreen;
 				draw sandclock_icon rotate: (180 - remaining_time)*3 at: {width - shape.width,y} size: shape.height/3;
 			}
