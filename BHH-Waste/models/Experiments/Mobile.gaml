@@ -21,30 +21,13 @@ global skills: [music] {
 	
 	NetworkManager networkManager;
 	
-	list<list<int>> fake_players_budgets <-
-	[
-		//TODO: changer
-		[128, 130, 132, 128], //Tour 1
-		[128, 130, 132, 128], //Tour 2
-		[128, 130, 132, 128], //Tour 3
-		[128, 130, 132, 128], //Tour 4
-		[128, 130, 132, 128], //Tour 5
-		[128, 130, 132, 128], //Tour 6
-		[128, 130, 132, 128], //Tour 7
-		[128, 130, 132, 128]  //Tour 8
-	];
-	
 	list<string> actions_to_process <- []; // actions of a player to process by the model
 	
 	init {
 	
 		create NetworkManager number:1 {
 			networkManager <- self;
-			write self.port;
-			write players_names;
-			write myself.fake_players_budgets;
-			write mobile_actions;
-			do init_game(self.port, players_names, myself.fake_players_budgets,mobile_actions);
+			do init_game(self.port, players_names, mobile_actions);
 		}
 		
 	}
@@ -59,10 +42,21 @@ global skills: [music] {
 				string content <- mess.contents;
 				
 				if content contains kw_ask_for_connection and length(players) < length(player_names) {
-					do add_player(mess.sender);
+					do add_player(mess.sender, village[length(players)].budget);
 				}
 				else if content contains kw_player_actions {
 					do add_player_action(mess.sender, content);
+					write "playing " + players_actions[mess.sender];
+					loop act over:players_actions[mess.sender] {						
+						ask myself{
+							write act;
+							write A_COLLECTIVE_HIGH;
+							do execute_action(act);							
+						}
+					}
+					ask myself{
+						do execute_action(A_END_TURN);							
+					}
 				}
 			}				
 		}
@@ -76,39 +70,21 @@ global skills: [music] {
 	action before_start_turn{
 		do	send_players_pollution_levels;
 		ask networkManager{
-			do send_start_turn(players[index_player], village[index_player].budget, turn);			
+			let player_idx <- village index_of (villages_order[index_player]);
+			do send_start_turn(players[player_idx], villages_order[index_player].budget, turn);			
 		}
 	}
 	
+
 	
-	
-	
-	reflex detect_interaction when: stage = PLAYER_ACTION_TURN {
-		
-		ask networkManager {
-			let idx_player <- length(players_actions.keys - 1);
-			let player <- players[idx_player];
-			list<string> actions <- players_actions[player] split_with ",";
-			write "end of the turn " + turn + " for player " + players_names[idx_player];
-			loop act over:actions {
-				write "execute action " + act;
-				ask myself {
-					do execute_action(act);
-				}
-			}	
-		}
-	} 
-	
-	
-	//TODO: appeler avant de donner la main pour jouer
 	action send_players_pollution_levels {
 		ask networkManager {
 			int i <- 0;
 			loop player over:players {
 				
-				list<float> water;
-				list<float> solid;
-				list<float> prod;
+				list<int> water;
+				list<int> solid;
+				list<int> prod;
 				
 				if (i = 0){
 					water 	<- village1_water_pollution_values;

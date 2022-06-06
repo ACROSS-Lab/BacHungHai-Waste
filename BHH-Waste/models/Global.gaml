@@ -162,9 +162,9 @@ global {
 		"o"::ACT_END_OF_TURN
 	]; 
 	
-	actions_name_short<- [A_DUMPHOLES::ACT_INSTALL_DUMPHOLES, A_PESTICIDES::ACT_PESTICIDE_REDUCTION, A_SENSIBILIZATION::ACT_SENSIBILIZATION, A_FILTERS::ACT_FACILITY_TREATMENT, A_COLLECTIVE_HIGH::ACTION_COLLECTIVE_ACTION, A_COLLECTIVE_LOW::ACTION_COLLECTIVE_ACTION, 
- 		A_DRAIN_DREDGES_HIGH::ACT_DRAIN_DREDGE, A_DRAIN_DREDGES_LOW::ACT_DRAIN_DREDGE, A_FALLOW::ACT_IMPLEMENT_FALLOW, A_MATURES_HIGH::ACT_SUPPORT_MANURE, A_MATURES_LOW::ACT_SUPPORT_MANURE, A_FILTER_MAINTENANCE::ACT_FACILITY_TREATMENT_MAINTENANCE, A_COLLECTION_LOW::ACT_COLLECT, A_COLLECTION_HIGH::ACT_COLLECT, A_END_TURN::ACT_END_OF_TURN
- 	];
+//	actions_name_short<- [A_DUMPHOLES::ACT_INSTALL_DUMPHOLES, A_PESTICIDES::ACT_PESTICIDE_REDUCTION, A_SENSIBILIZATION::ACT_SENSIBILIZATION, A_FILTERS::ACT_FACILITY_TREATMENT, A_COLLECTIVE_HIGH::ACTION_COLLECTIVE_ACTION, A_COLLECTIVE_LOW::ACTION_COLLECTIVE_ACTION, 
+// 		A_DRAIN_DREDGES_HIGH::ACT_DRAIN_DREDGE, A_DRAIN_DREDGES_LOW::ACT_DRAIN_DREDGE, A_FALLOW::ACT_IMPLEMENT_FALLOW, A_MATURES_HIGH::ACT_SUPPORT_MANURE, A_MATURES_LOW::ACT_SUPPORT_MANURE, A_FILTER_MAINTENANCE::ACT_FACILITY_TREATMENT_MAINTENANCE, A_COLLECTION_LOW::ACT_COLLECT, A_COLLECTION_HIGH::ACT_COLLECT, A_END_TURN::ACT_END_OF_TURN
+// 	];
 	}
 	
 	action before_start_turn{}
@@ -418,8 +418,9 @@ global {
 	
 	
 	action execute_action(string action_name) {
-
-			if ((action_name in actions_name_short.keys)){// and not(actions_name_short[action_name] in village[index_player].actions_done_this_year) and not(actions_name_short[action_name] in village[index_player].actions_done_total)) {
+		write actions_name_short;
+			if ((action_name in actions_name_short)){// and not(actions_name_short[action_name] in village[index_player].actions_done_this_year) and not(actions_name_short[action_name] in village[index_player].actions_done_total)) {
+				write "is in";
 				do action_executed(action_name);
 				switch action_name {
 					match A_DRAIN_DREDGES_LOW{
@@ -433,6 +434,7 @@ global {
 						}
 					} 
 					match A_FILTERS {
+						write "install filters";
 						ask villages_order[index_player] {
 							do install_facility_treatment_for_homes ;
 						}
