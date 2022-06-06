@@ -8,7 +8,7 @@
 
 model TangibleInteraction
 
-import "Debug.gaml"
+import "LFAY.gaml"
 
 
 
@@ -66,17 +66,3 @@ global skills: [music] {
 	}
 }
 
-//grid cell_image width: 640 height: 480;
-
-
-experiment with_tangible_interaction type: gui parent: the_serious_game{
-	/** Insert here the definition of the input and output of the model */
-	output {
-		
-		
-		/*display webcam {
-			grid cell_image ;
-			
-		}*/
-	}
-}
