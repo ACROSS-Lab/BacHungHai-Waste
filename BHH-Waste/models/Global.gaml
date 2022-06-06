@@ -400,17 +400,7 @@ global {
 		total_production <- (village1_production + village2_production + village3_production + village4_production) ;	
 	
 	}
-	
-	
-//	string ACT_DRAIN_DREDGE <- "Drain and dredge";
-//	string ACT_FACILITY_TREATMENT <- "Install water treatment facilities for every home";
-//	string ACT_SENSIBILIZATION <- "Organise sensibilization about waste sorting workshops in schools";
-//	string ACTION_COLLECTIVE_ACTION <- "Trimestrial collective action";
-//	string ACT_PESTICIDE_REDUCTION <- "Help farmers to reduce pesticides use";
-//	string ACT_SUPPORT_MANURE <- "Help farmer buy manure";
-//	string ACT_IMPLEMENT_FALLOW <- "Put part of the fields in fallow ";
-//	string ACT_INSTALL_DUMPHOLES <- "Making farmers participate in the installation of dumpholes for agricultural products";
-//	string ACT_END_OF_TURN <- "end of turn";
+
 	
 	
 	action action_executed(string action_name) {
@@ -420,7 +410,7 @@ global {
 	
 	action execute_action(string action_name) {
 
-			if ((action_name in actions_name_short) and not(action_name in village[index_player].actions_done_this_year) and not(action_name in village[index_player].actions_done_total)) {
+			if ((action_name in actions_name_short) and not(action_name in village[index_player].actions_done_this_year) /*and not(action_name in village[index_player].actions_done_total)*/) {
 				do action_executed(action_name);
 				switch action_name {
 					match A_DRAIN_DREDGES_LOW{

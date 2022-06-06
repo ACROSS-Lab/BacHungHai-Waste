@@ -208,7 +208,7 @@ global {
 	image_file next_icon <- image_file("../../includes/icons/fast-forward.png");
 	image_file play_icon <- image_file("../../includes/icons/play.png");
 	image_file pause_icon <- image_file("../../includes/icons/pause.png");
-	
+	image_file actions_icon <- image_file("../../includes/icons/actions.png");
 	image_file garbage_icon <- image_file("../../includes/icons/garbage.png");
 	image_file city_icon <- image_file("../../includes/icons/office.png");
 	image_file score_icon <- image_file("../../includes/icons/trophy.png");
@@ -232,6 +232,26 @@ global {
 		//		A_COLLECTION_LOW::image_file(prefix+"Collection teams low"),
 		//		A_COLLECTION_HIGH::image_file(prefix+"Collection teams high")
 		//];
+		
+		
+		
+	map<string, string> action_numbers <- [
+				A_DUMPHOLES::"3",
+				A_PESTICIDES::"4",
+				A_END_TURN::"",
+				A_SENSIBILIZATION::"6",
+				A_FILTERS::"2A",
+				A_COLLECTIVE_LOW::"5A",
+				A_COLLECTIVE_HIGH::"5B",
+				A_DRAIN_DREDGES_HIGH::"7B",
+				A_DRAIN_DREDGES_LOW::"7A",
+				A_FALLOW::"9",
+				A_MATURES_LOW::"8A",
+				A_MATURES_HIGH::"8B",
+				A_FILTER_MAINTENANCE::"2B",
+				A_COLLECTION_LOW::"1A",
+				A_COLLECTION_HIGH::"1B"
+		];
 	
 	
 	list<image_file> village_icon <- 4 among faces; 
@@ -312,6 +332,9 @@ experiment Open {
 		gama.pref_display_slice_number <- 128;
 		gama.pref_display_show_rotation <- false;
 		gama.pref_display_show_errors <- false;
+		gama.pref_errors_display <- false;
+		gama.pref_errors_stop <- false;
+		gama.pref_errors_in_editor <- false;
 	}
 	
 	output {
@@ -570,6 +593,11 @@ experiment Open {
 				if (stage = PLAYER_ACTION_TURN) {
 					draw ""+(int(villages_order[index_player])+1) color: #black font: font("Impact", 50, #bold) anchor: #center ;
 				}
+			}
+			
+			graphics "Actions" position: {-shape.width, 0} visible: stage=PLAYER_ACTION_TURN{
+				draw actions_icon size: {shape.width/3,shape.height/3};
+				draw string(villages_order[index_player].actions_done_this_year collect (action_numbers[each])) at: {location.x + shape.width/4, location.y} color: #white font: font("Impact", 50, #bold) anchor: #left_center;
 			}
 			graphics "Next"  visible: stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN {
 				draw next_icon at: {shape.width + 3*shape.width/3, shape.height/2} size: shape.width / 4;
