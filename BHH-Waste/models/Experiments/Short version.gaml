@@ -18,7 +18,7 @@ global {
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
 	float min_production_ecolabel <- 2200.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
-	float max_pollution_ecolabel <- 320000.0;// maximum threshold of production to get ecolabel, unities are converted in 
+	float max_pollution_ecolabel <- 300000.0;// maximum threshold of production to get ecolabel, unities are converted in 
 	
 
 /******* PARAMETERS RELATED TO THE IMPACT OF POLLUTION ON FIELD YIELD *************/
