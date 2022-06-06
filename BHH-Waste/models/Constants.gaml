@@ -102,7 +102,7 @@ global {
 		],
 		[
 			'id'::A_PESTICIDES,
-			'name'::'Drainer et draguer',
+			'name'::'Réduire le recours aux pesticides',
 			'cost'::40,
 			'once_per_game'::true,
 			'mandatory'::false,
@@ -121,7 +121,7 @@ global {
 		[
 			'id'::A_FILTERS,
 			'name'::'Système de traitement de eaux usées',
-   			'cost'::240,
+   			'cost'::0,
 			'once_per_game'::true,
 			'mandatory'::false,
 			'asset_name':: IMAGE_COLLECTIVE_ACTION,
