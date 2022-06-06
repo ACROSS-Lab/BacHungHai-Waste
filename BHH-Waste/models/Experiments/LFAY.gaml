@@ -12,9 +12,93 @@ model LFAY
 
 import "../Global.gaml"
 import "../Charts.gaml"
-import "Functions.gaml"
  
 global {
+	
+	image_file soil_pollution_class (float v) {
+		switch(v) {
+			match_between [0, 24999] {return smileys[0];}
+			match_between [25000, 39999] {return smileys[1];}
+			match_between [40000, 64999] {return smileys[2];}
+			match_between [65000, 90000] {return smileys[3];}
+			default {return smileys[4];}
+		}
+	}
+	
+	int production_class_current(plot p) {
+		float w <- p.current_productivity; 
+		switch(w) {
+			match_between [0, 0.000079] {return 0;}
+			match_between [0.00008, 0.000012] {return 1;}
+			match_between [0.00013, 0.00019] {return 2;}
+			match_between [0.0002, 0.00029] {return 3;}
+			default {return 4;}	
+		}
+	}
+	
+	// Returns 0 (down), 1 (equal), 2 (up) 
+	image_file tendency_on(list<float> data) {
+		int length <- length(data);
+		switch (length) {
+			match 0 {return arrows[1];}
+			match 1 {return arrows[2];} 
+			default {
+				float last <- last(data);
+				float before <- data[length-2];
+				return arrows[last > before ? 2 : (before > last ? 0 : 1)];
+			}
+		}
+		
+	}
+	
+	image_file water_pollution_class(float w) {
+		switch(w) {
+			match_between [0, 9999] {return smileys[0];}
+			match_between [10000, 19999] {return smileys[1];}
+			match_between [20000, 29999] {return smileys[2];}
+			match_between [30000, 44999] {return smileys[3];}
+			default {return smileys[4];}
+		}
+	}
+	
+	image_file production_class (village v) {
+		float w <- village_production[int(v)];
+		if (int(v) = 0) {
+			switch(w) {
+				match_between [0, 349] {return smileys[4];}
+				match_between [350, 699] {return smileys[3];}
+				match_between [700, 899] {return smileys[2];}
+				match_between [900, 1149] {return smileys[1];}
+				default {return smileys[0];}
+			}
+		} else {
+			switch(w) {
+				match_between [0, 499] {return smileys[4];}
+				match_between [500, 799] {return smileys[3];}
+				match_between [800, 1099] {return smileys[2];}
+				match_between [1100, 1499] {return smileys[1];}
+				default {return smileys[0];}
+			}
+		}
+		
+	}
+	
+	
+	int water_pollution_class_current(canal p) {
+		float w <- p.pollution_density; // TODO this is an example
+		switch(w) {
+			match_between [0, 0.9] {return 0;}
+			match_between [1, 9] {return 1;}
+			match_between [10, 19] {return 2;}
+			match_between [20, 39] {return 3;}
+			default {return 4;}
+		}
+	}
+	
+	action action_executed(string action_name) {
+		
+	} 
+		
 	
 	action tell (string msg, bool add_name <- false) {
 		 if (confirmation_popup) {
@@ -87,7 +171,7 @@ global {
 	rgb not_selected_color <- text_color;
 	rgb selected_color <- pie_background.darker;
 	rgb button_color <- not_selected_color;
-	rgb landfill_color <- rgb(123,50,148).brighter;
+	rgb landfill_color <- #chocolate;
 	rgb city_color <- #gray;
 	list<rgb> village_color <- [rgb(153, 187, 173), rgb(235, 216, 183), rgb(198, 169, 163), rgb(154, 129, 148)]; // color for the 4 villages
 	
@@ -99,7 +183,7 @@ global {
 	image_file water_icon <- image_file("../../includes/icons/water.png");
 	image_file plant_icon <- image_file("../../includes/icons/plant.png");
 	list<image_file> smileys <- [image_file("../../includes/icons/0.png"), image_file("../../includes/icons/1.png"), image_file("../../includes/icons/2.png"), image_file("../../includes/icons/3.png"), image_file("../../includes/icons/4.png")];
- 	list<image_file> arrows <- [image_file("../../includes/icons/up.png"), image_file("../../includes/icons/down.png"), image_file("../../includes/icons/equal.png")];
+ 	list<image_file> arrows <- [image_file("../../includes/icons/down.png"), image_file("../../includes/icons/equal.png"), image_file("../../includes/icons/down.png")];
 	list<image_file> faces <- [image_file("../../includes/icons/people-0.png"),image_file("../../includes/icons/people-1.png"),image_file("../../includes/icons/people-2.png"),image_file("../../includes/icons/people-3.png"),image_file("../../includes/icons/people-4.png"),image_file("../../includes/icons/people-5.png"),image_file("../../includes/icons/people-6.png"),image_file("../../includes/icons/people-7.png")];
 	image_file calendar_icon <- image_file("../../includes/icons/upcoming.png");
 	image_file discussion_icon <- image_file("../../includes/icons/conversation.png");
@@ -108,27 +192,53 @@ global {
 	image_file next_icon <- image_file("../../includes/icons/fast-forward.png");
 	image_file garbage_icon <- image_file("../../includes/icons/garbage.png");
 	image_file city_icon <- image_file("../../includes/icons/office.png");
-	image_file score_icon <- image_file("../../includes/icons/score.png");
+	image_file score_icon <- image_file("../../includes/icons/trophy.png");
+	image_file schedule_icon <- image_file("../../includes/icons/schedule.png");
+
+	string prefix <- "../../includes/icons/actions/";
+		//map<string, image_file> action_icons <- [
+		//		A_DUMPHOLES::image_file(prefix+"Dumpholes"),
+		//		A_PESTICIDES::image_file(prefix+"Pesticides"),
+		//		A_END_TURN::image_file(prefix+"End of turn"),
+		//		A_SENSIBILIZATION::image_file(prefix+"Sensibilization"),
+		//		A_FILTERS::image_file(prefix+"Filters for every home"),
+		//		A_COLLECTIVE_LOW::image_file(prefix+"Trimestrial collective action low"),
+		//		A_COLLECTIVE_HIGH::image_file(prefix+"Trimestrial collective action high"),
+		//		A_DRAIN_DREDGES_HIGH::image_file(prefix+"Drain and dredge high"),
+		//		A_DRAIN_DREDGES_LOW::image_file(prefix+"Drain and dredge low"),
+		//		A_FALLOW::image_file(prefix+"Fallow"),
+		//		A_MATURES_LOW::image_file(prefix+"Support manure low"),
+		//		A_MATURES_HIGH::image_file(prefix+"Support manure high"),
+		//		A_FILTER_MAINTENANCE::image_file(prefix+"Maintenance for filters"),
+		//		A_COLLECTION_LOW::image_file(prefix+"Collection teams low"),
+		//		A_COLLECTION_HIGH::image_file(prefix+"Collection teams high")
+		//];
+	
 	
 	list<image_file> village_icon <- 4 among faces; 
 	pie_chart day_timer;
+	pie_chart score_timer;
 	stacked_chart global_chart;
 	int cycle_count;
 	
 	
 	init {
 		create pie_chart {
-			radius <- 5000.0;
-			do add("Days", 80.0, #green);
-			do add("Total", 285, #darkred);
+			radius <- world.shape.width / 2;
+			do add("Days", 0.0, #green);
+			do add("Total", 365.0, #darkred);
 		}
 		day_timer <- pie_chart[0];
-		write world.shape.width;
-		write world.shape.height;		
+		create pie_chart {
+			radius <- world.shape.width / 2;
+			do add("Days", 0.0, #green);
+			do add("Total", 8*365.0, #darkred);
+		}
+		score_timer <- pie_chart[1];
 		create stacked_chart {
 			size <- world.shape.height;
-			desired_value <- 2000.0;
-			max_value <- 3000.0;
+			desired_value <- 1.0;
+			max_value <- 2.0;
 			ratio <- size / max_value;
 			desired_icon <- label_icon;
 			do add_column("Water");
@@ -137,15 +247,29 @@ global {
 			icons <- ["Water"::water_icon, "Soil"::soil_icon, "Production"::plant_icon];
 			loop i from: 0 to: 3 {
 				do add_element(village_color[i]);
-				do update_all(village_color[i], ["Water"::rnd(1000)+100, "Soil"::rnd(500)+100, "Production"::rnd(500)+100 ]);
 			}
 		}
 		global_chart <- stacked_chart[0];
 	}
 	
-	reflex when: stage = COMPUTE_INDICATORS{
+	reflex update_charts when: stage = COMPUTE_INDICATORS{
 		cycle_count <- cycle_count + 1;
+		ask day_timer {
+			do set_value("Days", last(days_with_ecolabel_year));
+			do set_value("Total", 365.0-last(days_with_ecolabel_year));
+		}
+		ask score_timer {
+			do set_value("Days", days_with_ecolabel);
+			do set_value("Total",8*365 - days_with_ecolabel);
+		}
+		
+		ask global_chart{
+			loop i from: 0 to: 3 {
+				do update_all(village_color[i], ["Water"::village_water_pollution[i]/max_pollution_ecolabel, "Soil"::village_solid_pollution[i]/max_pollution_ecolabel, "Production"::village_production[i]/min_production_ecolabel ]);
+			}
+		}				
 	}
+	
 
 }
 
@@ -178,7 +302,7 @@ experiment Open {
 		
 		/********************** PLAYER 1 DISPLAY *************************************************/
 
-		display "PLAYER 1" type: opengl axes: false background: village_color[0] refresh: stage = COMPUTE_INDICATORS antialias: true{
+		display "PLAYER 1" type: opengl axes: false background: village_color[0].darker refresh: stage = COMPUTE_INDICATORS antialias: true{
 			
 			light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3213.0194,2461.0968,7088.535} target: {3213.0194,2460.973,0.0} locked: true;
@@ -200,16 +324,16 @@ experiment Open {
 			
 			graphics "Icons" {
 				draw soil_icon at: {x_margin + 1*icon_size / 2, y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +3*icon_size/2, y_icons - icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +3*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.soil_pollution_class(village1_solid_pollution) at: {x_margin +3*icon_size/2, y_icons - icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village1_solid_pollution_values) at: {x_margin +3*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw water_icon at: {x_margin +6*icon_size/2,  y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +8*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +8*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.water_pollution_class(village1_water_pollution) at: {x_margin +8*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village1_water_pollution_values) at: {x_margin +8*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw plant_icon at: {x_margin +11*icon_size/2, y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +13*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +13*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.production_class(village[0]) at: {x_margin +13*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village1_production_values) at: {x_margin +13*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw tokens_icon at: {x_margin + 16*icon_size / 2, y_icons} size: symbol_icon_size;
-				draw ""+village[0].budget at: {x_margin + 16*icon_size / 2, y_icons - icon_size*2/3} color: #black font: player_font_regu anchor: #center;
+				draw ""+village[0].budget at: {x_margin + 16*icon_size / 2, y_icons - icon_size*2/3} color: #black font: font("Impact", player_text_size, #bold) anchor: #center;
 			}
 
 		}
@@ -223,59 +347,60 @@ experiment Open {
 			
 			graphics "Legend" {
 				float y_gap <- 0.2;
+				float x_gap <- 0.1;
 				float y <- 0.0;
 				float x <- 0.1;
 				draw plant_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
-				x <- x + 0.2;
+				x <- x + 2* x_gap;
 				loop c over: greens {
-					draw square(0.1*shape.width) border: #black width: line_width color: c at: {x* shape.width,y*shape.height};
-					x <- x + 0.1;
+					draw square(x_gap*shape.width) border: #black width: line_width color: c at: {x* shape.width,y*shape.height};
+					x <- x + x_gap;
 				}
-				show_production <- square(0.05*shape.width) at_location {x* shape.width,y*shape.height};
+				show_production <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
 				draw show_production wireframe: !over_production and !production_on color: production_on ? #black: #white width: line_width;
 				y <- y + y_gap;
-				x <- 0.1;
+				x <- x_gap;
 				draw water_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
-				x <- x + 0.2;
+				x <- x + 2* x_gap;
 				loop c over: blues {
-					draw square(0.1*shape.width) color: c border: #black width: line_width at: {x* shape.width,y*shape.height};
-					x <- x + 0.1;
+					draw square(x_gap*shape.width) color: c border: #black width: line_width at: {x* shape.width,y*shape.height};
+					x <- x + x_gap;
 				}
-				show_canal <- square(0.05*shape.width) at_location {x* shape.width,y*shape.height};
+				show_canal <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
 				draw show_canal wireframe: !over_canal and !canal_on color: canal_on ? #black: #white width: line_width;
 				y <- y + y_gap;
-				x <- 0.1;
+				x <-x_gap;
 				draw soil_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
-				x <- x + 0.2;
+				x <- x + 2* x_gap;
 				loop c over: reds {
-					draw square(0.1*shape.width) color: c border: #black width: line_width at: {x* shape.width,y*shape.height};
-					x <- x + 0.1;
+					draw square(x_gap*shape.width) color: c border: #black width: line_width at: {x* shape.width,y*shape.height};
+					x <- x +x_gap;
 				}
-				show_soil <- square(0.05*shape.width) at_location {x* shape.width,y*shape.height};
+				show_soil <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
 				draw show_soil wireframe: !over_soil and !soil_on color: soil_on ? #black: #white width: line_width;
 								
 				/*****/
 				y <- y + y_gap;
-				x <- 0.1;
+				x <- x_gap;
 				draw faces[0] at: {x* shape.width,y*shape.height} size: symbol_icon_size;
-				x <- x + 0.2;
+				x <- x + 2 * x_gap;
 				loop c over: village_color {
-					draw square(0.1*shape.width) color: c border: #black width: line_width at: {x* shape.width,y*shape.height};
-					x <- x + 0.1;
+					draw square(x_gap*shape.width) color: c border: #black width: line_width at: {x* shape.width,y*shape.height};
+					x <- x + x_gap;
 				}
-				x <- x + 0.1;
-				show_player <- square(0.05*shape.width) at_location {x* shape.width,y*shape.height};
+				x <- x + x_gap;
+				show_player <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
 				draw show_player wireframe: !over_player and !player_on color: player_on ? #black: #white width: line_width;
 				
 				/*****/				
 				y <- y + y_gap;
-				x <- 0.1;
+				x <- x_gap;
 				draw garbage_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
-				x <- x + 0.2;
+				x <- x + 2 * x_gap;
 				draw square(0.1*shape.width) color: landfill_color border: #black width: line_width at: {x* shape.width,y*shape.height};
 				x <- 0.5;
 				draw city_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
-				x <- x + 0.2;
+				x <- x + 2*x_gap;
 				draw square(0.1*shape.width) color: city_color border: #black width: line_width at: {x* shape.width,y*shape.height};
 
 
@@ -300,7 +425,7 @@ experiment Open {
 		
 		/********************** PLAYER 4 DISPLAY ***************************************************/
 		
-		display "Player 4" type: opengl axes: false background: village_color[3] refresh: stage = COMPUTE_INDICATORS antialias: true{
+		display "Player 4" type: opengl axes: false background: village_color[3].darker refresh: stage = COMPUTE_INDICATORS antialias: true{
 			
 			light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3213.0194,2461.0968,7088.535} target: {3213.0194,2460.973,0.0} locked: true;
@@ -322,16 +447,16 @@ experiment Open {
 
 			graphics "Icons" {
 				draw soil_icon at: {x_margin + 1*icon_size / 2, y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +3*icon_size/2, y_icons - icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +3*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.soil_pollution_class(village4_solid_pollution) at: {x_margin +3*icon_size/2, y_icons - icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village4_solid_pollution_values) at: {x_margin +3*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw water_icon at: {x_margin +6*icon_size/2,  y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +8*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +8*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.water_pollution_class(village4_water_pollution) at: {x_margin +8*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village4_water_pollution_values) at: {x_margin +8*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw plant_icon at: {x_margin +11*icon_size/2, y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +13*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +13*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.production_class(village[3]) at: {x_margin +13*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village4_production_values) at: {x_margin +13*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw tokens_icon at: {x_margin + 16*icon_size / 2, y_icons} size: symbol_icon_size;
-				draw ""+village[1].budget at: {x_margin + 16*icon_size / 2, y_icons - icon_size*2/3} color: #black font: player_font_regu anchor: #center;
+				draw ""+village[3].budget at: {x_margin + 16*icon_size / 2, y_icons - icon_size*2/3} color: #black font: font("Impact", player_text_size, #bold) anchor: #center;
 			}
 
 		}
@@ -342,16 +467,18 @@ experiment Open {
 			light #ambient intensity: ambient_intensity;
 			
 			species commune visible: false;
-			agents "Turn" value: [day_timer] position: {-world.shape.width , 0};
-			graphics "Turn#" position: {-world.shape.width , 0, 0.01} {
-				draw ""+80  color: #white font: font("Impact", 80, #bold) anchor: #center border: #black;
+			agents "Turn" value: [day_timer] position: {-world.shape.width , 0.05};
+			graphics "Turn#" position: {-world.shape.width , 0.1, 0.01} {
+				draw ""+(min(last(days_with_ecolabel_year),365)) at: {shape.width/2, shape.height/2 + shape.height/10} color: #white font: font("Impact", 60, #bold) anchor: #center;
+				draw schedule_icon size: symbol_icon_size*2 at: {shape.width/2, 500};
 			}
-			graphics "Label" size: {1,1} position: {0,0} transparency: flip(0.5) ? 0.1 : 0.8 {
+			graphics "Label" size: {1,1} position: {0,0} transparency: last(days_with_ecolabel_year) >= 183 ? 0 : 0.8 {
 				draw label_icon;
-
 			}
-			graphics "Score" size: {1,1} position: {0, shape.height/2}  {
-				draw score_icon at: {2*shape.width, 0};
+			agents "Score" value: [score_timer] position: {world.shape.width , 0.05};
+			graphics "Scope#" position: {world.shape.width , 0.1, 0.01} {
+				draw ""+(days_with_ecolabel)  at: {shape.width/2, shape.height/2 + shape.height/10}  color: #gold font: font("Impact", 60, #bold) anchor: #center;
+				draw score_icon size: symbol_icon_size*2 at: {shape.width/2, 500};
 			}
 			
 		}
@@ -364,10 +491,10 @@ experiment Open {
 			camera 'default' location: {3213.0194,2444.8489,6883.1631} target: {3213.0194,2444.7288,0.0};
 			species urban_area ;
 			species plot {
-				draw shape color: soil_on ? one_of(reds) : (production_on ? one_of(greens) : map_background) border: false;
+				draw shape color: soil_on ? one_of(reds) : (production_on ? greens[world.production_class_current(self)] : map_background) border: false;
 			}
 			species canal visible: canal_on {
-				draw shape buffer (soil_on or production_on ? 10 : 20,10) color: one_of(blues) border: #black width: soil_on or production_on ? 2.0 : 0;
+				draw shape buffer (soil_on or production_on ? 10 : 20,10) color: blues[world.water_pollution_class_current(self)] border: #black width: soil_on or production_on ? 2.0 : 0;
 			}
 			species local_landfill {
 				draw  shape depth: waste_quantity / 100.0 color: landfill_color;
@@ -440,7 +567,7 @@ experiment Open {
 
 		/********************** PLAYER 2 DISPLAY *************************************************/
 		
-		display "Player 2" type: opengl axes: false background: village_color[1] refresh: stage = COMPUTE_INDICATORS antialias: true{
+		display "Player 2" type: opengl axes: false background: village_color[1].darker refresh: stage = COMPUTE_INDICATORS antialias: true{
 			
 			light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3213.0194,2461.0968,7088.535} target: {3213.0194,2460.973,0.0} locked: true;
@@ -461,16 +588,16 @@ experiment Open {
 			
 			graphics "Icons" {
 				draw soil_icon at: {x_margin + 1*icon_size / 2, y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +3*icon_size/2, y_icons - icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +3*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.soil_pollution_class(village2_solid_pollution) at: {x_margin +3*icon_size/2, y_icons - icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village2_solid_pollution_values) at: {x_margin +3*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw water_icon at: {x_margin +6*icon_size/2,  y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +8*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +8*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.water_pollution_class(village2_water_pollution) at: {x_margin +8*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village2_water_pollution_values) at: {x_margin +8*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw plant_icon at: {x_margin +11*icon_size/2, y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +13*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +13*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.production_class(village[1]) at: {x_margin +13*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village2_production_values) at: {x_margin +13*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw tokens_icon at: {x_margin + 16*icon_size / 2, y_icons} size: symbol_icon_size;
-				draw ""+village[1].budget at: {x_margin + 16*icon_size / 2, y_icons - icon_size*2/3} color: #black font: player_font_regu anchor: #center;
+				draw ""+village[1].budget at: {x_margin + 16*icon_size / 2, y_icons - icon_size*2/3} color: #black font: font("Impact", player_text_size, #bold) anchor: #center;
 			}
 		}
 
@@ -478,7 +605,7 @@ experiment Open {
 		
 		display "Chart 4" type: opengl axes: false background: #fullscreen ? #black: legend_background refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle) {
 						light #ambient intensity: ambient_intensity;
-			camera 'default' location: #from_up_front locked: false;						
+			camera 'default' location: {3213.0194,2461.1095,7816.3615} target: {3213.0194,2460.973,0.0};						
 			
 			agents "Global" value: [global_chart] aspect: 'horizontal' size: {0.7, 0.7} position: {0.15,0.15} visible: !#fullscreen;
 			
@@ -499,7 +626,7 @@ experiment Open {
 				
 		/********************** PLAYER 3 DISPLAY ***************************************************/
 
-		display "Player 3" type: opengl axes: false refresh: stage = COMPUTE_INDICATORS background: village_color[2] antialias: true {
+		display "Player 3" type: opengl axes: false refresh: stage = COMPUTE_INDICATORS background: village_color[2].darker antialias: true {
 			
 			light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3213.0194,2461.0968,7088.535} target: {3213.0194,2460.973,0.0} locked: true;
@@ -521,14 +648,14 @@ experiment Open {
 			
 			graphics "Icons" {
 				draw soil_icon at: {x_margin + 1*icon_size / 2, y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +3*icon_size/2, y_icons - icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +3*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.soil_pollution_class(village3_solid_pollution) at: {x_margin +3*icon_size/2, y_icons - icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village3_solid_pollution_values) at: {x_margin +3*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw water_icon at: {x_margin +6*icon_size/2,  y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +8*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +8*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.water_pollution_class(village3_water_pollution) at: {x_margin +8*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village3_water_pollution_values) at: {x_margin +8*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw plant_icon at: {x_margin +11*icon_size/2, y_icons} size: symbol_icon_size;
-				draw one_of(smileys) at: {x_margin +13*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
-				draw one_of(arrows) at: {x_margin +13*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
+				draw simulation.production_class(village[2]) at: {x_margin +13*icon_size/2, y_icons- icon_size/4} size: smiley_icon_size;
+				draw simulation.tendency_on(village3_production_values) at: {x_margin +13*icon_size/2, y_icons+icon_size/2} size: arrow_icon_size;
 				draw tokens_icon at: {x_margin + 16*icon_size / 2, y_icons} size: symbol_icon_size;
 				draw ""+village[2].budget at: {x_margin + 16*icon_size / 2, y_icons - icon_size*2/3} color: #black font: font("Impact", player_text_size, #bold) anchor: #center;
 			}

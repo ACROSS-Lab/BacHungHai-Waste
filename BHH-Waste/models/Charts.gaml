@@ -36,8 +36,8 @@ species pie_chart {
 		float cur_value <- 0.0;
 		float sum <- sum(slices.values collect each.value);
 		loop p over: slices.pairs {
-			start_angle <- (cur_value*360/sum) - 90;
-			float arc_angle <- (p.value.value * 360/sum);
+			start_angle <- (cur_value*180/sum) - 180;
+			float arc_angle <- (p.value.value * 180/sum);
 			draw arc(radius, start_angle + arc_angle/2, arc_angle) color: p.value.key  border: #black width: 5;
 			cur_value <- cur_value + p.value.value;
 		}

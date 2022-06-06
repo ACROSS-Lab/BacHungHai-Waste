@@ -34,27 +34,27 @@ global {
 	// Class supposed to be between 0 (low) to 4 (high) for the villages
 	
 	
-	int production_class_last_year (village v) {
-		float w <- village_production[int(v)];
-		if (int(v) = 0) {
-			switch(w) {
-				match_between [0, 349] {return 0;}
-				match_between [350, 699] {return 1;}
-				match_between [700, 899] {return 2;}
-				match_between [900, 1149] {return 3;}
-				default {return 4;}
-			}
-		} else {
-			switch(w) {
-				match_between [0, 499] {return 0;}
-				match_between [500, 799] {return 1;}
-				match_between [800, 1099] {return 2;}
-				match_between [1100, 1499] {return 3;}
-				default {return 4;}
-			}
-		}
-		
-	}
+//	int production_class_last_year (village v) {
+//		float w <- village_production[int(v)];
+//		if (int(v) = 0) {
+//			switch(w) {
+//				match_between [0, 349] {return 0;}
+//				match_between [350, 699] {return 1;}
+//				match_between [700, 899] {return 2;}
+//				match_between [900, 1149] {return 3;}
+//				default {return 4;}
+//			}
+//		} else {
+//			switch(w) {
+//				match_between [0, 499] {return 0;}
+//				match_between [500, 799] {return 1;}
+//				match_between [800, 1099] {return 2;}
+//				match_between [1100, 1499] {return 3;}
+//				default {return 4;}
+//			}
+//		}
+//		
+//	}
 	
 	// Class supposed to be between 0 (low) to 4 (high) for the villages
 	
@@ -113,17 +113,7 @@ global {
 	}*/
 	
 	// Class supposed to be between 0 (low) to 4 (high) for the canals
-	
-	int water_pollution_class_current(canal p) {
-		float w <- p.pollution_density; // TODO this is an example
-		switch(w) {
-			match_between [0, 0.9] {return 0;}
-			match_between [1, 9] {return 1;}
-			match_between [10, 19] {return 2;}
-			match_between [20, 39] {return 3;}
-			default {return 4;}
-		}
-	}
+
 	
 	// Indicator for the global icon
 	
