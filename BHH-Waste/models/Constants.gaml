@@ -215,7 +215,7 @@ global {
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_FALLOW,
-			'description'::"↓Pollutions des terres\n ↓Productivité ce tour-ci\n ↑Production le prochain tour"
+			'description'::"↓Pollutions des terres\n↓Productivité ce tour-ci\n↑Production le prochain tour"
 			]
 		];
  	
