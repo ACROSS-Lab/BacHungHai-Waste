@@ -354,7 +354,7 @@ experiment Open {
 		
 		/********************** PLAYER 1 DISPLAY *************************************************/
 
-		display "PLAYER 1" type: opengl axes: false background: village_color[0].darker refresh: stage = COMPUTE_INDICATORS antialias: true{
+		display "PLAYER 1" type: opengl axes: false background: village_color[0].darker  antialias: true{
 			
 			light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3213.0194,2461.0968,7088.535} target: {3213.0194,2460.973,0.0} locked: true;

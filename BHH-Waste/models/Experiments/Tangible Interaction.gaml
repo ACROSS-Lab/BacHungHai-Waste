@@ -8,7 +8,8 @@
 
 model TangibleInteraction
 
-import "LFAY.gaml"
+import "Short version.gaml"
+
 
 
 
@@ -54,7 +55,7 @@ global skills: [music] {
 			latest_action <- "";
 		}
 		if result != latest_action {
-			if ((result in actions_name_short) and not(result in village[index_player].actions_done_this_year) and not(result in village[index_player].actions_done_total)) {
+			if ((result in actions_name_short.keys)){// and not(actions_name_short[result] in village[index_player].actions_done_this_year) and not(actions_name_short[result] in village[index_player].actions_done_total)) {
 				bool is_ok <- play_sound("../../includes/BEEP.wav");
 			
 				ready_action <- false;

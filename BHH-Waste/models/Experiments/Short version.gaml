@@ -8,7 +8,8 @@
 
 model Shortversion
 
-import "Debug.gaml"
+import "LFAY.gaml"
+
 
 global {
 	string langage <- "Français";

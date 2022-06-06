@@ -44,6 +44,8 @@ global {
 	list<village> village_ordered_by_production;
 	list<village> village_ordered_by_pollution;
 	
+	bool create_facility_treatment <- false;
+	
 	bool display_productivity_waste <- false parameter:"Display field productivity" category: "Display" ;
 	
 	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display" ;
@@ -159,6 +161,10 @@ global {
 		"i"::ACT_INSTALL_DUMPHOLES,
 		"o"::ACT_END_OF_TURN
 	]; 
+	
+	actions_name_short<- [A_DUMPHOLES::ACT_INSTALL_DUMPHOLES, A_PESTICIDES::ACT_PESTICIDE_REDUCTION, A_SENSIBILIZATION::ACT_SENSIBILIZATION, A_FILTERS::ACT_FACILITY_TREATMENT, A_COLLECTIVE_HIGH::ACTION_COLLECTIVE_ACTION, A_COLLECTIVE_LOW::ACTION_COLLECTIVE_ACTION, 
+ 		A_DRAIN_DREDGES_HIGH::ACT_DRAIN_DREDGE, A_DRAIN_DREDGES_LOW::ACT_DRAIN_DREDGE, A_FALLOW::ACT_IMPLEMENT_FALLOW, A_MATURES_HIGH::ACT_SUPPORT_MANURE, A_MATURES_LOW::ACT_SUPPORT_MANURE, A_FILTER_MAINTENANCE::ACT_FACILITY_TREATMENT_MAINTENANCE, A_COLLECTION_LOW::ACT_COLLECT, A_COLLECTION_HIGH::ACT_COLLECT, A_END_TURN::ACT_END_OF_TURN
+ 	];
 	}
 	action load_language {
 		matrix mat <- matrix(translation_game_csv_file);
@@ -410,7 +416,7 @@ global {
 	
 	action execute_action(string action_name) {
 
-			if ((action_name in actions_name_short) and not(action_name in village[index_player].actions_done_this_year) /*and not(action_name in village[index_player].actions_done_total)*/) {
+			if ((action_name in actions_name_short.keys)){// and not(actions_name_short[action_name] in village[index_player].actions_done_this_year) and not(actions_name_short[action_name] in village[index_player].actions_done_total)) {
 				do action_executed(action_name);
 				switch action_name {
 					match A_DRAIN_DREDGES_LOW{
@@ -624,6 +630,15 @@ global {
 	
 	action manage_end_of_indicator_computation {
 		if (current_day = 365) {
+			ask village {
+				treatment_facility_is_activated <- false;
+			}
+			if create_facility_treatment {
+				ask village {
+					treatment_facility_year <- 1;
+				}
+			}
+			create_facility_treatment <- false;
 			stage <- without_player ? PLAYER_ACTION_TURN : PLAYER_DISCUSSION_TURN;
 			index_player <- 0;
 			step <- 0.000000000001;
