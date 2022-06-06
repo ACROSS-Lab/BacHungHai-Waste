@@ -141,6 +141,7 @@ global {
 	/********************** FONTS ************************************************/
 	font player_font_bold -> font("Impact", player_text_size, #bold);
 	font player_font_regu -> font("Impact", player_text_size, #none);
+	font base_font <- font("Impact", 30, #none);
 	
 	/******************* GENERAL PARAMETERS *************************************/
 	
@@ -521,7 +522,7 @@ experiment Open {
 			species commune visible: false;
 			agents "Turn" value: [day_timer] position: {-world.shape.width , 0.05};
 			graphics "Turn#" position: {-world.shape.width , 0.1, 0.01} {
-				draw ""+(min(last(days_with_ecolabel_year),365)) at: {shape.width/2, shape.height/2 + shape.height/10} color: #white font: font("Impact", 60, #bold) anchor: #center;
+				draw ""+(min(last(days_with_ecolabel_year),365)) at: {shape.width/2, shape.height/2 + shape.height/10} color: #white font: base_font anchor: #center;
 				draw schedule_icon size: symbol_icon_size*2 at: {shape.width/2, 500};
 			}
 			graphics "Label" size: {1,1} position: {0,0} transparency: last(days_with_ecolabel_year) >= 183 ? 0 : 0.8 {
@@ -529,7 +530,7 @@ experiment Open {
 			}
 			agents "Score" value: [score_timer] position: {world.shape.width , 0.05};
 			graphics "Scope#" position: {world.shape.width , 0.1, 0.01} {
-				draw ""+(days_with_ecolabel)  at: {shape.width/2, shape.height/2 + shape.height/10}  color: #gold font: font("Impact", 60, #bold) anchor: #center;
+				draw ""+(days_with_ecolabel)  at: {shape.width/2, shape.height/2 + shape.height/10}  color: #gold font: base_font anchor: #center;
 				draw score_icon size: symbol_icon_size*2 at: {shape.width/2, 500};
 			}
 			
@@ -570,7 +571,7 @@ experiment Open {
 			
 			graphics "Jauge for the turns" {
 				float y <- shape.height - 500;
-				draw ""+turn  color: #white font: font("Impact", 50, #bold) anchor: #left_center at: {2*shape.width + 500,y};
+				draw ""+turn  color: #white font: base_font anchor: #left_center at: {2*shape.width + 500,y};
 				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
 				float width <- cycle_count * 2 * shape.width / (8 * 365);
 				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkred;
@@ -579,7 +580,7 @@ experiment Open {
 			
 			graphics "Jauge for the discussion" visible: stage = PLAYER_DISCUSSION_TURN {
 				float y <- 0.0;
-				draw ""+int(remaining_time)+"s"  color: #white font: font("Impact", 50, #bold) anchor: #left_center at: {2*shape.width + 500,y};
+				draw ""+int(remaining_time)+"s"  color: #white font: base_font anchor: #left_center at: {2*shape.width + 500,y};
 				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
 				float width <-( 180 -remaining_time)* 2 * shape.width / (180);
 				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkgreen;
@@ -591,13 +592,13 @@ experiment Open {
 				image_file icon <- (stage = PLAYER_DISCUSSION_TURN) ? discussion_icon : ((stage = PLAYER_ACTION_TURN) ? village_icon[int(villages_order[index_player])] : computer_icon);
 				draw icon size: {3*shape.width/5, 3*shape.width/5};
 				if (stage = PLAYER_ACTION_TURN) {
-					draw ""+(int(villages_order[index_player])+1) color: #black font: font("Impact", 50, #bold) anchor: #center ;
+					draw ""+(int(villages_order[index_player])+1) color: #black font: base_font anchor: #center ;
 				}
 			}
 			
 			graphics "Actions" position: {-shape.width, 0} visible: stage=PLAYER_ACTION_TURN{
 				draw actions_icon size: {shape.width/3,shape.height/3};
-				draw string(villages_order[index_player].actions_done_this_year collect (action_numbers[each])) at: {location.x + shape.width/4, location.y} color: #white font: font("Impact", 50, #bold) anchor: #left_center;
+				draw string(villages_order[index_player].actions_done_this_year collect (action_numbers[each])) at: {location.x + shape.width/4, location.y} color: #white font: base_font anchor: #left_center;
 			}
 			graphics "Next"  visible: stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN {
 				draw next_icon at: {shape.width + 3*shape.width/3, shape.height/2} size: shape.width / 4;
