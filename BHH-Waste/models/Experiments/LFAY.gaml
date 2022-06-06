@@ -96,8 +96,23 @@ global {
 		}
 	}
 	
+	map<village,list<string>> village_actions <- nil;
 	action action_executed(string action_name) {
-		
+//		write sample(index_player);
+//		write sample(villages_order[index_player]);
+//		write sample(action_numbers[action_name]);
+//		write sample(village_actions);
+		if village_actions = nil or empty(village_actions) {
+			loop v over: village {
+				village_actions[v]<-[];
+			}
+			//village_actions <- village as_map (each::copy([]));
+		}
+		list the_list <- village_actions[villages_order[index_player]];
+		if the_list != nil {
+					the_list <+ action_numbers[action_name];
+		}
+
 	} 
 		
 	
@@ -135,12 +150,13 @@ global {
 	point smiley_icon_size -> {2*icon_size/3,2*icon_size/3};
 	int player_text_size -> #fullscreen ? 120 : 24;
 	bool active_button;
-	int line_width <- 5;
+	int line_width <- 4;
 	float chart_line_width <- 8.0;
 	
 	/********************** FONTS ************************************************/
 	font player_font_bold -> font("Impact", player_text_size, #bold);
 	font player_font_regu -> font("Impact", player_text_size, #none);
+	font base_font <- font("Impact", 30, #none);
 	
 	/******************* GENERAL PARAMETERS *************************************/
 	
@@ -214,44 +230,8 @@ global {
 	image_file score_icon <- image_file("../../includes/icons/trophy.png");
 	image_file schedule_icon <- image_file("../../includes/icons/schedule.png");
 
-	string prefix <- "../../includes/icons/actions/";
-		//map<string, image_file> action_icons <- [
-		//		A_DUMPHOLES::image_file(prefix+"Dumpholes"),
-		//		A_PESTICIDES::image_file(prefix+"Pesticides"),
-		//		A_END_TURN::image_file(prefix+"End of turn"),
-		//		A_SENSIBILIZATION::image_file(prefix+"Sensibilization"),
-		//		A_FILTERS::image_file(prefix+"Filters for every home"),
-		//		A_COLLECTIVE_LOW::image_file(prefix+"Trimestrial collective action low"),
-		//		A_COLLECTIVE_HIGH::image_file(prefix+"Trimestrial collective action high"),
-		//		A_DRAIN_DREDGES_HIGH::image_file(prefix+"Drain and dredge high"),
-		//		A_DRAIN_DREDGES_LOW::image_file(prefix+"Drain and dredge low"),
-		//		A_FALLOW::image_file(prefix+"Fallow"),
-		//		A_MATURES_LOW::image_file(prefix+"Support manure low"),
-		//		A_MATURES_HIGH::image_file(prefix+"Support manure high"),
-		//		A_FILTER_MAINTENANCE::image_file(prefix+"Maintenance for filters"),
-		//		A_COLLECTION_LOW::image_file(prefix+"Collection teams low"),
-		//		A_COLLECTION_HIGH::image_file(prefix+"Collection teams high")
-		//];
-		
-		
-		
-	map<string, string> action_numbers <- [
-				A_DUMPHOLES::"3",
-				A_PESTICIDES::"4",
-				A_END_TURN::"",
-				A_SENSIBILIZATION::"6",
-				A_FILTERS::"2A",
-				A_COLLECTIVE_LOW::"5A",
-				A_COLLECTIVE_HIGH::"5B",
-				A_DRAIN_DREDGES_HIGH::"7B",
-				A_DRAIN_DREDGES_LOW::"7A",
-				A_FALLOW::"9",
-				A_MATURES_LOW::"8A",
-				A_MATURES_HIGH::"8B",
-				A_FILTER_MAINTENANCE::"2B",
-				A_COLLECTION_LOW::"1A",
-				A_COLLECTION_HIGH::"1B"
-		];
+
+	map<string, string> action_numbers;
 	
 	
 	list<image_file> village_icon <- 4 among faces; 
@@ -289,9 +269,28 @@ global {
 			}
 		}
 		global_chart <- stacked_chart[0];
+			action_numbers <- [
+				A_DUMPHOLES::"3",
+				A_PESTICIDES::"4",
+				A_END_TURN::"",
+				A_SENSIBILIZATION::"6",
+				A_FILTERS::"2A",
+				A_COLLECTIVE_LOW::"5A",
+				A_COLLECTIVE_HIGH::"5B",
+				A_DRAIN_DREDGES_HIGH::"7B",
+				A_DRAIN_DREDGES_LOW::"7A",
+				A_FALLOW::"9",
+				A_MATURES_LOW::"8A",
+				A_MATURES_HIGH::"8B",
+				A_FILTER_MAINTENANCE::"2B",
+				A_COLLECTION_LOW::"1A",
+				A_COLLECTION_HIGH::"1B"
+		];
+
 	}
 	
 	reflex update_charts when: stage = COMPUTE_INDICATORS{
+		village_actions <- nil;
 		cycle_count <- cycle_count + 1;
 		ask day_timer {
 			do set_value("Days", last(days_with_ecolabel_year));
@@ -317,6 +316,7 @@ global {
 		if remaining_time <= 0 {
 			do end_of_discussion_phase;		
 		}
+
 	}
 	
 
@@ -392,7 +392,7 @@ experiment Open {
 		
 		/********************** LEGEND DISPLAY *************************************************/
 
-		display "LEGEND" type: opengl axes: false background: legend_background refresh: stage = COMPUTE_INDICATORS {
+		display "LEGEND" type: opengl axes: false background: legend_background  {
 			
 			light #ambient intensity: ambient_intensity;
 			species commune visible: false;
@@ -477,7 +477,7 @@ experiment Open {
 		
 		/********************** PLAYER 4 DISPLAY ***************************************************/
 		
-		display "Player 4" type: opengl axes: false background: village_color[3].darker refresh: stage = COMPUTE_INDICATORS antialias: true{
+		display "Player 4" type: opengl axes: false background: village_color[3].darker antialias: true{
 			
 			light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3213.0194,2461.0968,7088.535} target: {3213.0194,2460.973,0.0} locked: true;
@@ -521,7 +521,7 @@ experiment Open {
 			species commune visible: false;
 			agents "Turn" value: [day_timer] position: {-world.shape.width , 0.05};
 			graphics "Turn#" position: {-world.shape.width , 0.1, 0.01} {
-				draw ""+(min(last(days_with_ecolabel_year),365)) at: {shape.width/2, shape.height/2 + shape.height/10} color: #white font: font("Impact", 60, #bold) anchor: #center;
+				draw ""+(min(last(days_with_ecolabel_year),365)) at: {shape.width/2, shape.height/2 + shape.height/10} color: #white font: base_font anchor: #center;
 				draw schedule_icon size: symbol_icon_size*2 at: {shape.width/2, 500};
 			}
 			graphics "Label" size: {1,1} position: {0,0} transparency: last(days_with_ecolabel_year) >= 183 ? 0 : 0.8 {
@@ -529,7 +529,7 @@ experiment Open {
 			}
 			agents "Score" value: [score_timer] position: {world.shape.width , 0.05};
 			graphics "Scope#" position: {world.shape.width , 0.1, 0.01} {
-				draw ""+(days_with_ecolabel)  at: {shape.width/2, shape.height/2 + shape.height/10}  color: #gold font: font("Impact", 60, #bold) anchor: #center;
+				draw ""+(days_with_ecolabel)  at: {shape.width/2, shape.height/2 + shape.height/10}  color: #gold font: base_font anchor: #center;
 				draw score_icon size: symbol_icon_size*2 at: {shape.width/2, 500};
 			}
 			
@@ -570,7 +570,7 @@ experiment Open {
 			
 			graphics "Jauge for the turns" {
 				float y <- shape.height - 500;
-				draw ""+turn  color: #white font: font("Impact", 50, #bold) anchor: #left_center at: {2*shape.width + 500,y};
+				draw ""+turn  color: #white font: base_font anchor: #left_center at: {2*shape.width + 500,y};
 				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
 				float width <- cycle_count * 2 * shape.width / (8 * 365);
 				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkred;
@@ -579,7 +579,7 @@ experiment Open {
 			
 			graphics "Jauge for the discussion" visible: stage = PLAYER_DISCUSSION_TURN {
 				float y <- 0.0;
-				draw ""+int(remaining_time)+"s"  color: #white font: font("Impact", 50, #bold) anchor: #left_center at: {2*shape.width + 500,y};
+				draw ""+int(remaining_time)+"s"  color: #white font: base_font anchor: #left_center at: {2*shape.width + 500,y};
 				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
 				float width <-( 180 -remaining_time)* 2 * shape.width / (180);
 				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkgreen;
@@ -591,13 +591,13 @@ experiment Open {
 				image_file icon <- (stage = PLAYER_DISCUSSION_TURN) ? discussion_icon : ((stage = PLAYER_ACTION_TURN) ? village_icon[int(villages_order[index_player])] : computer_icon);
 				draw icon size: {3*shape.width/5, 3*shape.width/5};
 				if (stage = PLAYER_ACTION_TURN) {
-					draw ""+(int(villages_order[index_player])+1) color: #black font: font("Impact", 50, #bold) anchor: #center ;
+					draw ""+(int(villages_order[index_player])+1) color: #black font: base_font anchor: #center ;
 				}
 			}
 			
 			graphics "Actions" position: {-shape.width, 0} visible: stage=PLAYER_ACTION_TURN{
 				draw actions_icon size: {shape.width/3,shape.height/3};
-				draw string(villages_order[index_player].actions_done_this_year collect (action_numbers[each])) at: {location.x + shape.width/4, location.y} color: #white font: font("Impact", 50, #bold) anchor: #left_center;
+				draw string(village_actions[villages_order[index_player]]) at: {location.x + shape.width/4, location.y} color: #white font: base_font anchor: #left_center;
 			}
 			graphics "Next"  visible: stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN {
 				draw next_icon at: {shape.width + 3*shape.width/3, shape.height/2} size: shape.width / 4;
@@ -648,7 +648,7 @@ experiment Open {
 
 		/********************** PLAYER 2 DISPLAY *************************************************/
 		
-		display "Player 2" type: opengl axes: false background: village_color[1].darker refresh: stage = COMPUTE_INDICATORS antialias: true{
+		display "Player 2" type: opengl axes: false background: village_color[1].darker  antialias: true{
 			
 			light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3213.0194,2461.0968,7088.535} target: {3213.0194,2460.973,0.0} locked: true;
@@ -707,7 +707,7 @@ experiment Open {
 				
 		/********************** PLAYER 3 DISPLAY ***************************************************/
 
-		display "Player 3" type: opengl axes: false refresh: stage = COMPUTE_INDICATORS background: village_color[2].darker antialias: true {
+		display "Player 3" type: opengl axes: false  background: village_color[2].darker antialias: true {
 			
 			light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3213.0194,2461.0968,7088.535} target: {3213.0194,2460.973,0.0} locked: true;
