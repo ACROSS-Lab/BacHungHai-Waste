@@ -85,7 +85,7 @@ global {
 	
 	
 	int water_pollution_class_current(canal p) {
-		float w <- p.pollution_density; // TODO this is an example
+		float w <- p.pollution_density; 
 		switch(w) {
 			match_between [0, 0.9] {return 0;}
 			match_between [1, 9] {return 1;}
@@ -190,7 +190,7 @@ global {
 	/********************** COLORS ************************************************/
 	
 	list<rgb> greens <- palette(rgb(237, 248, 233), rgb(186, 228, 179), rgb(116, 196, 118), rgb(49, 163, 84), rgb(0, 109, 44));
-	list<rgb> blues <- palette(rgb(239, 243, 255), rgb(189, 215, 231), rgb(107, 174, 214), rgb(49, 130, 189), rgb(8, 81, 156));
+	list<rgb> blues <- reverse(palette(rgb(239, 243, 255), rgb(189, 215, 231), rgb(107, 174, 214), rgb(49, 130, 189), rgb(8, 81, 156)));
 	list<rgb> reds <- palette(rgb(254, 229, 217), rgb(252, 174, 145), rgb(251, 106, 74), rgb(222, 45, 38), rgb(165, 15, 21));
 	rgb map_background <- #black;
 	rgb player_background <- #white;
@@ -403,14 +403,33 @@ experiment Open {
 				float x_gap <- 0.1;
 				float y <- 0.0;
 				float x <- 0.1;
+				
+
+				x <- x + 2 * x_gap;
+				draw smileys[0] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+				x <- 0.5;
+				x <- x + 2*x_gap;
+				draw smileys[4] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+				
+				
+				//y <- y + y_gap;
+				x <- x_gap;
 				draw plant_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
 				x <- x + 2* x_gap;
-				loop c over: greens {
+				loop c over: reverse(greens) {
 					draw square(x_gap*shape.width) border: #black width: line_width color: c at: {x* shape.width,y*shape.height};
 					x <- x + x_gap;
 				}
 				show_production <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
 				draw show_production wireframe: !over_production and !production_on color: production_on ? #black: #white width: line_width;
+				// SMILEYS
+				x <- x_gap;
+				x <- x + 2 * x_gap;
+				draw smileys[0] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+				x <- 0.5;
+				x <- x + 2*x_gap;
+				draw smileys[4] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+				//
 				y <- y + y_gap;
 				x <- x_gap;
 				draw water_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
@@ -421,6 +440,14 @@ experiment Open {
 				}
 				show_canal <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
 				draw show_canal wireframe: !over_canal and !canal_on color: canal_on ? #black: #white width: line_width;
+				// SMILEYS
+				x <- x_gap;
+				x <- x + 2 * x_gap;
+				draw smileys[0] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+				x <- 0.5;
+				x <- x + 2*x_gap;
+				draw smileys[4] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+				//
 //				y <- y + y_gap;
 //				x <-x_gap;
 //				draw soil_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
