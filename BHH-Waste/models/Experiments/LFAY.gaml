@@ -43,8 +43,9 @@ global {
 			match 0 {return arrows[1];}
 			match 1 {return arrows[2];} 
 			default {
-				float last <- last(data);
+				float last <- data[length-1];
 				float before <- data[length-2];
+//				write ("before: " + string(before) + " last :" + last);
 				return arrows[last > before ? 2 : (before > last ? 0 : 1)];
 			}
 		}
@@ -106,6 +107,18 @@ global {
 		 }
 	}
 	
+	
+	action pause {
+		about_to_pause <- true;
+		ask experiment {do update_outputs;}
+		invoke pause;
+	}
+	
+	action resume {
+		about_to_pause <- false;
+		invoke resume;
+	}
+	
 	/********************** PROPORTION OF THE DISPLAYS ****************************/
 	
 	int small_prop <- 1500;
@@ -132,14 +145,17 @@ global {
 	/******************* GENERAL PARAMETERS *************************************/
 	
 	bool confirmation_popup <- false;
-	bool no_starting_actions <- false;
+	bool no_starting_actions <- true;
+	bool about_to_pause <- false;
+	float pause_started_time <- 0.0;
 	
 	/******************* USE TIMERS *************************************/
 	bool use_timer_player_turn <- false;	
 	bool use_timer_for_discussion <- true;
 	
 	bool timer_just_for_warning <- false; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player - for the moment, some issue with the automatic change of step
-	float time_for_discussion <- 3 #mn; // time before the player turns
+	float initial_time_for_discussion <- 3 #mn const: true; // time before the player turns
+	//float time_for_discussion <- initial_time_for_discussion;
 	
 	
 	/********************* SPECIAL FOR LEGENDS AND THE MAP ****************************/
@@ -183,13 +199,16 @@ global {
 	image_file water_icon <- image_file("../../includes/icons/water.png");
 	image_file plant_icon <- image_file("../../includes/icons/plant.png");
 	list<image_file> smileys <- [image_file("../../includes/icons/0.png"), image_file("../../includes/icons/1.png"), image_file("../../includes/icons/2.png"), image_file("../../includes/icons/3.png"), image_file("../../includes/icons/4.png")];
- 	list<image_file> arrows <- [image_file("../../includes/icons/down.png"), image_file("../../includes/icons/equal.png"), image_file("../../includes/icons/down.png")];
+ 	list<image_file> arrows <- [image_file("../../includes/icons/down.png"), image_file("../../includes/icons/equal.png"), image_file("../../includes/icons/up.png")];
 	list<image_file> faces <- [image_file("../../includes/icons/people-0.png"),image_file("../../includes/icons/people-1.png"),image_file("../../includes/icons/people-2.png"),image_file("../../includes/icons/people-3.png"),image_file("../../includes/icons/people-4.png"),image_file("../../includes/icons/people-5.png"),image_file("../../includes/icons/people-6.png"),image_file("../../includes/icons/people-7.png")];
 	image_file calendar_icon <- image_file("../../includes/icons/upcoming.png");
 	image_file discussion_icon <- image_file("../../includes/icons/conversation.png");
 	image_file sandclock_icon <- image_file("../../includes/icons/hourglass.png");
 	image_file computer_icon <- image_file("../../includes/icons/simulation.png");
 	image_file next_icon <- image_file("../../includes/icons/fast-forward.png");
+	image_file play_icon <- image_file("../../includes/icons/play.png");
+	image_file pause_icon <- image_file("../../includes/icons/pause.png");
+	
 	image_file garbage_icon <- image_file("../../includes/icons/garbage.png");
 	image_file city_icon <- image_file("../../includes/icons/office.png");
 	image_file score_icon <- image_file("../../includes/icons/trophy.png");
@@ -267,7 +286,17 @@ global {
 			loop i from: 0 to: 3 {
 				do update_all(village_color[i], ["Water"::village_water_pollution[i]/max_pollution_ecolabel, "Soil"::village_solid_pollution[i]/max_pollution_ecolabel, "Production"::village_production[i]/min_production_ecolabel ]);
 			}
-		}				
+		}	
+		// TODO remove this at some point ! 
+	time_for_discussion <- initial_time_for_discussion;			
+		pause_started_time <- 0.0;
+	}
+	
+	reflex end_of_discussion_turn when:  stage = PLAYER_DISCUSSION_TURN {
+		remaining_time <- int(time_for_discussion - machine_time/1000.0  +start_discussion_turn_time/1000.0); 
+		if remaining_time <= 0 {
+			do end_of_discussion_phase;		
+		}
 	}
 	
 
@@ -298,7 +327,7 @@ experiment Open {
 				
 			]
 			)
-		toolbars: false tabs: false parameters: false consoles: false navigator: false controls: true tray: false background: #gray;
+		toolbars: false tabs: false parameters: false consoles: false navigator: false controls: false tray: false background: #gray;
 		
 		/********************** PLAYER 1 DISPLAY *************************************************/
 
@@ -346,7 +375,7 @@ experiment Open {
 			species commune visible: false;
 			
 			graphics "Legend" {
-				float y_gap <- 0.2;
+				float y_gap <- 0.3;
 				float x_gap <- 0.1;
 				float y <- 0.0;
 				float x <- 0.1;
@@ -368,16 +397,16 @@ experiment Open {
 				}
 				show_canal <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
 				draw show_canal wireframe: !over_canal and !canal_on color: canal_on ? #black: #white width: line_width;
-				y <- y + y_gap;
-				x <-x_gap;
-				draw soil_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
-				x <- x + 2* x_gap;
-				loop c over: reds {
-					draw square(x_gap*shape.width) color: c border: #black width: line_width at: {x* shape.width,y*shape.height};
-					x <- x +x_gap;
-				}
-				show_soil <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
-				draw show_soil wireframe: !over_soil and !soil_on color: soil_on ? #black: #white width: line_width;
+//				y <- y + y_gap;
+//				x <-x_gap;
+//				draw soil_icon at: {x* shape.width,y*shape.height} size: symbol_icon_size;
+//				x <- x + 2* x_gap;
+//				loop c over: reds {
+//					draw square(x_gap*shape.width) color: c border: #black width: line_width at: {x* shape.width,y*shape.height};
+//					x <- x +x_gap;
+//				}
+//				show_soil <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
+//				draw show_soil wireframe: !over_soil and !soil_on color: soil_on ? #black: #white width: line_width;
 								
 				/*****/
 				y <- y + y_gap;
@@ -407,17 +436,17 @@ experiment Open {
 			}
 			
 			event #mouse_move {
-				over_canal <- (show_canal * 3) intersects #user_location;
-				over_soil <- (show_soil * 3) intersects #user_location;
-				over_production <- (show_production * 3) intersects #user_location;
-				over_player <- (show_player * 3) intersects #user_location;
+				over_canal <- show_canal != nil and (show_canal * 3) intersects #user_location;
+				over_soil <- show_soil != nil 	and (show_soil * 3) intersects #user_location;
+				over_production <- show_production != nil and (show_production * 3) intersects #user_location;
+				over_player <- show_player != nil and (show_player * 3) intersects #user_location;
 			}
 			
 			event #mouse_down {
-				if (show_canal * 3) intersects #user_location {canal_on <- !canal_on;}
-				if (show_soil * 3) intersects #user_location {soil_on <- !soil_on;}
-				if (show_production * 3) intersects #user_location {production_on <- !production_on;}
-				if (show_player * 3) intersects #user_location {player_on <- !player_on;}
+				if (show_canal != nil) and (show_canal * 3) intersects #user_location {canal_on <- !canal_on;}
+				if (show_soil != nil) and (show_soil * 3) intersects #user_location {soil_on <- !soil_on;}
+				if (show_production != nil) and (show_production * 3) intersects #user_location {production_on <- !production_on;}
+				if (show_player != nil) and (show_player * 3) intersects #user_location {player_on <- !player_on;}
 			}
 			
 			
@@ -505,6 +534,10 @@ experiment Open {
 			agents "Current village" value: village transparency: 0.2 position: {0,0,0.01} visible: player_on {
 				draw shape color: color border: color;
 			}
+			graphics "Pause" transparency: 0.7 position: {0,0,0.01} visible: paused or about_to_pause{
+				draw simulation.shape color: #black;
+//				draw "Paused" color: #white font: font("Impact", 150, #bold) anchor:#center;
+			}
 		}
 
 		/********************** TIMER DISPLAY ***************************************************/
@@ -538,26 +571,46 @@ experiment Open {
 					draw ""+(int(villages_order[index_player])+1) color: #black font: font("Impact", 50, #bold) anchor: #center ;
 				}
 			}
-			graphics "Next" transparency: active_button ? 0.33 : 0.7 visible: stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN {
-				draw next_icon at: {shape.width + shape.width/3, shape.height/2} size: shape.width / 3;
+			graphics "Next"  visible: stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN {
+				draw next_icon at: {shape.width + 3*shape.width/3, shape.height/2} size: shape.width / 4;
 			}
 			
-			event #mouse_move {
-				using topology(simulation) {
-					active_button <-  ({world.shape.width + world.shape.width/3, world.shape.height/2} distance_to #user_location) < world.shape.width/3;
-				}
+			graphics "Play Pause"  {
+				draw simulation.paused or about_to_pause? play_icon : pause_icon at: {shape.width + shape.width/3, shape.height/2} size: shape.width / 4;
 			}
+			
+//		event #mouse_move {
+//				using topology(simulation) {
+//					active_button <-  ({world.shape.width + 3*world.shape.width/3, world.shape.height/2} distance_to #user_location) < world.shape.width/3;
+//				}
+//			}
 			
 			event #mouse_down {
 				using topology(simulation) {
-					if ({world.shape.width + world.shape.width/3, world.shape.height/2} distance_to #user_location) < world.shape.width/2 {
+					if ({world.shape.width + 3*world.shape.width/3, world.shape.height/2} distance_to #user_location) < world.shape.width/3 {
+						//write "Fast forward with distance to button = " + {world.shape.width + 3*world.shape.width/3, world.shape.height/2} distance_to #user_location;
 						if (stage = PLAYER_DISCUSSION_TURN) {
 							ask simulation {do end_of_discussion_phase;}
-						} else {
+						} else if (stage !=COMPUTE_INDICATORS) {
 							ask simulation {
 								ask villages_order[index_player] {
 									do end_of_turn;
 								}
+							}
+						}
+					} else if ({world.shape.width + world.shape.width/3, world.shape.height/2} distance_to #user_location) < world.shape.width/3 {
+						//write "Pause with distance to button = " + {world.shape.width + world.shape.width/3, world.shape.height/2} distance_to #user_location;
+						
+						ask simulation {
+							if paused or about_to_pause {
+								if (pause_started_time > 0) {
+								time_for_discussion <- time_for_discussion + int((gama.machine_time - pause_started_time)/1000);}
+								pause_started_time <- 0.0;
+								do resume;
+							} 
+							else {
+								pause_started_time <- gama.machine_time;
+								do pause;
 							}
 						}
 					}
@@ -607,7 +660,7 @@ experiment Open {
 						light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3213.0194,2461.1095,7816.3615} target: {3213.0194,2460.973,0.0};						
 			
-			agents "Global" value: [global_chart] aspect: 'horizontal' size: {0.7, 0.7} position: {0.15,0.15} visible: !#fullscreen;
+			agents "Global" value: [global_chart] aspect: vertical size: {0.8, 0.8} position: {0.1,0.1} visible: !#fullscreen;
 			
 			chart WASTE_POLLUTION  size:{1, 0.5} type: xy background: #black color: #white visible: #fullscreen label_font: player_font_bold {
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #gray marker: false thickness: chart_line_width ;
@@ -637,7 +690,7 @@ experiment Open {
 
 
 			agents "Village" value: ([village[2]]) position: {shape.width*0.15,  0.05} size: {0.7,0.7}{
-				draw shape color:  village_color[2] ;
+				draw shape color:  village_color[2] ; 
 				draw shape wireframe: true border: #black width: line_width;
 			}
 			
