@@ -77,6 +77,9 @@ global {
 	string IMAGE_REDUCE_PESTICIDES	<- "reduce-pesticide-use.png";
 	string IMAGE_COLLECTIVE_ACTION	<- "wastewater-treatment.png";
 	string IMAGE_WASTE_COLLECTION	<- "trimestriel-waste-collection.png";
+	string IMAGE_END_TURN			<- "";
+	string IMAGE_COLLECT_WASTE_WEEK	<- "";
+	// missing endturn + Collecte des déchets ou Collecte trimestriel
 	
 	list<string> players_names <- 
 	[
@@ -90,125 +93,129 @@ global {
 	[
 		[
 			'id'::A_DUMPHOLES,
-			'name'::'Drain and dredge',
-			'cost'::20,
-			'once_per_game'::false,
+			'name'::'Construction de puits de collecte',
+			'cost'::40,
+			'once_per_game'::true,
 			'mandatory'::false,
-			'asset_name'::IMAGE_DRAIN_DREDGE,
-			'description'::"↓Solid waste\n↓Waste water"
+			'asset_name'::IMAGE_DUMPHOLES,
+			'description'::"↓Déchets solides dans les champs\n"
 		],
 		[
 			'id'::A_PESTICIDES,
-			'name'::'Drain and dredge',
-			'cost'::50,
-			'once_per_game'::false,
+			'name'::'Drainer et draguer',
+			'cost'::40,
+			'once_per_game'::true,
 			'mandatory'::false,
-			'asset_name'::'drain-dredge.png'
+			'asset_name':: IMAGE_REDUCE_PESTICIDES,
+			'description'::"↓Déchets solides dans les champs\n↓Productivité"
 		],
 		[
 			'id'::A_SENSIBILIZATION,
-			'name'::'Sensibilization',
-			'cost'::25,
+			'name'::'Sensibilisation au tri des déchets',
+			'cost'::20,
 			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::'nexistepas'
+			'asset_name'::IMAGE_RAISE_AWAReNESS,
+			'description'::"↓Déchets solides dans le village\n"
 		],
 		[
 			'id'::A_FILTERS,
-			'name'::'Collect waste',
-   			'cost'::25,
-			'once_per_game'::false,
-			'mandatory'::true,
-			'asset_name'::'drain-dredge.png'
+			'name'::'Système de traitement de eaux usées',
+   			'cost'::240,
+			'once_per_game'::true,
+			'mandatory'::false,
+			'asset_name':: IMAGE_COLLECTIVE_ACTION,
+			'description'::"↓Eaux usées des habitants\n"
 		],
 		[	
 			'id'::A_COLLECTIVE_HIGH,
-			'name'::'Collect waste',
+			'name'::'Collecte de déchets',
 		   	'cost'::50,
 			'once_per_game'::false,
 			'mandatory'::true,
-			'asset_name'::'drain-dredge.png'
+			'asset_name':: IMAGE_COLLECT_WASTE_WEEK,
+			'description'::"↓Déchets solides dans les zones urbaines\n"
 		],
 		[	
 			'id'::A_COLLECTIVE_LOW,
-			'name'::'Install facility treatments',
-			'cost'::50,
-			'once_per_game'::true,
-			'mandatory'::false,
-			'asset_name'::''
+			'name'::'Collecte de déchets',
+			'cost'::30,
+			'once_per_game'::false,
+			'mandatory'::true,
+			'asset_name'::IMAGE_COLLECT_WASTE_WEEK,
+			'description'::"↓Déchets solides dans les zones urbaines\n"
 		],
 		[	
 			'id'::A_DRAIN_DREDGES_HIGH,
-			'name'::'a',
+			'name'::'Drainer et draguer',
 			'cost'::50,
-			'once_per_game'::true,
+			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::''
+			'asset_name'::IMAGE_DRAIN_DREDGE,
+			'description'::"↓Eaux usées dans les canaux\n"
 		],
 		[
 			'id'::A_DRAIN_DREDGES_LOW,
-			'name'::'b',
-			'cost'::50,
-			'once_per_game'::true,
+			'name'::'Drainer et draguer',
+			'cost'::25,
+			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::'',
-			"description"::"↑Waste water\n↑Productivity"
+			'asset_name'::IMAGE_DRAIN_DREDGE,
+			"description"::"↓Eaux usées dans les canaux\n"
 		],
 		[
 			'id'::A_FALLOW,
-			'name'::'c',
-			'cost'::50,
-			'once_per_game'::true,
+			'name'::'Jachère',
+			'cost'::40,
+			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::''
+			'asset_name'::IMAGE_FALLOW,
+			'description'::"↓Pollutions des terres\n ↓Productivité ce tour-ci\n ↑Production le prochain tour"
 		],
 		[
 			'id'::A_MATURES_HIGH,
-			'name'::'d',
-			'cost'::50,
-			'once_per_game'::true,
+			'name'::'Aides pour l\'achat des engrais',
+			'cost'::40,
+			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::''
+			'asset_name'::IMAGE_FERTILIZERS,
+			'description'::"↑Productivité\n ↑Eaux usées"
 		],
 		[
 			'id'::A_MATURES_LOW,
-			'name'::'e',
-			'cost'::50,
-			'once_per_game'::true,
+			'name'::'Aides pour l\'achat des engrais',
+			'cost'::20,
+			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::''
+			'asset_name'::IMAGE_FERTILIZERS,
+			'description'::"↑Productivité\n ↑Eaux usées"
 		],
 		[
 			'id'::A_FILTER_MAINTENANCE,
-			'name'::'f',
-			'cost'::50,
-			'once_per_game'::true,
+			'name'::'Entretien du système de traitement',
+			'cost'::10,
+			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::''
+			'asset_name'::IMAGE_COLLECTIVE_ACTION,
+			'description'::"↓Eaux usées des habitants\n"
 		],
 		[
 			'id'::A_COLLECTION_LOW,
-			'name'::'Action collective',
-			'cost'::0,
-			'once_per_game'::true,
+			'name'::'Collecte trimestriel de déchets dans les canaux',
+			'cost'::18,
+			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::'collective-action.png'
+			'asset_name'::IMAGE_WASTE_COLLECTION,
+			'description'::"↓Déchets solides dans les canaux\n"
 		],
 		[
 			'id'::A_COLLECTION_HIGH,
-			'name'::'Action collective',
-			'cost'::0,
-			'once_per_game'::true,
+			'name'::'Collecte trimestriel de déchets dans les canaux',
+			'cost'::35,
+			'once_per_game'::false,
 			'mandatory'::false,
-			'asset_name'::'collective-action.png'
-		],
-		[
-			'id'::A_END_TURN,
-			'name'::'Action collective',
-			'cost'::0,
-			'once_per_game'::true,
-			'mandatory'::false,
-			'asset_name'::'collective-action.png'
+			'asset_name'::IMAGE_WASTE_COLLECTION,
+			'description'::"↓Déchets solides dans les canaux\n"
 		]
 	];
  	
