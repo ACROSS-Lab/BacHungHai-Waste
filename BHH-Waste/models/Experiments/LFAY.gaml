@@ -232,9 +232,11 @@ global {
 	image_file city_icon <- image_file("../../includes/icons/office.png");
 	image_file score_icon <- image_file("../../includes/icons/trophy.png");
 	image_file schedule_icon <- image_file("../../includes/icons/schedule.png");
+	image_file danger_icon <- image_file("../../includes/icons/danger.png");
 
 
 	map<string, string> action_numbers;
+	map<string, string> numbers_actions;
 	
 	
 	list<image_file> village_icon <- 4 among faces; 
@@ -263,11 +265,14 @@ global {
 			max_value <- 2.0;
 			ratio <- size / max_value;
 			desired_icon <- label_icon;
+			do add_column("Production");
+			do add_column("Total");
 			do add_column("Water");
 			do add_column("Soil");
-			do add_column("Production");
-			icons <- ["Water"::water_icon, "Soil"::soil_icon, "Production"::plant_icon];
-		 inf_or_sup <- ["Water"::true, "Soil"::true, "Production"::false];
+
+			icons <- ["Total"::danger_icon, "Water"::water_icon, "Soil"::soil_icon, "Production"::plant_icon];
+		 	inf_or_sup <- ["Total"::true,"Water"::true, "Soil"::true, "Production"::false];
+		 	draw_smiley <- ["Total"::true,"Water"::false, "Soil"::false, "Production"::true];
 			
 			loop i from: 0 to: 3 {
 				do add_element(village_color[i]);
@@ -277,7 +282,7 @@ global {
 			action_numbers <- [
 				A_DUMPHOLES::"3",
 				A_PESTICIDES::"4",
-				A_END_TURN::"",
+				//A_END_TURN::"",
 				A_SENSIBILIZATION::"6",
 				A_FILTERS::"2A",
 				A_COLLECTIVE_LOW::"5A",
@@ -291,6 +296,7 @@ global {
 				A_COLLECTION_LOW::"1A",
 				A_COLLECTION_HIGH::"1B"
 		];
+		numbers_actions <- reverse(action_numbers);
 
 	}
 	
@@ -308,12 +314,12 @@ global {
 		
 		ask global_chart{
 			loop i from: 0 to: 3 {
-				do update_all(village_color[i], ["Water"::village_water_pollution[i]/max_pollution_ecolabel, "Soil"::village_solid_pollution[i]/max_pollution_ecolabel, "Production"::village_production[i]/min_production_ecolabel ]);
+				do update_all(village_color[i], ["Total"::(village_water_pollution[i] + village_solid_pollution[i])/max_pollution_ecolabel, "Water"::village_water_pollution[i]/max_pollution_ecolabel, "Soil"::village_solid_pollution[i]/max_pollution_ecolabel, "Production"::village_production[i]/min_production_ecolabel ]);
 			}
 		}	
 		// TODO remove this at some point ! 
 	time_for_discussion <- initial_time_for_discussion;			
-		pause_started_time <- 0.0;
+	pause_started_time <- 0.0;
 	}
 	
 	reflex end_of_discussion_turn when:  stage = PLAYER_DISCUSSION_TURN {
@@ -331,6 +337,11 @@ global {
 
 
 experiment Open {
+	
+	map<string, point> action_locations <- [];
+	point next_location <- {0,0};
+	point pause_location <- {0,0};
+	string over_action;
 	
 	
 	init {
@@ -428,12 +439,12 @@ experiment Open {
 				show_production <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
 				draw show_production wireframe: !over_production and !production_on color: production_on ? #black: #white width: line_width;
 				// SMILEYS
-				x <- x_gap;
-				x <- x + 2 * x_gap;
-				draw smileys[0] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
-				x <- 0.5;
-				x <- x + 2*x_gap;
-				draw smileys[4] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+//				x <- x_gap;
+//				x <- x + 2 * x_gap;
+//				draw smileys[0] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+//				x <- 0.5;
+//				x <- x + 2*x_gap;
+//				draw smileys[4] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
 				//
 				y <- y + y_gap;
 				x <- x_gap;
@@ -446,12 +457,12 @@ experiment Open {
 				show_canal <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
 				draw show_canal wireframe: !over_canal and !canal_on color: canal_on ? #black: #white width: line_width;
 				// SMILEYS
-				x <- x_gap;
-				x <- x + 2 * x_gap;
-				draw smileys[0] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
-				x <- 0.5;
-				x <- x + 2*x_gap;
-				draw smileys[4] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+//				x <- x_gap;
+//				x <- x + 2 * x_gap;
+//				draw smileys[0] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
+//				x <- 0.5;
+//				x <- x + 2*x_gap;
+//				draw smileys[4] size:(0.05*shape.width)  at: {x* shape.width,y*shape.height,0.05};
 				//
 //				y <- y + y_gap;
 //				x <-x_gap;
@@ -552,18 +563,28 @@ experiment Open {
 			light #ambient intensity: ambient_intensity;
 			
 			species commune visible: false;
-			agents "Turn" value: [day_timer] position: {-world.shape.width , 0.05};
-			graphics "Turn#" position: {-world.shape.width , 0.1, 0.01} {
-				draw ""+(min(last(days_with_ecolabel_year),365)) at: {shape.width/2, shape.height/2 + shape.height/10} color: #white font: base_font anchor: #center;
-				draw schedule_icon size: symbol_icon_size*2 at: {shape.width/2, 500};
+			agents "Turn" value: [day_timer] position: {-world.shape.width , 0.2};
+			graphics "Turn#" position: {-world.shape.width , 0, 0.01} {
+				draw schedule_icon size: symbol_icon_size*2 at: {shape.width/2, shape.height/2};
+				draw ""+(min(last(days_with_ecolabel_year),365)) at: {shape.width/2, shape.height/4} color: #white font: base_font anchor: #center;
+
 			}
-			graphics "Label" size: {1,1} position: {0,0} transparency: last(days_with_ecolabel_year) >= 183 ? 0 : 0.8 {
+			graphics "Label" size: {0.7,0.7} position: {0.15,0} transparency: last(days_with_ecolabel_year) >= 183 ? 0 : 0.8 {
 				draw label_icon;
 			}
-			agents "Score" value: [score_timer] position: {world.shape.width , 0.05};
-			graphics "Scope#" position: {world.shape.width , 0.1, 0.01} {
-				draw ""+(days_with_ecolabel)  at: {shape.width/2, shape.height/2 + shape.height/10}  color: #gold font: base_font anchor: #center;
-				draw score_icon size: symbol_icon_size*2 at: {shape.width/2, 500};
+			agents "Score" value: [score_timer] position: {world.shape.width , 0.2};
+			graphics "Scope#" position: {world.shape.width , 0, 0.01} {
+				draw score_icon size: symbol_icon_size*2 at: {shape.width/2, shape.height/2};
+				draw ""+(days_with_ecolabel)  at: {shape.width/2, shape.height/4}  color: #gold font: base_font anchor: #center;
+			}
+			
+			graphics "Jauge for the turns" {
+				float y <- shape.height - 500;
+				draw ""+turn  color: #white font: base_font anchor: #left_center at: {2*shape.width + 500,y};
+				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
+				float width <- cycle_count * 2 * shape.width / (simulation.end_of_game * 365);
+				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkred;
+				draw calendar_icon at: {width - shape.width,y} size: shape.height/3;
 			}
 			
 		}
@@ -600,112 +621,264 @@ experiment Open {
 	
 		display "TIMER" type: opengl axes: false background: timer_background  {
 			light #ambient intensity: ambient_intensity;
-			
-			graphics "Jauge for the turns" {
-				float y <- shape.height - 500;
-				draw ""+turn  color: #white font: base_font anchor: #left_center at: {2*shape.width + 500,y};
-				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
-				float width <- cycle_count * 2 * shape.width / (simulation.end_of_game * 365);
-				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkred;
-				draw calendar_icon at: {width - shape.width,y} size: shape.height/3;
+			graphics "Jauge for the discussion" visible: stage = PLAYER_DISCUSSION_TURN and turn <= end_of_game {
+				float y <- location.y + shape.height / 2;
+				float left <- location.x - shape.width;
+				float right <- location.x + shape.width;
+				draw "" + int(remaining_time) + "s" color: #white font: base_font anchor: #left_center at: {right + 500, y};
+				draw line({left, y}, {right, y}) buffer (200, 200) color: #white;
+				float width <- (initial_time_for_discussion - remaining_time) * (right - left) / (initial_time_for_discussion);
+				draw line({left, y}, {left + width, y}) buffer (200, 200) color: #darkgreen;
+				draw sandclock_icon /*rotate: (180 - remaining_time)*3*/ at: {left + width, y} size: shape.height / 3;
 			}
-			
-			graphics "Jauge for the discussion" visible: stage = PLAYER_DISCUSSION_TURN {
-				float y <- 0.0;
-				draw ""+int(remaining_time)+"s"  color: #white font: base_font anchor: #left_center at: {2*shape.width + 500,y};
-				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
-				float width <-( initial_time_for_discussion -remaining_time)* 2 * shape.width / (initial_time_for_discussion);
-				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkgreen;
-				draw sandclock_icon rotate: (180 - remaining_time)*3 at: {width - shape.width,y} size: shape.height/3;
-			}
-			
-			
-			graphics "Stage" position: {0,-500}{
-				image_file icon <- (stage = PLAYER_DISCUSSION_TURN) ? discussion_icon : ((stage = PLAYER_ACTION_TURN) ? village_icon[int(villages_order[index_player])] : computer_icon);
-				draw icon size: {3*shape.width/5, 3*shape.width/5};
-				if (stage = PLAYER_ACTION_TURN) {
-					draw ""+(int(villages_order[index_player])+1) color: #black font: base_font anchor: #center ;
-				}
-			}
-			
-			graphics "Actions" position: {-shape.width, 0} visible: stage=PLAYER_ACTION_TURN{
-				draw actions_icon size: {shape.width/3,shape.height/3};
-				draw string(village_actions[villages_order[index_player]]) at: {location.x + shape.width/4, location.y} color: #white font: base_font anchor: #left_center;
-			}
-			graphics "Next"  visible: stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN {
-				draw next_icon at: {shape.width + 3*shape.width/3, shape.height/2} size: shape.width / 4;
-			}
-			
-			graphics "Play Pause"  {
-				draw simulation.paused or about_to_pause? play_icon : pause_icon at: {shape.width + shape.width/3, shape.height/2} size: shape.width / 4;
-			}
-			
-//				A_DUMPHOLES::"3",
-//				A_PESTICIDES::"4",
-//				A_END_TURN::"",
-//				A_SENSIBILIZATION::"6",
-//				A_FILTERS::"2A",
-//				A_COLLECTIVE_LOW::"5A",
-//				A_COLLECTIVE_HIGH::"5B",
-//				A_DRAIN_DREDGES_HIGH::"7B",
-//				A_DRAIN_DREDGES_LOW::"7A",
-//				A_FALLOW::"9",
-//				A_MATURES_LOW::"8A",
-//				A_MATURES_HIGH::"8B",
-//				A_FILTER_MAINTENANCE::"2B",
-//				A_COLLECTION_LOW::"1A",
-//				A_COLLECTION_HIGH::"1B"
 
-			event "1"  {ask simulation {do execute_action(A_COLLECTION_LOW);}}
-			event "a"  {ask simulation {do execute_action(A_COLLECTION_HIGH);}}
-			event "2"  {ask simulation {do execute_action(A_FILTERS);}}
-			event "b"  {ask simulation {do execute_action(A_FILTER_MAINTENANCE);}}
-			event "3"  {ask simulation {do execute_action(A_DUMPHOLES);}}
-			event "c"  {ask simulation {do execute_action(A_DUMPHOLES);}}
-			event "4"  {ask simulation {do execute_action(A_PESTICIDES);}}
-			event "d"  {ask simulation {do execute_action(A_PESTICIDES);}}
-			event "5"  {ask simulation {do execute_action(A_COLLECTIVE_LOW);}}
-			event "e"  {ask simulation {do execute_action(A_COLLECTIVE_HIGH);}}
-			event "6"  {ask simulation {do execute_action(A_SENSIBILIZATION);}}
-			event "f"  {ask simulation {do execute_action(A_SENSIBILIZATION);}}
-			event "7"  {ask simulation {do execute_action(A_DRAIN_DREDGES_LOW);}}
-			event "g"  {ask simulation {do execute_action(A_DRAIN_DREDGES_HIGH);}}
-			event "8"  {ask simulation {do execute_action(A_MATURES_LOW);}}
-			event "h"  {ask simulation {do execute_action(A_MATURES_HIGH);}}
-			event "9"  {ask simulation {do execute_action(A_FALLOW);}}
-			event "i"  {ask simulation{do execute_action(A_FALLOW);}}
-			event "0" {ask simulation{do before_start_turn;}}
+			graphics "Actions of players" visible: stage = PLAYER_ACTION_TURN {
+				float y <- location.y + shape.height / 2;
+				float left <- location.x - 7 * shape.width / 5;
+				float right <- location.x + 7 * shape.width / 5;
+				float gap <- (right - left) / length(simulation.numbers_actions);
+				float index <- 0.5;
+				loop s over: (sort(simulation.numbers_actions.keys, each)) {
+					village v <- villages_order[index_player];
+					bool selected <- village_actions[v] != nil and village_actions[v] contains s;
+					draw s color: selected or over_action = s ? #white : rgb(255, 255, 255, 130) font: font("Impact", 36, #bold) anchor: #center at: {left + gap * index, y};
+					if (selected) {
+						draw circle(shape.width / 10) wireframe: true width: line_width color: #white at: {left + gap * index, y};
+					}
+
+					action_locations[s] <- {left + gap * index, y};
+					index <- index + 1;
+				}
+
+			}
+
+			graphics "Stage" position: {0, -500} {
+				image_file icon <- (stage = PLAYER_DISCUSSION_TURN) ? discussion_icon : ((stage = PLAYER_ACTION_TURN) ? village_icon[int(villages_order[index_player])] : computer_icon);
+				draw icon size: {3 * shape.width / 5, 3 * shape.width / 5};
+				if (stage = PLAYER_ACTION_TURN) {
+					draw "" + (int(villages_order[index_player]) + 1) color: #black font: base_font anchor: #center;
+				}
+
+			}
+
+			graphics "Next" visible: (stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN) and turn <= end_of_game {
+				next_location <- {location.x + shape.width / 2, location.y};
+				draw next_icon at: next_location size: shape.width / 4;
+			}
+
+			graphics "Play Pause" visible: turn <= end_of_game {
+				pause_location <- {location.x - shape.width / 2, location.y};
+				draw simulation.paused or about_to_pause ? play_icon : pause_icon at: pause_location size: shape.width / 4;
+			}
+
+			event "1" {
+				ask simulation {
+					do execute_action(A_COLLECTION_LOW);
+				}
+
+			}
+
+			event "a" {
+				ask simulation {
+					do execute_action(A_COLLECTION_HIGH);
+				}
+
+			}
+
+			event "2" {
+				ask simulation {
+					do execute_action(A_FILTERS);
+				}
+
+			}
+
+			event "b" {
+				ask simulation {
+					do execute_action(A_FILTER_MAINTENANCE);
+				}
+
+			}
+
+			event "3" {
+				ask simulation {
+					do execute_action(A_DUMPHOLES);
+				}
+
+			}
+
+			event "c" {
+				ask simulation {
+					do execute_action(A_DUMPHOLES);
+				}
+
+			}
+
+			event "4" {
+				ask simulation {
+					do execute_action(A_PESTICIDES);
+				}
+
+			}
+
+			event "d" {
+				ask simulation {
+					do execute_action(A_PESTICIDES);
+				}
+
+			}
+
+			event "5" {
+				ask simulation {
+					do execute_action(A_COLLECTIVE_LOW);
+				}
+
+			}
+
+			event "e" {
+				ask simulation {
+					do execute_action(A_COLLECTIVE_HIGH);
+				}
+
+			}
+
+			event "6" {
+				ask simulation {
+					do execute_action(A_SENSIBILIZATION);
+				}
+
+			}
+
+			event "f" {
+				ask simulation {
+					do execute_action(A_SENSIBILIZATION);
+				}
+
+			}
+
+			event "7" {
+				ask simulation {
+					do execute_action(A_DRAIN_DREDGES_LOW);
+				}
+
+			}
+
+			event "g" {
+				ask simulation {
+					do execute_action(A_DRAIN_DREDGES_HIGH);
+				}
+
+			}
+
+			event "8" {
+				ask simulation {
+					do execute_action(A_MATURES_LOW);
+				}
+
+			}
+
+			event "h" {
+				ask simulation {
+					do execute_action(A_MATURES_HIGH);
+				}
+
+			}
+
+			event "9" {
+				ask simulation {
+					do execute_action(A_FALLOW);
+				}
+
+			}
+
+			event "i" {
+				ask simulation {
+					do execute_action(A_FALLOW);
+				}
+
+			}
+
+			event "0" {
+				ask simulation {
+					do before_start_turn;
+				}
+
+			}
+
+			event #mouse_move {
+				using topology(simulation) {
+					if (stage = PLAYER_ACTION_TURN) {
+						loop s over: action_locations.keys {
+							if (action_locations[s] distance_to #user_location < world.shape.width / 10) {
+								over_action <- s;
+								return;
+							}
+
+						}
+
+					}
+
+					over_action <- "";
+				}
+
+			}
+
 			event #mouse_down {
 				using topology(simulation) {
-					if ({world.shape.width + 3*world.shape.width/3, world.shape.height/2} distance_to #user_location) < world.shape.width/3 {
+					if (next_location distance_to #user_location) < world.shape.width / 3 {
+						if (turn > end_of_game) {
+							return;
+						}
 						//write "Fast forward with distance to button = " + {world.shape.width + 3*world.shape.width/3, world.shape.height/2} distance_to #user_location;
 						if (stage = PLAYER_DISCUSSION_TURN) {
-							ask simulation {do end_of_discussion_phase;}
-						} else if (stage !=COMPUTE_INDICATORS) {
+							ask simulation {
+								do end_of_discussion_phase;
+							}
+
+						} else if (stage != COMPUTE_INDICATORS) {
 							ask simulation {
 								ask villages_order[index_player] {
 									do end_of_turn;
 								}
+
 							}
+
 						}
-					} else if ({world.shape.width + world.shape.width/3, world.shape.height/2} distance_to #user_location) < world.shape.width/3 {
-						//write "Pause with distance to button = " + {world.shape.width + world.shape.width/3, world.shape.height/2} distance_to #user_location;
-						
+
+					}
+
+					if (pause_location distance_to #user_location) < world.shape.width / 3 {
+					//write "Pause with distance to button = " + {world.shape.width + world.shape.width/3, world.shape.height/2} distance_to #user_location;
 						ask simulation {
 							if paused or about_to_pause {
 								if (pause_started_time > 0) {
-								time_for_discussion <- time_for_discussion + int((gama.machine_time - pause_started_time)/1000);}
+									time_for_discussion <- time_for_discussion + int((gama.machine_time - pause_started_time) / 1000);
+								}
+
 								pause_started_time <- 0.0;
 								do resume;
-							} 
-							else {
+							} else {
 								pause_started_time <- gama.machine_time;
 								do pause;
 							}
+
 						}
+
 					}
+
+					if (stage = PLAYER_ACTION_TURN and over_action != nil) {
+						ask simulation {
+							write "execute " + myself.over_action;
+							do execute_action(numbers_actions[myself.over_action]);
+						}
+
+						over_action <- nil;
+						return;
+					}
+
 				}
+
 			}
+
 		}
 
 		/********************** PLAYER 2 DISPLAY *************************************************/
@@ -857,6 +1030,7 @@ species stacked_chart {
 	map<string, map<rgb,float>> data <- [];
 	map<string, image_file> icons <- [];
 	map<string, bool> inf_or_sup ;
+	map<string, bool> draw_smiley;
 	image_file desired_icon;
 	float size;
 	float max_value;
@@ -920,7 +1094,7 @@ species stacked_chart {
  		float col_height <- size / length(data);
  		float col_index <- 0.0;
  		loop col over: data.keys {
- 			if (!inf_or_sup[col]) {col_index <- col_index+0.5;}
+ 			if (col = "Water") {col_index <- col_index+0.5;}
  			float current_x <- 0.0;
  			float total <- 0.0;
  			loop c over: data[col].keys {
@@ -933,13 +1107,14 @@ species stacked_chart {
  			}
  			if (icons[col] != nil) {
  				draw icons[col] at: {size/10, col_index * col_height  + y_margin} size: {col_height/2, col_height/2};
+ 				if draw_smiley[col] {
  				if (total <= 1 and inf_or_sup[col] or total > 1 and !inf_or_sup[col]) {
  					draw smileys[0]  at: {size/10 + col_height/4, col_index * col_height  + y_margin+ col_height/4} size: {col_height/4, col_height/4};
- 				} else {draw smileys[4]  at: {size/10+ col_height/4, col_index * col_height  + y_margin+ col_height/4} size: {col_height/4, col_height/4};}
+ 				} else {draw smileys[4]  at: {size/10+ col_height/4, col_index * col_height  + y_margin+ col_height/4} size: {col_height/4, col_height/4};}}
  			}
  			col_index <- col_index + 1;
  		}
- 		draw line({location.x -size/3 + desired_value*ratio, location.y - 2*size/3},{location.x -size/3 + desired_value*ratio, location.y + 2*size/3}) color: #white width: 5;
+ 		draw line({location.x -size/3 + desired_value*ratio, location.y - 2*size/3},{location.x -size/3 + desired_value*ratio, location.y + size/8}) color: #white width: 5;
  		if (desired_icon != nil) {
  			draw desired_icon at: {location.x -size/3 + desired_value*ratio, location.y - 2*size/3} size: 2*col_height/3;
 		}
