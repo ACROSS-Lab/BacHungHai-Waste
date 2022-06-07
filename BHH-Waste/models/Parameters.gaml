@@ -126,7 +126,7 @@ global {
 	
 	float water_waste_filtering_inhabitants <- 0.2 min: 0.0 max: 1.0; // part of the water waste produced per inhabitants that are filtered
 	float water_waste_year_inhabitants <- 180000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
-	float solid_waste_year_inhabitants <-  90.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
+	float solid_waste_year_inhabitants <-  80.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
 	float water_waste_year_farmers <- 75000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
 	float solid_waste_year_farmers <-  90.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
