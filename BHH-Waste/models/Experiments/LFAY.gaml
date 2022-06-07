@@ -10,7 +10,10 @@
 
 model LFAY
 
+
+
 import "../Global.gaml"
+//import "Short version.gaml"
  
 global {
 	
@@ -600,7 +603,7 @@ experiment Open {
 				float y <- shape.height - 500;
 				draw ""+turn  color: #white font: base_font anchor: #left_center at: {2*shape.width + 500,y};
 				draw line({-shape.width, y}, {2*shape.width, y}) buffer (200, 200) color: #white;
-				float width <- cycle_count * 2 * shape.width / (8 * 365);
+				float width <- cycle_count * 2 * shape.width / (simulation.end_of_game * 365);
 				draw line({-shape.width, y}, {width - shape.width, y}) buffer (200, 200) color: #darkred;
 				draw calendar_icon at: {width - shape.width,y} size: shape.height/3;
 			}

@@ -59,14 +59,14 @@ global {
 	float step <- 1#day;// one simulation step = 1 day 
 	float house_size <- 50.0 #m; // size of a house plot
 	
-	int end_of_game <- 8; // Number of turns of the game (1 turn = 1 year)
+	int end_of_game <- 6; // Number of turns of the game (1 turn = 1 year)
 	float tolerance_dist <- 1#m;
 	
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 3000.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
-	float max_pollution_ecolabel <- 325000.0;// maximum threshold of production to get ecolabel, unities are converted in 
+	float min_production_ecolabel <- 2200.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
+	float max_pollution_ecolabel <- 310000.0;// maximum threshold of production to get ecolabel, unities are converted in 
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	

@@ -48,7 +48,7 @@ global {
 	
 	int compute_budget(int urban_pop, int agricultural_pop, float production_level, int day_ecolabel) {
 		//return  base_budget_year_per_village + round((urban_pop + agricultural_pop) / 30) ;
-		int v <-  base_budget_year_per_village + round((production_level)/35);
+		int v <-  base_budget_year_per_village + round((production_level)/35); 
 		write sample(v);
 		int r <- v - (int(v/5) * 5);
 	 	if r = 0 {return v;}
