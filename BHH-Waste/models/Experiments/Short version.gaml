@@ -18,8 +18,8 @@ global {
 /*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 2500.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
-	float max_pollution_ecolabel <- 325000.0;// maximum threshold of production to get ecolabel, unities are converted in 
+	float min_production_ecolabel <- 2400.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
+	float max_pollution_ecolabel <- 330000.0;// maximum threshold of production to get ecolabel, unities are converted in 
 	
 
 /******* PARAMETERS RELATED TO THE IMPACT OF POLLUTION ON FIELD YIELD *************/
@@ -44,7 +44,7 @@ global {
 /************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
 	int base_budget_year_per_village <- 90; // total buget per year for a village (in token):
-	float min_increase_urban_area_population_year <- 0.70 ; //min increase of urban area per year (in terms of number of people)
+	float min_increase_urban_area_population_year <- 0.60 ; //min increase of urban area per year (in terms of number of people)
 	
 	int compute_budget(int urban_pop, int agricultural_pop, float production_level, int day_ecolabel) {
 		//return  base_budget_year_per_village + round((urban_pop + agricultural_pop) / 30) ;
@@ -72,11 +72,11 @@ global {
 	int token_trimestrial_collective_action_strong <- 35; //per year
 	int token_trimestrial_collective_action_weak <- round(token_trimestrial_collective_action_strong / 2.0); //per year
 	
-	float impact_trimestrial_collective_action_strong <- 0.42  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
+	float impact_trimestrial_collective_action_strong <- 0.50  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.0  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	
 	int token_drain_dredge_strong <- 50; //per action
-	float impact_drain_dredge_waste_strong <- 0.50 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
+	float impact_drain_dredge_waste_strong <- 0.60 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
 	float impact_drain_dredge_agriculture_strong <- 0.0 min: 0.0 max: 1.0; //improvment of the agricultural production
 	int token_drain_dredge_weak <- round(token_drain_dredge_strong/2.0) ; //per action
 	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.0 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
