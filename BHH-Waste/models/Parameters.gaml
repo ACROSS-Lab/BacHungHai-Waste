@@ -59,14 +59,14 @@ global {
 	float step <- 1#day;// one simulation step = 1 day 
 	float house_size <- 50.0 #m; // size of a house plot
 	
-	int end_of_game <- 6; // Number of turns of the game (1 turn = 1 year)
+	int end_of_game <- 8; // Number of turns of the game (1 turn = 1 year)
 	float tolerance_dist <- 1#m;
 	
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 2200.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
-	float max_pollution_ecolabel <- 310000.0;// maximum threshold of production to get ecolabel, unities are converted in 
+	float min_production_ecolabel <- 2500.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
+	float max_pollution_ecolabel <- 315000.0;// maximum threshold of production to get ecolabel, unities are converted in 
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
@@ -125,8 +125,8 @@ global {
 	float ground_solid_pollution_reducing_day <- 0.001; //quantity of the solid water pollution that disapear every day
 	
 	float water_waste_filtering_inhabitants <- 0.2 min: 0.0 max: 1.0; // part of the water waste produced per inhabitants that are filtered
-	float water_waste_year_inhabitants <- 125000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
-	float solid_waste_year_inhabitants <-  100.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
+	float water_waste_year_inhabitants <- 180000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
+	float solid_waste_year_inhabitants <-  90.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
 	float water_waste_year_farmers <- 75000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
 	float solid_waste_year_farmers <-  90.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
@@ -146,7 +146,7 @@ global {
 	int token_weak_waste_collection <- 30; //tokens/year - cost of "weak collection"
 	int token_strong_waste_collection <- 50; //tokens/year - cost of "strong collection"
 	int token_ultimate_waste_collection <- 90; //tokens/year - cost of "ultimate collection"
-	float collection_team_collection_capacity_day <- 215.0; //quantity of solid waste remove during 1 day of work
+	float collection_team_collection_capacity_day <- 250.0; //quantity of solid waste remove during 1 day of work
 	
 	list<int> days_collects_weak <- [2,5] ; //day of collects - 1 = monday, 7 = sunday
 	list<int> days_collects_strong <- [1, 3, 5,  7] ; //day of collects - 1 = monday, 7 = sunday
