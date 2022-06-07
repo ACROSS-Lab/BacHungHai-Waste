@@ -17,6 +17,7 @@ import "../Global.gaml"
  
 global {
 	
+	
 	image_file soil_pollution_class (float v) {
 		switch(v) {
 			match_between [0, 24999] {return smileys[0];}
@@ -339,6 +340,7 @@ experiment Open {
 		gama.pref_errors_display <- false;
 		gama.pref_errors_stop <- false;
 		gama.pref_errors_in_editor <- false;
+		gama.pref_display_numkeyscam <- false;
 	}
 	
 	output {
@@ -638,12 +640,41 @@ experiment Open {
 				draw simulation.paused or about_to_pause? play_icon : pause_icon at: {shape.width + shape.width/3, shape.height/2} size: shape.width / 4;
 			}
 			
-//		event #mouse_move {
-//				using topology(simulation) {
-//					active_button <-  ({world.shape.width + 3*world.shape.width/3, world.shape.height/2} distance_to #user_location) < world.shape.width/3;
-//				}
-//			}
-			
+//				A_DUMPHOLES::"3",
+//				A_PESTICIDES::"4",
+//				A_END_TURN::"",
+//				A_SENSIBILIZATION::"6",
+//				A_FILTERS::"2A",
+//				A_COLLECTIVE_LOW::"5A",
+//				A_COLLECTIVE_HIGH::"5B",
+//				A_DRAIN_DREDGES_HIGH::"7B",
+//				A_DRAIN_DREDGES_LOW::"7A",
+//				A_FALLOW::"9",
+//				A_MATURES_LOW::"8A",
+//				A_MATURES_HIGH::"8B",
+//				A_FILTER_MAINTENANCE::"2B",
+//				A_COLLECTION_LOW::"1A",
+//				A_COLLECTION_HIGH::"1B"
+
+			event "1"  {ask simulation {do execute_action(A_COLLECTION_LOW);}}
+			event "a"  {ask simulation {do execute_action(A_COLLECTION_HIGH);}}
+			event "2"  {ask simulation {do execute_action(A_FILTERS);}}
+			event "b"  {ask simulation {do execute_action(A_FILTER_MAINTENANCE);}}
+			event "3"  {ask simulation {do execute_action(A_DUMPHOLES);}}
+			event "c"  {ask simulation {do execute_action(A_DUMPHOLES);}}
+			event "4"  {ask simulation {do execute_action(A_PESTICIDES);}}
+			event "d"  {ask simulation {do execute_action(A_PESTICIDES);}}
+			event "5"  {ask simulation {do execute_action(A_COLLECTIVE_LOW);}}
+			event "e"  {ask simulation {do execute_action(A_COLLECTIVE_HIGH);}}
+			event "6"  {ask simulation {do execute_action(A_SENSIBILIZATION);}}
+			event "f"  {ask simulation {do execute_action(A_SENSIBILIZATION);}}
+			event "7"  {ask simulation {do execute_action(A_DRAIN_DREDGES_LOW);}}
+			event "g"  {ask simulation {do execute_action(A_DRAIN_DREDGES_HIGH);}}
+			event "8"  {ask simulation {do execute_action(A_MATURES_LOW);}}
+			event "h"  {ask simulation {do execute_action(A_MATURES_HIGH);}}
+			event "9"  {ask simulation {do execute_action(A_FALLOW);}}
+			event "i"  {ask simulation{do execute_action(A_FALLOW);}}
+			event "0" {ask simulation{do before_start_turn;}}
 			event #mouse_down {
 				using topology(simulation) {
 					if ({world.shape.width + 3*world.shape.width/3, world.shape.height/2} distance_to #user_location) < world.shape.width/3 {
