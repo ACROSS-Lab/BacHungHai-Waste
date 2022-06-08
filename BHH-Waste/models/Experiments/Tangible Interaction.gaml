@@ -21,7 +21,7 @@ global skills: [music] {
 	
 
 	
-	int webcam <- 1;
+	int webcam <- 0;
 	float delay_between_actions<- 1#s;
 	int image_width <- 640;
 	int image_height <- 480;
@@ -55,7 +55,7 @@ global skills: [music] {
 			latest_action <- "";
 		}
 		if result != latest_action {
-			if ((result in actions_name_short.keys)){// and not(actions_name_short[result] in village[index_player].actions_done_this_year) and not(actions_name_short[result] in village[index_player].actions_done_total)) {
+			if ((result in actions_name_short)){// and not(actions_name_short[result] in village[index_player].actions_done_this_year) and not(actions_name_short[result] in village[index_player].actions_done_total)) {
 				bool is_ok <- play_sound("../../includes/BEEP.wav");
 			
 				ready_action <- false;
