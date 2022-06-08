@@ -661,7 +661,7 @@ experiment Open {
 
 			}
 
-			graphics "Next" visible: (stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN) and turn <= end_of_game {
+			graphics "Next" transparency: ((stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN) and turn <= end_of_game) ? 0 : 0.6 {
 				next_location <- {location.x + shape.width / 2, location.y};
 				draw next_icon at: next_location size: shape.width / 4;
 			}
