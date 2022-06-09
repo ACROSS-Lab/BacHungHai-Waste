@@ -1,0 +1,33 @@
+turn,player,budget,action1,action2,action3,action4,action5,action6
+1,2,35,Collect frequency:2,Maintenance of water treatment facilities:false,Make farmers participate in building collection pits for pesticide packagings
+1,1,2,Collect frequency:2,Maintenance of water treatment facilities:false,Trimestrial collective waste collection:low,Put part of the fields in fallow,Help farmers to buy manure:low
+1,4,2,Collect frequency:2,Maintenance of water treatment facilities:false,Trimestrial collective waste collection:low,Put part of the fields in fallow,Help farmers to buy manure:low
+1,3,15,Collect frequency:2,Maintenance of water treatment facilities:false,Put part of the fields in fallow,Drain and dredge:low
+2,4,10,Collect frequency:2,Maintenance of water treatment facilities:false,Make farmers participate in building collection pits for pesticide packagings,Drain and dredge:low
+2,1,12,Collect frequency:2,Maintenance of water treatment facilities:false,Drain and dredge:low,Trimestrial collective waste collection:low,Organise sensibilization events about waste sorting
+2,2,0,Collect frequency:4,Maintenance of water treatment facilities:false,Trimestrial collective waste collection:high,Organise sensibilization events about waste sorting
+2,3,5,Collect frequency:2,Maintenance of water treatment facilities:false,Help farmers to buy manure:low,Drain and dredge:high
+3,2,0,Collect frequency:2,Maintenance of water treatment facilities:false,Drain and dredge:high,Put part of the fields in fallow
+3,3,10,Collect frequency:4,Maintenance of water treatment facilities:false,Drain and dredge:high
+3,1,7,Collect frequency:2,Maintenance of water treatment facilities:false,Organise sensibilization events about waste sorting,Trimestrial collective waste collection:low,Drain and dredge:low
+3,4,5,Collect frequency:2,Maintenance of water treatment facilities:false,Trimestrial collective waste collection:high,Help farmers to buy manure:high
+4,1,5,Collect frequency:2,Maintenance of water treatment facilities:false,Put part of the fields in fallow,Drain and dredge:low
+4,3,0,Collect frequency:4,Maintenance of water treatment facilities:false,Make farmers participate in building collection pits for pesticide packagings,Organise sensibilization events about waste sorting
+4,4,0,Collect frequency:4,Maintenance of water treatment facilities:false,Drain and dredge:high,Help farmers to buy manure:low
+4,2,0,Collect frequency:4,Maintenance of water treatment facilities:false,Trimestrial collective waste collection:high,Drain and dredge:low
+5,4,0,Collect frequency:2,Maintenance of water treatment facilities:false,Install water treatment facilities for every home:(P1%55;P2%60;P3%60;P4%65;),Help farmers to buy manure:low
+5,1,0,Collect frequency:2,Maintenance of water treatment facilities:false,Organise sensibilization events about waste sorting
+5,2,5,Collect frequency:2,Maintenance of water treatment facilities:false,Drain and dredge:low
+5,3,0,Collect frequency:2,Maintenance of water treatment facilities:false,Help farmers to buy manure:low
+6,1,10,Collect frequency:2,Maintenance of water treatment facilities:true,Drain and dredge:high
+6,3,12,Collect frequency:4,Maintenance of water treatment facilities:true,Organise sensibilization events about waste sorting,Trimestrial collective waste collection:low
+6,4,2,Collect frequency:2,Maintenance of water treatment facilities:true,Trimestrial collective waste collection:low,Put part of the fields in fallow
+6,2,10,Collect frequency:4,Maintenance of water treatment facilities:true,Drain and dredge:high
+7,4,5,Collect frequency:2,Maintenance of water treatment facilities:true,Trimestrial collective waste collection:high,Help farmers to buy manure:low
+7,3,0,Collect frequency:2,Maintenance of water treatment facilities:true,Trimestrial collective waste collection:high,Help farmers to buy manure:low,Organise sensibilization events about waste sorting
+7,2,5,Collect frequency:2,Maintenance of water treatment facilities:true,Drain and dredge:high,Organise sensibilization events about waste sorting
+7,1,0,Collect frequency:2,Maintenance of water treatment facilities:true,Put part of the fields in fallow,Help farmers to buy manure:low
+8,4,5,Collect frequency:2,Maintenance of water treatment facilities:true,Trimestrial collective waste collection:high,Organise sensibilization events about waste sorting
+8,1,7,Collect frequency:2,Maintenance of water treatment facilities:false,Trimestrial collective waste collection:low,Help farmers to buy manure:high
+8,2,12,Collect frequency:4,Maintenance of water treatment facilities:true,Trimestrial collective waste collection:low,Drain and dredge:low
+8,3,2,Collect frequency:4,Maintenance of water treatment facilities:true,Help farmers to buy manure:high,Trimestrial collective waste collection:low
