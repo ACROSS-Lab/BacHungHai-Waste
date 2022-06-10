@@ -207,6 +207,17 @@ species NetworkManager skills:[network]{
 		
 	}
 	
+	action reset_player(unknown player, string player_name){
+		let idx <- player_names index_of player_name;
+		players[idx] <- player;
+		do send to:player contents:kw_initial_data + ":{"  
+		+ '"' + kw_player_name 	+ '":"' + player_name 	+ '",' 
+	//	+ '"' + kw_budget 		+ '":' 	+ budgets[idx] 	+ "," //TODO
+		+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
+		+ '}';
+	}
+	
+	
 	action new_turn(list<int> budgets)  {
 		turn <- turn + 1;
 		players_actions <- [];

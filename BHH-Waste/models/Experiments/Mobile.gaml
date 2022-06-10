@@ -41,8 +41,14 @@ global skills: [music] {
 				write "message received " + mess;
 				string content <- mess.contents;
 				
-				if content contains kw_ask_for_connection and length(players) < length(player_names) {
-					do add_player(mess.sender, village[length(players)].budget);
+				if content contains kw_ask_for_connection { //and length(players) < length(player_names) {
+					if content contains kw_player_name {
+						let p_name <- (content replace(kw_ask_for_connection + ':' + kw_player_name+':', '') split_with '"')[0];
+						do reset_player(mess.sender, p_name);
+					}
+					else {
+						do add_player(mess.sender, village[length(players)].budget);						
+					}
 				}
 				else if content contains kw_player_actions {
 					do add_player_action(mess.sender, content);
