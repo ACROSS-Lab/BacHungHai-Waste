@@ -217,9 +217,11 @@ global {
 	image_file tokens_icon <- image_file("../../includes/icons/tokens.png");
 	image_file water_icon <- image_file("../../includes/icons/water.png");
 	image_file plant_icon <- image_file("../../includes/icons/plant.png");
-	list<image_file> smileys <- [image_file("../../includes/icons/0.png"), image_file("../../includes/icons/1.png"), image_file("../../includes/icons/2.png"), image_file("../../includes/icons/3.png"), image_file("../../includes/icons/4.png")];
+	list<image_file> smileys <- [image_file("../../includes/icons/smiley0.png"), image_file("../../includes/icons/smiley1.png"), image_file("../../includes/icons/smiley2.png"), image_file("../../includes/icons/smiley3.png"), image_file("../../includes/icons/smiley4.png")];
  	list<image_file> arrows <- [image_file("../../includes/icons/down.png"), image_file("../../includes/icons/equal.png"), image_file("../../includes/icons/up.png")];
 	list<image_file> faces <- [image_file("../../includes/icons/people-0.png"),image_file("../../includes/icons/people-1.png"),image_file("../../includes/icons/people-2.png"),image_file("../../includes/icons/people-3.png"),image_file("../../includes/icons/people-4.png"),image_file("../../includes/icons/people-5.png"),image_file("../../includes/icons/people-6.png"),image_file("../../includes/icons/people-7.png")];
+	list<image_file> numbers <- [image_file("../../includes/icons/1.png"), image_file("../../includes/icons/2.png"), image_file("../../includes/icons/3.png"),image_file("../../includes/icons/4.png")];
+	
 	image_file calendar_icon <- image_file("../../includes/icons/upcoming.png");
 	image_file discussion_icon <- image_file("../../includes/icons/conversation.png");
 	image_file sandclock_icon <- image_file("../../includes/icons/hourglass.png");
@@ -436,8 +438,8 @@ experiment Open {
 					draw square(x_gap*shape.width) border: #black width: line_width color: c at: {x* shape.width,y*shape.height};
 					x <- x + x_gap;
 				}
-				show_production <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
-				draw show_production wireframe: !over_production and !production_on color: production_on ? #black: #white width: line_width;
+				//show_production <- square((x_gap/2)*shape.width) at_location {x* shape.width,y*shape.height};
+				//draw show_production wireframe: !over_production and !production_on color: production_on ? #black: #white width: line_width;
 				// SMILEYS
 //				x <- x_gap;
 //				x <- x + 2 * x_gap;
