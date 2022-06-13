@@ -159,7 +159,8 @@ global {
 	float chart_line_width <- 4.0;
 	
 	/********************** FONTS ************************************************/
-	int text_size -> #hidpi ? (#fullscreen ? 100 : 30) : (#fullscreen ? 60 : 15);
+	// UNCOMMENT FOR THE LATEST VERSION IN GAMA int text_size -> #hidpi ? (#fullscreen ? 100 : 30) : (#fullscreen ? 60 : 15);
+	int text_size <- 30;
 	font ui_font -> font("Impact", text_size, #bold);
 	
 	/******************* GENERAL PARAMETERS *************************************/
