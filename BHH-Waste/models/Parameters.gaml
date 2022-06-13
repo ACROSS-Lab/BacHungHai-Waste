@@ -124,11 +124,11 @@ global {
 	float ground_solid_pollution_reducing_day <- 0.001; //quantity of the solid water pollution that disapear every day
 	
 	float water_waste_filtering_inhabitants <- 0.2 min: 0.0 max: 1.0; // part of the water waste produced per inhabitants that are filtered
-	float water_waste_year_inhabitants <- 180000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
+	float water_waste_year_inhabitants <- 200000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
 	float solid_waste_year_inhabitants <-  80.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
 	float water_waste_year_farmers <- 75000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
-	float solid_waste_year_farmers <-  90.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
+	float solid_waste_year_farmers <-  105.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
 	
 	float part_solid_waste_canal_inhabitants <- 0.6; // proportion of solid waste throw in the canal per people living in urban area; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
 	float part_water_waste_canal_inhabitants <- 1.0;// proportion of water waste throw in the canal per people living in urban area; (1 - part_water_waste_canal_inhabitants) is throw on the ground
@@ -154,39 +154,39 @@ global {
 	int token_trimestrial_collective_action_strong <- 35; //per year
 	int token_trimestrial_collective_action_weak <- round(token_trimestrial_collective_action_strong / 2.0); //per year
 	
-	float impact_trimestrial_collective_action_strong <- 0.37  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
-	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.0  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
+	float impact_trimestrial_collective_action_strong <- 0.35  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
+	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.5  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	
 	int token_drain_dredge_strong <- 50; //per action
-	float impact_drain_dredge_waste_strong <- 0.47 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
+	float impact_drain_dredge_waste_strong <- 0.45 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
 	float impact_drain_dredge_agriculture_strong <- 0.0 min: 0.0 max: 1.0; //improvment of the agricultural production
 	int token_drain_dredge_weak <- round(token_drain_dredge_strong/2.0) ; //per action
-	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.0 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
+	float impact_drain_dredge_waste_weak <- impact_drain_dredge_waste_strong/2.5 min: 0.0 max: 1.0; //part of the solid waste remove from the canal
 	float impact_drain_dredge_agriculture_weak <- impact_drain_dredge_agriculture_strong/2.0 min: 0.0 max: 1.0; //improvment of the agricultural production
 	
 	int token_install_filter_for_homes_construction <- 240 ; //construction
 	int token_install_filter_for_homes_maintenance <- 10; //per year	
-	list<float> treatment_facility_decrease <- [0.20,0.40,0.80] ; // impact of treatement facility for year 1, year 2, and after. Comprised between 0 and 1
+	list<float> treatment_facility_decrease <- [0.10,0.35,0.70] ; // impact of treatement facility for year 1, year 2, and after. Comprised between 0 and 1
 	
 	int token_sensibilization <- 20; //each time
 	float impact_sensibilization <- 1.0 min: 0.0 max: 1.0; //add this value to the environmental sensibility of people leaving in urban areas
 	
 	float sensibilisation_function(float x) { //function that returns the coefficient of solid production according to the environmental_sensibility of inahbitants 'x'
-		return (1 - 2/(1 +exp(x/4)));
+		return (1 - 2/(1 +exp(x/3)));
 	}
 	int token_pesticide_reducing <- 40; // 
 	float impact_pesticide_reducing_production  <- 0.1 min: 0.0 max: 1.0; //decrease of the agricultural production
-	float impact_pesticide_reducing_waste  <- 0.60 min: 0.0 max: 1.0; //decrease waste production from farmers
+	float impact_pesticide_reducing_waste  <- 0.60 min: 0.0 max: 1.0; //decrease water waste production from farmers
 	
 	int token_implement_fallow <- 40; //per year
 	float part_of_plots_in_fallow  <- 0.30 min: 0.0 max: 1.0; //decrease the agricultural production
-	list<float> improve_of_fallow_on_productivity <- [0.50, 0.25]; //at T+1 -> Improve the productivity of 50 % at T+1, then of 25 % at T+2, and 0% after
+	list<float> improve_of_fallow_on_productivity <- [0.40, 0.20]; //at T+1 -> Improve the productivity of 50 % at T+1, then of 25 % at T+2, and 0% after
 	
 	int token_support_manure_buying_strong <- 40; //per year
 	float impact_support_manure_buying_production_strong  <- 0.40 min: 0.0 max: 1.0; //improvment of the agricultural production
 	float impact_support_manure_buying_waste_strong  <- 0.6 min: 0.0 max: 1.0; //increase wastewater production
 	int token_support_manure_buying_weak <- round(token_support_manure_buying_strong/2); //per year
-	float impact_support_manure_buying_production_weak  <- impact_support_manure_buying_production_strong/2.0 min: 0.0 max: 1.0; //improvment of the agricultural production
+	float impact_support_manure_buying_production_weak  <- impact_support_manure_buying_production_strong/2.5 min: 0.0 max: 1.0; //improvment of the agricultural production
 	float impact_support_manure_buying_waste_weak  <- impact_support_manure_buying_waste_strong/2.0 min: 0.0 max: 1.0; //increase wastewater production
 	
 	
