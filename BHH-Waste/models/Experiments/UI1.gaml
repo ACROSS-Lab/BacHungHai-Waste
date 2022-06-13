@@ -639,13 +639,22 @@ experiment Open {
 
 					}
 
-					over_action <- "";
+					over_action <- nil;
 				}
 
 			}
 
 			event #mouse_down {
 				using topology(simulation) {
+					if (stage = PLAYER_ACTION_TURN and over_action != nil) {
+						ask simulation {
+							write "execute " + myself.over_action;
+							do execute_action(numbers_actions[myself.over_action]);
+						}
+
+						over_action <- nil;
+						return;
+					}
 					if (next_location distance_to #user_location) < world.shape.width / 3 {
 						if (turn > end_of_game) {
 							return;
@@ -685,15 +694,7 @@ experiment Open {
 
 					}
 
-					if (stage = PLAYER_ACTION_TURN and over_action != nil) {
-						ask simulation {
-							write "execute " + myself.over_action;
-							do execute_action(numbers_actions[myself.over_action]);
-						}
-
-						over_action <- nil;
-						return;
-					}
+					
 
 				}
 
