@@ -59,19 +59,19 @@ global {
 	float step <- 1#day;// one simulation step = 1 day 
 	float house_size <- 50.0 #m; // size of a house plot
 	
-	int end_of_game <- 8; // Number of turns of the game (1 turn = 1 year)
+	int end_of_game <- 13; // Number of turns of the game (1 turn = 1 year)
 	float tolerance_dist <- 1#m;
 	
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 2500.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
-	float max_pollution_ecolabel <- 315000.0;// maximum threshold of production to get ecolabel, unities are converted in 
+	float min_production_ecolabel <- 2750.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
+	float max_pollution_ecolabel <- 300000.0;// maximum threshold of production to get ecolabel, unities are converted in 
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
 	int base_budget_year_per_village <- 90; // total buget per year for a village (in token):
-	list<float> increase_urban_area_population_year_per_village <- [0.01,0.5,0.25,0.6] ; // increase of urban area per year per village (in terms of number of people)
+	list<float> increase_urban_area_population_year_per_village <- [0.15,0.8,0.25,0.25] ; // increase of urban area per year per village (in terms of number of people)
 	
 	int compute_budget(int urban_pop, int agricultural_pop, float production_level, int day_ecolabel) {
 		//return  base_budget_year_per_village + round((urban_pop + agricultural_pop) / 30) ;
