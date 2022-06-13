@@ -71,7 +71,7 @@ global {
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
 	int base_budget_year_per_village <- 90; // total buget per year for a village (in token):
-	float min_increase_urban_area_population_year <- 0.50 ; //min increase of urban area per year (in terms of number of people)
+	list<float> increase_urban_area_population_year_per_village <- [0.01,0.5,0.25,0.6] ; // increase of urban area per year per village (in terms of number of people)
 	
 	int compute_budget(int urban_pop, int agricultural_pop, float production_level, int day_ecolabel) {
 		//return  base_budget_year_per_village + round((urban_pop + agricultural_pop) / 30) ;

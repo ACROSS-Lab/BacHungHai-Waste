@@ -743,7 +743,8 @@ global {
 	
 	action increase_urban_area {
 		ask village {
-			target_population <- round(population *(1 + min_increase_urban_area_population_year));
+			float increase_urban_area_population_year <- increase_urban_area_population_year_per_village[int(self)];
+			target_population <- round(population *(1 + increase_urban_area_population_year));
 			using topology(world) {
 				ask urban_areas {
 					geometry prev_geom <- copy(shape);
@@ -753,7 +754,7 @@ global {
 					list<plot> neighbors_plot <- (myself.plots at_distance 0.1) sort_by each.shape.area;
 					
 					if not empty(neighbors_plot) {
-						int target_pop <- round(population *(1 + min_increase_urban_area_population_year)) -  (houses count each.inhabitant_to_create);
+						int target_pop <- round(population *(1 + increase_urban_area_population_year)) -  (houses count each.inhabitant_to_create);
 						//write sample(population) + " " + sample(target_pop);
 						loop while: not empty(neighbors_plot) and population <target_pop {
 							plot p <- first(neighbors_plot);
