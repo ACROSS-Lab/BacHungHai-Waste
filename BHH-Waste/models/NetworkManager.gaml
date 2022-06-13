@@ -142,6 +142,8 @@ species NetworkManager skills:[network]{
 	string kw_player_actions		<- "_AFEOT_";
 	string kw_start_turn			<- "_START_TURN_";
 	string kw_turn_number			<- "turn";
+	string kw_your_turn				<- "_YT_";
+	string kw_not_your_turn			<- "_NYT_";
 	
 	
 	list<string> 				player_names;
@@ -161,10 +163,22 @@ species NetworkManager skills:[network]{
 		
 	}
 	
-	action send_start_turn(unknown player, int turn_budget, int turn_number) {
+	action send_data_before_turn(unknown player, int turn_budget, int turn_number) {
 		let mess <- kw_start_turn +':{"' +kw_budget +'":' + turn_budget + ',"' + kw_turn_number+ '":' + turn_number +"}";
 		write "sending: " + mess + " to: " + player;
 		do send to:player contents:mess;
+	}
+	
+	action send_your_turn(unknown player){
+		write "giving turn to: " + player;
+		loop _p over:players{
+			if _p = player {
+				do send to:_p contents:kw_your_turn;				
+			}
+			else {
+				do send to:_p contents:kw_not_your_turn;
+			}
+		}
 	}
 	
 	action add_player_action(unknown player, string action_list_message) {
@@ -179,6 +193,9 @@ species NetworkManager skills:[network]{
 		port				<- _port;
 		player_names 		<- _player_names;
 		available_actions 	<- actions;
+		loop times:length(_player_names){
+			players <- [nil];
+		}
 		
 	}
 	
@@ -187,35 +204,56 @@ species NetworkManager skills:[network]{
 		do send to:player contents:flag + ":" + data;
 	}
 	
-	
 
-	
-	action add_player(unknown sender, int budget) {
-		
-		write "new player: " + sender;
+	action set_player(unknown sender, int player_number, int budget) {
+		write "set player " + player_number + " as " + sender + " with " + budget;
 		do send to:sender contents:kw_initial_data + ":{"  
-				+ '"' + kw_player_name 	+ '":"' + player_names[length(players)] 	+ '",' 
+				+ '"' + kw_player_name 	+ '":"' + player_names[player_number] 	+ '",' 
 				+ '"' + kw_budget 		+ '":' 	+ budget 	+ ","
 				+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
 				+ '}';
-				
-		players <- players + sender;
-		
-		if  length(players) = length(player_names) {
-			write "all players joined";
+		// We remove the traces of the old connection
+		if (players[player_number] != nil){
+			write "removing old player";
+			write players_actions;
+			unknown old_player <- players[player_number];
+			players_actions <- players_actions - [old_player::players_actions[old_player]];
+			write players_actions;
+			
 		}
+		players[player_number] <- sender;
 		
-	}
-	
-	action reset_player(unknown player, string player_name){
-		let idx <- player_names index_of player_name;
-		players[idx] <- player;
-		do send to:player contents:kw_initial_data + ":{"  
-		+ '"' + kw_player_name 	+ '":"' + player_name 	+ '",' 
-	//	+ '"' + kw_budget 		+ '":' 	+ budgets[idx] 	+ "," //TODO
-		+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
-		+ '}';
-	}
+		
+		do send_data_before_turn(sender, budget, turn);
+	}	
+
+//	
+//	action add_player(unknown sender, int budget) {
+//		
+//		write "new player: " + sender;
+//		do send to:sender contents:kw_initial_data + ":{"  
+//				+ '"' + kw_player_name 	+ '":"' + player_names[length(players)] 	+ '",' 
+//				+ '"' + kw_budget 		+ '":' 	+ budget 	+ ","
+//				+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
+//				+ '}';
+//				
+//		players <- players + sender;
+//		
+//		if  length(players) = length(player_names) {
+//			write "all players joined";
+//		}
+//		
+//	}
+//	
+//	action reset_player(unknown player, string player_name){
+//		let idx <- player_names index_of player_name;
+//		players[idx] <- player;
+//		do send to:player contents:kw_initial_data + ":{"  
+//		+ '"' + kw_player_name 	+ '":"' + player_name 	+ '",' 
+//	//	+ '"' + kw_budget 		+ '":' 	+ budgets[idx] 	+ "," //TODO
+//		+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
+//		+ '}';
+//	}
 	
 	
 	action new_turn(list<int> budgets)  {
@@ -223,7 +261,7 @@ species NetworkManager skills:[network]{
 		players_actions <- [];
 		int i <- 0;
 		loop player over:players {
-			do send_start_turn(player, budgets[i], turn + 1);
+			do send_data_before_turn(player, budgets[i], turn + 1);
 			i <- i + 1;
 		}
 	}

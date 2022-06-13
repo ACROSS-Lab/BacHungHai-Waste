@@ -42,13 +42,19 @@ global skills: [music] {
 				string content <- mess.contents;
 				
 				if content contains kw_ask_for_connection { //and length(players) < length(player_names) {
-					if content contains kw_player_name {
-						let p_name <- (content replace(kw_ask_for_connection + ':' + kw_player_name+':', '') split_with '"')[0];
-						do reset_player(mess.sender, p_name);
+					int idx <- int(content replace(kw_ask_for_connection + ':', ''));
+					write "connection of player: " + idx + ", current player: " + (index_player + 1);
+					do set_player(mess.sender, idx-1, village[idx-1].budget);
+					if (idx-1 = index_player) {
+						do send_your_turn(players[idx-1]);
 					}
-					else {
-						do add_player(mess.sender, village[length(players)].budget);						
-					}
+//					if content contains kw_player_name {
+//						let p_name <- (content replace(kw_ask_for_connection + ':' + kw_player_name+':', '') split_with '"')[0];
+//						do reset_player(mess.sender, p_name);
+//					}
+//					else {
+//						do add_player(mess.sender, village[length(players)].budget);						
+//					}
 				}
 				else if content contains kw_player_actions {
 					do add_player_action(mess.sender, content);
@@ -74,10 +80,19 @@ global skills: [music] {
 	
 	
 	action before_start_turn{
+		write "before start turn";
 		do	send_players_pollution_levels;
 		ask networkManager{
+			int i <- 0;
+			loop player over:players{
+				do send_data_before_turn(players[i], villages_order[i].budget, turn);							
+				if (i = index_player) {
+					do send_your_turn(player);
+				}
+				
+				i <- i + 1;
+			}
 			let player_idx <- village index_of (villages_order[index_player]);
-			do send_start_turn(players[player_idx], villages_order[index_player].budget, turn);			
 		}
 	}
 	
