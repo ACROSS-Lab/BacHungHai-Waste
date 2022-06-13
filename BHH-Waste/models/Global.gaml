@@ -58,10 +58,11 @@ global {
 	map<string,string> from_english;
 	//string type_of_map_display <- MAP_SOLID_WASTE;// category: "Display" among: ["Map of solid waste", "Map of waster waste", "Map of total pollution", "Map of agricultural productivity"] parameter: "Type of map display" ;//on_change: update_display;
 	string stage <-COMPUTE_INDICATORS;
-	
+	int commune_money <- 0;
 	int index_player <- 0;
 	int action_type <- -1;	
 	
+	bool commune_budget_dispatch <- false;
 	bool to_refresh <- false update: false;
 	int remaining_time min: 0;
 	float start_discussion_turn_time;
@@ -635,6 +636,7 @@ global {
 	
 	action manage_end_of_indicator_computation {
 		if (current_day = 365) {
+			commune_budget_dispatch <- false;
 			ask village {
 				treatment_facility_is_activated <- false;
 			}
@@ -844,26 +846,38 @@ global {
 	}
 	
 	reflex playerturn when: stage = PLAYER_ACTION_TURN{
-		if without_player or (index_player >= length(village)) {
-			if (turn >= end_of_game) {
-				do pause;
+		if without_player or (index_player >= length(villages_order)) {
+			if use_money_pool and not commune_budget_dispatch{
+				map result <- user_input_dialog(SELECT_A_VILLAGE_TO_RECEIVE_COMMUNE_BUDGET,[choose(PLAYER_SELECTED,string,one_of(players_names),players_names )]);
+				int index <- index_of(players_names,result[PLAYER_SELECTED]);
+				villages_order <<  village[index];
+				 ask village[index] {
+				 	budget <- commune_money;
+				 }
+				to_refresh <- true;
 			} else {
-				if without_player and not without_actions {
-					loop i from: 0 to: length(village) - 1 {
-						ask village[i] {
-							do start_turn;
-							do play_predefined_actions;
-							do ending_turn;
+				if (turn >= end_of_game) {
+					do pause;
+				} else {
+					if without_player and not without_actions {
+						loop i from: 0 to: length(village) - 1 {
+							ask village[i] {
+								do start_turn;
+								do play_predefined_actions;
+								do ending_turn;
+							}
 						}
 					}
+					stage <- COMPUTE_INDICATORS;
+					days_with_ecolabel_year << 0;
+					current_day <- 0;
+					step <- #day;
+						
+					if not without_player {do tell(INDICATOR_COMPUTATION);}
+					do increase_urban_area;
+					
 				}
-				stage <- COMPUTE_INDICATORS;
-				days_with_ecolabel_year << 0;
-				current_day <- 0;
-				step <- #day;
-				
-				if not without_player {do tell(INDICATOR_COMPUTATION);}
-				do increase_urban_area;
+			
 			}
 			
 			

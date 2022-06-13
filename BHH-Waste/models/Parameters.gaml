@@ -17,6 +17,8 @@ global {
 
 	//string langage <- "Tiếng Việt";
 	
+	
+	bool use_money_pool <- true;
 	bool confirmation_popup <- true;
 	bool no_starting_actions <- false;
 	bool random_turn <- true;

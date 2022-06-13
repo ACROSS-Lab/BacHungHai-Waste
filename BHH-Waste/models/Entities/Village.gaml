@@ -6,7 +6,7 @@
 */
 @no_experiment
 model WasteManagement
-
+ 
 import "../Global.gaml"
 
 
@@ -470,6 +470,9 @@ species village {
 	}
 	
 	action ending_turn {
+		if index_player >= length(village) {
+			commune_budget_dispatch <- true;
+		}
 		if save_log {
 			string to_save <- "" + turn + "," + (int(self) +1) + "," + budget +",";
 			/*loop act over: actions_done_this_year  {
@@ -477,6 +480,8 @@ species village {
 			}*/
 			to_save <-to_save + ACT_COLLECT + ":" + last(player_collect_policy) + ",";
 			to_save <- to_save + ACT_FACILITY_TREATMENT_MAINTENANCE + ":" + last(player_traitement_facility_maintenance);
+			
+			commune_money <- commune_money + budget;
 			map<string, map> this_turn <- last(player_actions);
 			loop act over: this_turn.keys{
 				map param <- this_turn[act];

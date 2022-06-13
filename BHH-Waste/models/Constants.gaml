@@ -42,6 +42,8 @@ global {
 	string CONFIRM_END_OF_TURN <- "do you confirm that you want to end the turn?";
 	string NOT_ENOUGH_BUDGET <- "Not enough budget for";
 	
+	string SELECT_A_VILLAGE_TO_RECEIVE_COMMUNE_BUDGET <- "Choose a village to receive the remaining budget";
+	string PLAYER_SELECTED <- "Village selected";
 	
 	string A_DUMPHOLES <- "Dumpholes";
 	string A_PESTICIDES <- "Pesticides";
