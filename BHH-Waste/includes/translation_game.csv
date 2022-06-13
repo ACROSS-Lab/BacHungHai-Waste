@@ -95,3 +95,6 @@ MAP_PRODUCTIVITY,Map of agricultural productivity,Carte de la productivité agri
 NUMBER_DAY_ECOLABEL,Total number of days with ecolabel,Nombre total de jours avec l'écolabel,Tổng số ngày với nhãn sinh thái 
 TURN_OF,Turn of,Tour du,Lượt của
 RANKING,ranking,classement,xếp hạng
+SELECT_A_VILLAGE_TO_RECEIVE_COMMUNE_BUDGET,Choose a village to receive the remaining budget,Choisir un village pour recevoir le budget restant,Chọn một làng để nhận ngân sách còn lại
+PLAYER_SELECTED,Village selected,Village selectionné,Làng được chọn
+	
