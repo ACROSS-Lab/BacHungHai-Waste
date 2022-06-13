@@ -154,7 +154,7 @@ global {
 	list<int> days_collects_ultimate <- [1, 2, 3, 4, 5, 6, 7]; //
 	
 	int token_trimestrial_collective_action_strong <- 35; //per year
-	int token_trimestrial_collective_action_weak <- round(token_trimestrial_collective_action_strong / 2.0); //per year
+	int token_trimestrial_collective_action_weak <- round(token_trimestrial_collective_action_strong / 1.75); //per year
 	
 	float impact_trimestrial_collective_action_strong <- 0.35  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
 	float impact_trimestrial_collective_action_weak <- impact_trimestrial_collective_action_strong / 2.5  min: 0.0 max: 1.0; //part of the solid and water waste remove from the canal
