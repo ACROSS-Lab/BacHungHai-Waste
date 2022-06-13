@@ -112,7 +112,7 @@ global {
 		}
 		list the_list <- village_actions[villages_order[index_player]];
 		if the_list != nil {
-					the_list <+ action_numbers[action_name];
+				the_list <+ action_numbers[action_name];
 		}
 
 	} 

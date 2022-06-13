@@ -74,7 +74,7 @@ species village {
 	
 	
 	//1:ACT_DRAIN_DREDGE
-	action drain_dredge(bool is_strong <- true, bool selection_possible <- true) {
+	bool drain_dredge(bool is_strong <- true, bool selection_possible <- true) {
 		if (ACT_DRAIN_DREDGE in actions_done_this_year) {
 			if not without_player {do tell_not_twice(ACT_DRAIN_DREDGE);}
 		} else {
@@ -111,16 +111,18 @@ species village {
 						water_waste_level <- water_waste_level * (1 - impact_drain_dredge_waste);
 					}
 					budget <- budget - token_drain_dredge;
+					return true;
 				}
 			} else {
 				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_DRAIN_DREDGE );}
 			}
 			
 		}
+		return false;
 	}
 	
 	//2:ACT_FACILITY_TREATMENT
-	action install_facility_treatment_for_homes(map money_paid <- nil) {
+	bool install_facility_treatment_for_homes(map money_paid <- nil) {
 		if (ACT_FACILITY_TREATMENT in actions_done_total) {
 			if not without_player {do tell_not_twice(ACT_FACILITY_TREATMENT);}
 		} else {
@@ -197,18 +199,20 @@ species village {
 						loop i from: 0 to: 3 {
 							village[i].budget <- village[i].budget - ps[i];
 						}
+						return true;
 					}
 				} else {
 					
 					if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_FACILITY_TREATMENT );}
 			
 				}
+				return false;
 			
 		}
 	}
 	
 	//3:ACT_SENSIBILIZATION
-	action sensibilization {
+	bool sensibilization {
 		if (ACT_SENSIBILIZATION in actions_done_this_year) {
 			if not without_player {do tell_not_twice(ACT_SENSIBILIZATION);}
 		} else {
@@ -227,16 +231,18 @@ species village {
 					ask inhabitants + farmers {
 						environmental_sensibility <- environmental_sensibility+ impact_sensibilization;
 					}
+					return true;
 				}
 			}else {
 				
 				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_SENSIBILIZATION );}
 			}
 		}
+		return false;
 	}
 	
 	//4:ACTION_COLLECTIVE_ACTION
-	action trimestrial_collective_action (bool is_strong <- true, bool selection_possible <- true){
+	bool trimestrial_collective_action (bool is_strong <- true, bool selection_possible <- true){
 		if (ACTION_COLLECTIVE_ACTION in actions_done_this_year) {
 			if not without_player {do tell_not_twice(ACTION_COLLECTIVE_ACTION);}
 		} else {
@@ -274,17 +280,19 @@ species village {
 						solid_waste_level <- solid_waste_level * (1 - impact_trimestrial_collective_action);
 					}
 					budget <- budget - token_trimestrial_collective_action;
+					return true;
 				}
 			} else {
 				
 				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACTION_COLLECTIVE_ACTION );}
 			}
 		}
+		return false;
 		
 	}
 	
 	//5:ACT_PESTICIDE_REDUCTION
-	action pesticide_reducing {
+	bool pesticide_reducing {
 		if (ACT_PESTICIDE_REDUCTION in actions_done_total) {
 			if not without_player {do tell_not_twice(ACT_PESTICIDE_REDUCTION);}
 		} else {
@@ -302,15 +310,17 @@ species village {
 					ask plots {
 						does_reduce_pesticide <- true;
 					}
+					return true;
 				}
 			}else {
 				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_PESTICIDE_REDUCTION );}
 			}
 		}
+		return false;
 	}
 	
 	//6:ACT_SUPPORT_MANURE
-	action support_manure_buying(bool is_strong <- true, bool selection_possible <- true) {
+	bool support_manure_buying(bool is_strong <- true, bool selection_possible <- true) {
 		if (ACT_SUPPORT_MANURE in actions_done_this_year) {
 			if not without_player {do tell_not_twice(ACT_SUPPORT_MANURE);}
 		} else {
@@ -343,17 +353,19 @@ species village {
 						use_more_manure_strong <- strong;
 						use_more_manure_weak <- not strong;
 					}
+					return true;
 				}
 			}else {
 				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_SUPPORT_MANURE );}
 			}
 		}
+		return false;
 	}
 	
 	
 	
 	//7:ACT_IMPLEMENT_FALLOW
-	action implement_fallow {
+	bool implement_fallow {
 		if (ACT_IMPLEMENT_FALLOW in actions_done_this_year) {
 			if not without_player {do tell_not_twice(ACT_IMPLEMENT_FALLOW);}
 		} else {
@@ -397,18 +409,19 @@ species village {
 				//actions_done_total << ACT_IMPLEMENT_FALLOW;
 				actions_done_this_year << ACT_IMPLEMENT_FALLOW;
 				
-		
+				return true;
 				}
 			}else {
 				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_IMPLEMENT_FALLOW );}
 			}
 		
 		}
+		return false;
 	}
 	
 	
 	//8:ACT_INSTALL_DUMPHOLES,
-	action install_dumpholes {
+	bool install_dumpholes {
 		if (ACT_INSTALL_DUMPHOLES in actions_done_total) {
 			if not without_player {do tell_not_twice(ACT_INSTALL_DUMPHOLES);}
 		} else {
@@ -427,13 +440,16 @@ species village {
 					ask plots {
 						has_dumphole <- true;
 					}
+					return true;
 				
 				}
 				
 			}else {
 				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_INSTALL_DUMPHOLES );}
+				
 			}
 		}
+		return false;
 	}
 	
 	action play_predefined_actions {
@@ -521,7 +537,7 @@ species village {
 		}
 	}
 	
-	action install_fiter_maintenance {
+	bool install_fiter_maintenance {
 		if (ACT_FACILITY_TREATMENT_MAINTENANCE in actions_done_this_year) {
 			if not without_player {do tell_not_twice(ACT_FACILITY_TREATMENT_MAINTENANCE);}
 		} else {if (treatment_facility_year > 0) {
@@ -531,23 +547,25 @@ species village {
 					budget <- budget - token_install_filter_for_homes_maintenance;
 					actions_done_this_year << ACT_FACILITY_TREATMENT_MAINTENANCE;
 					player_traitement_facility_maintenance << treatment_facility_is_activated;
-					
 				}
 				if display_info_action_console{write "ACTION : " +ACT_FACILITY_TREATMENT_MAINTENANCE;}
 					
 				if treatment_facility_is_activated {
 					treatment_facility_year <- treatment_facility_year + 1;
+					return true;
 				}
+				
 			} else {
 				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_FACILITY_TREATMENT_MAINTENANCE );}
 			}
 		}
 		
 		}
+		return false;
 		
 	}
 	
-	action collection_team_action(bool is_strong) {
+	bool collection_team_action(bool is_strong) {
 		if (ACT_COLLECT in actions_done_this_year) {
 			if not without_player {do tell_not_twice(ACT_COLLECT);}
 		} else {
@@ -564,10 +582,11 @@ species village {
 				budget <- budget - cost;
 				if display_info_action_console{write "ACTION : " + ACT_COLLECT + " " +(is_strong ? collect_per_week_strong : collect_per_week_weak);}
 				ask collection_teams {collection_days <- myself.weak_collection_policy ? days_collects_weak : (myself.strong_collection_policy ? days_collects_strong : days_collects_ultimate);}
-			
-		}
+				return true;
+			}
 		
 		}
+		return false;
 	}
 	
 	action start_turn {
