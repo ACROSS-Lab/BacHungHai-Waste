@@ -854,6 +854,7 @@ global {
 				 ask village[index] {
 				 	budget <- commune_money;
 				 }
+				 commune_money <- 0;
 				to_refresh <- true;
 			} else {
 				if (turn >= end_of_game) {
