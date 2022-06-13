@@ -875,11 +875,6 @@ global {
 		if remaining_time <= 0 {
 			do tell(TIME_DISCUSSION_FINISHED);
 			do pause;
-			if not timer_just_for_warning {
-				ask villages_order[0] {
-					do start_turn;
-				}
-			}
 		}
 	}
 	reflex end_of_player_turn when: not without_player and  use_timer_player_turn and stage = PLAYER_ACTION_TURN {
@@ -888,11 +883,6 @@ global {
 		if remaining_time <= 0 {
 			do tell(TIME_PLAYER + " " + (int(villages_order[index_player]) + 1) +" " + FINISHED);
 			do pause;
-			if not timer_just_for_warning {
-				ask villages_order[index_player] {
-					do ending_turn;
-				}
-			}
 		}
 	}
 
