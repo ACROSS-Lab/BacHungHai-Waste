@@ -21,13 +21,12 @@ global {
 	bool no_starting_actions <- false;
 	bool random_turn <- true;
 	csv_file translation_game_csv_file <- csv_file("../includes/translation_game.csv", ",", false);
-	bool display_info_action_console <- true;
+	bool display_info_action_console <- false;
 	
 	/******************* USE TIMERS *************************************/
 	bool use_timer_player_turn <- false;	
 	bool use_timer_for_discussion <- false;
 	
-	bool timer_just_for_warning <- true; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player - for the moment, some issue with the automatic change of step
 	float time_for_player_turn <- 20#s;//2 #mn;
 	float time_for_discussion <- 20 #s;//3 #mn; // time before the player turns
 	 
