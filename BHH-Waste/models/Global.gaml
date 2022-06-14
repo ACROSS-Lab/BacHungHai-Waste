@@ -419,91 +419,90 @@ global {
 	
 	
 	action execute_action(string action_name) {
-		write actions_name_short;
-			if ((action_name in actions_name_short)){// and not(actions_name_short[action_name] in village[index_player].actions_done_this_year) and not(actions_name_short[action_name] in village[index_player].actions_done_total)) {
-				bool is_ok <- false;
-				switch action_name {
-					match A_DRAIN_DREDGES_LOW{
-						ask villages_order[index_player] {
-							is_ok <- drain_dredge(false, false);
-						}
-					} 
-					match A_DRAIN_DREDGES_HIGH{
-						ask villages_order[index_player] {
-							is_ok <-  drain_dredge(true, false);
-						}
-					} 
-					match A_FILTERS {
-						write "install filters";
-						ask villages_order[index_player] {
-							is_ok <-  install_facility_treatment_for_homes() ;
-						}
+		if ((action_name in actions_name_short)){// and not(actions_name_short[action_name] in village[index_player].actions_done_this_year) and not(actions_name_short[action_name] in village[index_player].actions_done_total)) {
+			bool is_ok <- false;
+			switch action_name {
+				match A_DRAIN_DREDGES_LOW{
+					ask villages_order[index_player] {
+						is_ok <- drain_dredge(false, false);
 					}
-					match A_SENSIBILIZATION {
-						ask villages_order[index_player] {
-							is_ok <-  sensibilization() ;
-						}
+				} 
+				match A_DRAIN_DREDGES_HIGH{
+					ask villages_order[index_player] {
+						is_ok <-  drain_dredge(true, false);
 					}
-					match A_COLLECTIVE_HIGH {
-						ask villages_order[index_player] {
-							is_ok <-  trimestrial_collective_action(true, false) ;
-						}
-					}
-					match A_COLLECTIVE_LOW {
-						ask villages_order[index_player] {
-							is_ok <-  trimestrial_collective_action(false, false) ;
-						}
-					}
-					match A_COLLECTION_HIGH {
-						ask villages_order[index_player] {
-							is_ok <-  collection_team_action(true) ;
-						}
-					}
-					match A_COLLECTION_LOW {
-						ask villages_order[index_player] {
-							is_ok <-  collection_team_action(false) ;
-						}
-					}
-					match A_PESTICIDES {
-						ask villages_order[index_player] {
-							is_ok <-  pesticide_reducing() ;
-						}
-					}
-					match A_MATURES_HIGH {
-						ask villages_order[index_player] {
-							is_ok <-  support_manure_buying(true, false) ;
-						}
-					}
-					match A_MATURES_LOW {
-						ask villages_order[index_player] {
-							is_ok <-  support_manure_buying(false, false) ;
-						}
-					}
-					match A_FALLOW {
-						ask villages_order[index_player] {
-							is_ok <-  implement_fallow();
-						}
-					}
-					match A_DUMPHOLES {
-						ask villages_order[index_player] {
-							is_ok <-  install_dumpholes() ;
-						}
-					}
-					match A_FILTER_MAINTENANCE {
-						ask villages_order[index_player] {
-							is_ok <-  install_fiter_maintenance() ;
-						}
-					}
-					match A_END_TURN {
-						ask villages_order[index_player] {
-							do end_of_turn ;
-						}
+				} 
+				match A_FILTERS {
+					write "install filters";
+					ask villages_order[index_player] {
+						is_ok <-  install_facility_treatment_for_homes() ;
 					}
 				}
-				if is_ok {
-					do action_executed(action_name);
+				match A_SENSIBILIZATION {
+					ask villages_order[index_player] {
+						is_ok <-  sensibilization() ;
+					}
+				}
+				match A_COLLECTIVE_HIGH {
+					ask villages_order[index_player] {
+						is_ok <-  trimestrial_collective_action(true, false) ;
+					}
+				}
+				match A_COLLECTIVE_LOW {
+					ask villages_order[index_player] {
+						is_ok <-  trimestrial_collective_action(false, false) ;
+					}
+				}
+				match A_COLLECTION_HIGH {
+					ask villages_order[index_player] {
+						is_ok <-  collection_team_action(true) ;
+					}
+				}
+				match A_COLLECTION_LOW {
+					ask villages_order[index_player] {
+						is_ok <-  collection_team_action(false) ;
+					}
+				}
+				match A_PESTICIDES {
+					ask villages_order[index_player] {
+						is_ok <-  pesticide_reducing() ;
+					}
+				}
+				match A_MATURES_HIGH {
+					ask villages_order[index_player] {
+						is_ok <-  support_manure_buying(true, false) ;
+					}
+				}
+				match A_MATURES_LOW {
+					ask villages_order[index_player] {
+						is_ok <-  support_manure_buying(false, false) ;
+					}
+				}
+				match A_FALLOW {
+					ask villages_order[index_player] {
+						is_ok <-  implement_fallow();
+					}
+				}
+				match A_DUMPHOLES {
+					ask villages_order[index_player] {
+						is_ok <-  install_dumpholes() ;
+					}
+				}
+				match A_FILTER_MAINTENANCE {
+					ask villages_order[index_player] {
+						is_ok <-  install_fiter_maintenance() ;
+					}
+				}
+				match A_END_TURN {
+					ask villages_order[index_player] {
+						do end_of_turn ;
+					}
 				}
 			}
+			if is_ok {
+				do action_executed(action_name);
+			}
+		}
 		
 	}
 	

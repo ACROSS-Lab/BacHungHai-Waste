@@ -80,7 +80,7 @@ global {
 	string IMAGE_COLLECTIVE_ACTION	<- "wastewater-treatment.png";
 	string IMAGE_WASTE_COLLECTION	<- "trimestriel-waste-collection.png";
 	string IMAGE_END_TURN			<- "";
-	string IMAGE_COLLECT_WASTE_WEEK	<- "";
+	string IMAGE_COLLECT_WASTE_WEEK	<- "waste-collection.png";
 	// missing endturn + Collecte des déchets ou Collecte trimestriel
 	
 	list<string> players_names <- 

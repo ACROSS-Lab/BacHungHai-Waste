@@ -59,8 +59,6 @@ global skills: [music] {
 					write "playing " + players_actions[mess.sender];
 					loop act over:players_actions[mess.sender] {						
 						ask myself{
-							write act;
-							write A_COLLECTIVE_HIGH;
 							do execute_action(act);							
 						}
 					}
