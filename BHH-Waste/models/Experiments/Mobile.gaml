@@ -46,8 +46,11 @@ global skills: [music] {
 					int idx <- int(content replace(kw_ask_for_connection + ':', ''));
 					int idx_player <- int(villages_order[index_player]);
 					write "connection of player: " + idx + ", current player: " + (idx_player + 1);
-					do set_player(mess.sender, idx-1, village[idx-1].budget);
+					do set_player(mess.sender, idx-1, village[idx-1].budget, world.turn);
 					if (idx-1 = idx_player) {
+						ask myself {
+							do	send_player_data(idx - 1, networkManager.players[idx-1]);
+						}
 						do send_your_turn(players[idx-1]);
 					}
 				}
@@ -75,61 +78,74 @@ global skills: [music] {
 	
 	
 	action before_start_turn{
-		do	send_players_pollution_levels;
-		ask networkManager{
-			int i <- 0;
-			int idx_player <- int(villages_order[index_player]);
-			loop player over:players{
-				if player != nil {
-					do send_data_before_turn(players[i], village[i].budget, turn);							
-					if (i = idx_player) {
-						do send_your_turn(player);
-					}					
-				}
-				i <- i + 1;
+		int i <- 0;
+		loop player over:networkManager.players{
+			if player != nil {
+				do before_start_turn_player(i, player);
 			}
+			i <- i + 1;
+		}
+	}
+	
+	action before_start_turn_player(int i, unknown player) {
+
+		int idx_player <- int(villages_order[index_player]);
+
+		do send_player_data(i, player);
+
+		ask networkManager{
+			do send_data_before_turn(players[i], village[i].budget, turn);							
+			if (i = idx_player) {
+				do send_your_turn(player);
+			}					
 		}
 	}
 	
 
 	
-	action send_players_pollution_levels {
-		ask networkManager {
-			int i <- 0;
-			loop player over:players {
-				
-				list<int> water;
-				list<int> solid;
-				list<int> prod;
-				
-				if (i = 0){
-					water 	<- village1_water_pollution_values;
-					solid 	<- village1_solid_pollution_values;
-					prod 	<- village1_production_values;
-				}
-				else if (i = 1){
-					water 	<- village2_water_pollution_values;
-					solid 	<- village2_solid_pollution_values;
-					prod 	<- village2_production_values;
-				}
-				else if (i = 2){
-					water 	<- village3_water_pollution_values;
-					solid 	<- village3_solid_pollution_values;
-					prod 	<- village3_production_values;
-				}
-				else if (i = 3){
-					water 	<- village4_water_pollution_values;
-					solid 	<- village4_solid_pollution_values;
-					prod 	<- village4_production_values;
-				}
-				
-				do send_data(player, kw_water_pollution, water);
-				do send_data(player, kw_solid_pollution, solid);
-				do send_data(player, kw_productivity, prod);	
-				i <- i + 1;
-			}
+	action send_players_pollution_levels {		
+		int i <- 0;
+		loop player over:networkManager.players {
+			do send_player_data(i, player);	
+			i <- i + 1;
 		}
 	}
+	
+	action send_player_data(int i, unknown player){
+		ask networkManager {
+		
+			write "sending pollution data for player " + (i+1);	
+			list<int> water;
+			list<int> solid;
+			list<int> prod;
+			
+			if (i = 0){
+				water 	<- village1_water_pollution_values;
+				solid 	<- village1_solid_pollution_values;
+				prod 	<- village1_production_values;
+			}
+			else if (i = 1){
+				water 	<- village2_water_pollution_values;
+				solid 	<- village2_solid_pollution_values;
+				prod 	<- village2_production_values;
+			}
+			else if (i = 2){
+				water 	<- village3_water_pollution_values;
+				solid 	<- village3_solid_pollution_values;
+				prod 	<- village3_production_values;
+			}
+			else if (i = 3){
+				water 	<- village4_water_pollution_values;
+				solid 	<- village4_solid_pollution_values;
+				prod 	<- village4_production_values;
+			}
+			
+			do send_data(player, kw_water_pollution, water);
+			do send_data(player, kw_solid_pollution, solid);
+			do send_data(player, kw_productivity, prod);
+		}
+	}
+	
 	
 }
 
