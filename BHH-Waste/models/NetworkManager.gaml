@@ -172,13 +172,19 @@ species NetworkManager skills:[network]{
 	action send_your_turn(unknown player){
 		write "giving turn to: " + player;
 		loop _p over:players{
-			if _p = player {
-				do send to:_p contents:kw_your_turn;				
-			}
-			else {
-				do send to:_p contents:kw_not_your_turn;
+			if _p != nil {
+				write _p;
+				if _p = player {
+					write "sending " + kw_your_turn + " to " + _p;
+					do send to:_p contents:kw_your_turn;				
+				}
+				else {
+					write "sending " + kw_not_your_turn + " to " + _p;
+					do send to:_p contents:kw_not_your_turn;
+				}				
 			}
 		}
+		write "turns given";
 	}
 	
 	action add_player_action(unknown player, string action_list_message) {
@@ -194,8 +200,9 @@ species NetworkManager skills:[network]{
 		player_names 		<- _player_names;
 		available_actions 	<- actions;
 		loop times:length(_player_names){
-			players <- [nil];
+			players <+ nil;
 		}
+		write "players: " + players;
 		
 	}
 	
@@ -206,7 +213,7 @@ species NetworkManager skills:[network]{
 	
 
 	action set_player(unknown sender, int player_number, int budget) {
-		write "set player " + player_number + " as " + sender + " with " + budget;
+		write "set player " + (player_number+1) + " as " + sender + " with " + budget;
 		do send to:sender contents:kw_initial_data + ":{"  
 				+ '"' + kw_player_name 	+ '":"' + player_names[player_number] 	+ '",' 
 				+ '"' + kw_budget 		+ '":' 	+ budget 	+ ","

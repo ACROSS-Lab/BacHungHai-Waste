@@ -43,9 +43,10 @@ global skills: [music] {
 				
 				if content contains kw_ask_for_connection { //and length(players) < length(player_names) {
 					int idx <- int(content replace(kw_ask_for_connection + ':', ''));
-					write "connection of player: " + idx + ", current player: " + (index_player + 1);
+					int idx_player <- int(villages_order[index_player]);
+					write "connection of player: " + idx + ", current player: " + (idx_player + 1);
 					do set_player(mess.sender, idx-1, village[idx-1].budget);
-					if (idx-1 = index_player) {
+					if (idx-1 = idx_player) {
 						do send_your_turn(players[idx-1]);
 					}
 //					if content contains kw_player_name {
@@ -84,15 +85,18 @@ global skills: [music] {
 		do	send_players_pollution_levels;
 		ask networkManager{
 			int i <- 0;
+			int idx_player <- int(villages_order[index_player]);
+			write "current index_player:" + idx_player;
 			loop player over:players{
-				do send_data_before_turn(players[i], villages_order[i].budget, turn);							
-				if (i = index_player) {
-					do send_your_turn(player);
+				if player != nil {
+					do send_data_before_turn(players[i], villages_order[index_player].budget, turn);							
+					if (i = idx_player) {
+						write "current player found";
+						do send_your_turn(player);
+					}					
 				}
-				
 				i <- i + 1;
 			}
-			let player_idx <- village index_of (villages_order[index_player]);
 		}
 	}
 	
