@@ -21,6 +21,7 @@ global skills: [music] {
 	
 	NetworkManager networkManager;
 	
+	//TODO: is it used anywhere ?
 	list<string> actions_to_process <- []; // actions of a player to process by the model
 	
 	init {
@@ -41,7 +42,7 @@ global skills: [music] {
 				write "message received " + mess;
 				string content <- mess.contents;
 				
-				if content contains kw_ask_for_connection { //and length(players) < length(player_names) {
+				if content contains kw_ask_for_connection { 
 					int idx <- int(content replace(kw_ask_for_connection + ':', ''));
 					int idx_player <- int(villages_order[index_player]);
 					write "connection of player: " + idx + ", current player: " + (idx_player + 1);
@@ -49,13 +50,6 @@ global skills: [music] {
 					if (idx-1 = idx_player) {
 						do send_your_turn(players[idx-1]);
 					}
-//					if content contains kw_player_name {
-//						let p_name <- (content replace(kw_ask_for_connection + ':' + kw_player_name+':', '') split_with '"')[0];
-//						do reset_player(mess.sender, p_name);
-//					}
-//					else {
-//						do add_player(mess.sender, village[length(players)].budget);						
-//					}
 				}
 				else if content contains kw_player_actions {
 					do add_player_action(mess.sender, content);
@@ -81,17 +75,14 @@ global skills: [music] {
 	
 	
 	action before_start_turn{
-		write "before start turn";
 		do	send_players_pollution_levels;
 		ask networkManager{
 			int i <- 0;
 			int idx_player <- int(villages_order[index_player]);
-			write "current index_player:" + idx_player;
 			loop player over:players{
 				if player != nil {
-					do send_data_before_turn(players[i], villages_order[index_player].budget, turn);							
+					do send_data_before_turn(players[i], village[i].budget, turn);							
 					if (i = idx_player) {
-						write "current player found";
 						do send_your_turn(player);
 					}					
 				}

@@ -148,7 +148,6 @@ species NetworkManager skills:[network]{
 	
 	list<string> 				player_names;
 	list<unknown> 				players;
-	//list<list<int>>				player_budgets;
 	map<unknown,list<string>> 	players_actions;
 	list<map<string,unknown>>	available_actions;
 	
@@ -165,26 +164,21 @@ species NetworkManager skills:[network]{
 	
 	action send_data_before_turn(unknown player, int turn_budget, int turn_number) {
 		let mess <- kw_start_turn +':{"' +kw_budget +'":' + turn_budget + ',"' + kw_turn_number+ '":' + turn_number +"}";
-		write "sending: " + mess + " to: " + player;
 		do send to:player contents:mess;
 	}
 	
 	action send_your_turn(unknown player){
-		write "giving turn to: " + player;
 		loop _p over:players{
 			if _p != nil {
 				write _p;
 				if _p = player {
-					write "sending " + kw_your_turn + " to " + _p;
 					do send to:_p contents:kw_your_turn;				
 				}
 				else {
-					write "sending " + kw_not_your_turn + " to " + _p;
 					do send to:_p contents:kw_not_your_turn;
 				}				
 			}
 		}
-		write "turns given";
 	}
 	
 	action add_player_action(unknown player, string action_list_message) {
@@ -202,8 +196,6 @@ species NetworkManager skills:[network]{
 		loop times:length(_player_names){
 			players <+ nil;
 		}
-		write "players: " + players;
-		
 	}
 	
 
@@ -219,6 +211,7 @@ species NetworkManager skills:[network]{
 				+ '"' + kw_budget 		+ '":' 	+ budget 	+ ","
 				+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
 				+ '}';
+				
 		// We remove the traces of the old connection
 		if (players[player_number] != nil){
 			write "removing old player";
@@ -233,34 +226,6 @@ species NetworkManager skills:[network]{
 		
 		do send_data_before_turn(sender, budget, turn);
 	}	
-
-//	
-//	action add_player(unknown sender, int budget) {
-//		
-//		write "new player: " + sender;
-//		do send to:sender contents:kw_initial_data + ":{"  
-//				+ '"' + kw_player_name 	+ '":"' + player_names[length(players)] 	+ '",' 
-//				+ '"' + kw_budget 		+ '":' 	+ budget 	+ ","
-//				+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
-//				+ '}';
-//				
-//		players <- players + sender;
-//		
-//		if  length(players) = length(player_names) {
-//			write "all players joined";
-//		}
-//		
-//	}
-//	
-//	action reset_player(unknown player, string player_name){
-//		let idx <- player_names index_of player_name;
-//		players[idx] <- player;
-//		do send to:player contents:kw_initial_data + ":{"  
-//		+ '"' + kw_player_name 	+ '":"' + player_name 	+ '",' 
-//	//	+ '"' + kw_budget 		+ '":' 	+ budgets[idx] 	+ "," //TODO
-//		+ '"' + kw_actions		+ '":' 	+ list_of_map_to_json(available_actions) 
-//		+ '}';
-//	}
 	
 	
 	action new_turn(list<int> budgets)  {
