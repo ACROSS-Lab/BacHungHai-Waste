@@ -252,6 +252,8 @@ global {
 			}
 		}
 	}
+	
+	action before_discussion_phase{} //Can be implemented in children
 		
 	
 	action create_canals {
@@ -680,7 +682,11 @@ global {
 				do tell(mess);
 				do tell(DISCUSSION_PHASE);
 				start_discussion_turn_time <- machine_time;
-				ask world {do update_display;do resume;}
+				ask world {
+					do update_display;
+					do resume;
+					do before_discussion_phase;
+				}
 		
 			}
 			

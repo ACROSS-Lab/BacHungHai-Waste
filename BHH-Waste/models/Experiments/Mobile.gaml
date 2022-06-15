@@ -21,8 +21,6 @@ global skills: [music] {
 	
 	NetworkManager networkManager;
 	
-	//TODO: is it used anywhere ?
-	list<string> actions_to_process <- []; // actions of a player to process by the model
 	
 	init {
 	
@@ -82,6 +80,18 @@ global skills: [music] {
 				do before_start_turn_player(i, player);
 			}
 			i <- i + 1;
+		}
+	}
+	
+	action before_discussion_phase{
+		write "before discussion phase";
+		ask networkManager{
+			int i <- 0;
+			loop player over:players{
+				ask myself{ do send_player_data(i, player);}	
+				do send_data_before_turn(player, village[i].budget, turn);
+				i <- i + 1;
+			} 			
 		}
 	}
 	
