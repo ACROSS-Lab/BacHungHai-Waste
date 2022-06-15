@@ -8,7 +8,7 @@
 
 model TangibleInteraction
 
-import "Debug.gaml"
+import "UI1.gaml"
 
 
 
