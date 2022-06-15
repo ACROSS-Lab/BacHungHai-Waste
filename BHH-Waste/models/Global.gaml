@@ -848,7 +848,7 @@ global {
 	
 	reflex playerturn when: stage = PLAYER_ACTION_TURN{
 		if without_player or (index_player >= length(villages_order)) {
-			if use_money_pool and not commune_budget_dispatch{
+			if not without_player and  use_money_pool and not commune_budget_dispatch{
 				commune_money <- 0;
 				ask village {
 					commune_money <- commune_money + budget;
