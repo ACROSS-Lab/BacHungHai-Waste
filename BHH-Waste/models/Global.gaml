@@ -866,6 +866,7 @@ global {
 				 ask village[index] {
 				 	budget <- commune_money;
 				 }
+				 do before_start_turn();
 				commune_money <- 0;
 				to_refresh <- true;
 			} else {
