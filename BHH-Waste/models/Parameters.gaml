@@ -67,11 +67,11 @@ global {
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
 	float min_production_ecolabel <- 2750.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
-	float max_pollution_ecolabel <- 300000.0;// maximum threshold of production to get ecolabel, unities are converted in 
+	float max_pollution_ecolabel <- 310000.0;// maximum threshold of production to get ecolabel, unities are converted in 
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
-	int base_budget_year_per_village <- 90; // total buget per year for a village (in token):
+	int base_budget_year_per_village <- 95; // total buget per year for a village (in token):
 	list<float> increase_urban_area_population_year_per_village <- [0.05,0.8,0.25,0.25] ; // increase of urban area per year per village (in terms of number of people)
 	
 	int compute_budget(int urban_pop, int agricultural_pop, float production_level, int day_ecolabel) {
@@ -127,10 +127,10 @@ global {
 	
 	float water_waste_filtering_inhabitants <- 0.2 min: 0.0 max: 1.0; // part of the water waste produced per inhabitants that are filtered
 	float water_waste_year_inhabitants <- 200000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people living in urban area per year 
-	float solid_waste_year_inhabitants <-  68.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
+	float solid_waste_year_inhabitants <-  63.0;//kg/pers/year - quantity of solid waste produced per people living in urban area per year  
 	
 	float water_waste_year_farmers <- 75000.0 / 1000.0;// L/pers/year - quantity of water waste produced per people outside  urban area (farmer) per year 
-	float solid_waste_year_farmers <-  125.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
+	float solid_waste_year_farmers <-  115.0;//kg/pers/year - quantity of solid waste produced per people outside  urban area (farmer) per year
 	
 	float part_solid_waste_canal_inhabitants <- 0.6; // proportion of solid waste throw in the canal per people living in urban area; (1 - part_solid_waste_canal_inhabitants) is throw on the ground
 	float part_water_waste_canal_inhabitants <- 1.0;// proportion of water waste throw in the canal per people living in urban area; (1 - part_water_waste_canal_inhabitants) is throw on the ground
@@ -147,7 +147,7 @@ global {
 	int token_weak_waste_collection <- 30; //tokens/year - cost of "weak collection"
 	int token_strong_waste_collection <- 50; //tokens/year - cost of "strong collection"
 	int token_ultimate_waste_collection <- 90; //tokens/year - cost of "ultimate collection"
-	float collection_team_collection_capacity_day <- 250.0; //quantity of solid waste remove during 1 day of work
+	float collection_team_collection_capacity_day <- 230.0; //quantity of solid waste remove during 1 day of work
 	
 	list<int> days_collects_weak <- [2,5] ; //day of collects - 1 = monday, 7 = sunday
 	list<int> days_collects_strong <- [1, 3, 5,  7] ; //day of collects - 1 = monday, 7 = sunday

@@ -19,9 +19,9 @@ global {
 	
 	image_file soil_pollution_smiley (float v) {
 		switch(v) {
-			match_between [0, 24999] {return smileys[0];}
-			match_between [25000, 39999] {return smileys[1];}
-			match_between [40000, 64999] {return smileys[2];}
+			match_between [0, 19999] {return smileys[0];}
+			match_between [20000, 29999] {return smileys[1];}
+			match_between [30000, 64999] {return smileys[2];}
 			match_between [65000, 90000] {return smileys[3];}
 			default {return smileys[4];}
 		}
@@ -51,9 +51,9 @@ global {
 	
 	image_file water_pollution_smiley(float w) {
 		switch(w) {
-			match_between [0, 9999] {return smileys[0];}
-			match_between [10000, 19999] {return smileys[1];}
-			match_between [20000, 29999] {return smileys[2];}
+			match_between [0, 4999] {return smileys[0];}
+			match_between [5000, 14999] {return smileys[1];}
+			match_between [15000, 29999] {return smileys[2];}
 			match_between [30000, 44999] {return smileys[3];}
 			default {return smileys[4];}
 		}
@@ -73,17 +73,17 @@ global {
 		float w <- village_production[int(v)];
 		if (int(v) = 0) {
 			switch(w) {
-				match_between [0, 349] {return smileys[4];}
-				match_between [350, 699] {return smileys[3];}
-				match_between [700, 899] {return smileys[2];}
+				match_between [0, 199] {return smileys[4];}
+				match_between [200, 499] {return smileys[3];}
+				match_between [500, 899] {return smileys[2];}
 				match_between [900, 1149] {return smileys[1];}
 				default {return smileys[0];}
 			}
 		} else {
 			switch(w) {
-				match_between [0, 499] {return smileys[4];}
-				match_between [500, 799] {return smileys[3];}
-				match_between [800, 1099] {return smileys[2];}
+				match_between [0, 299] {return smileys[4];}
+				match_between [300, 699] {return smileys[3];}
+				match_between [700, 1099] {return smileys[2];}
 				match_between [1100, 1499] {return smileys[1];}
 				default {return smileys[0];}
 			}
