@@ -49,7 +49,9 @@ global skills: [music] {
 						ask myself {
 							do	send_player_data(idx - 1, networkManager.players[idx-1]);
 						}
-						do send_your_turn(players[idx-1]);
+						if (stage = TURN_OF_PLAYER){
+							do send_your_turn(players[idx-1]);							
+						}
 					}
 				}
 				else if content contains kw_player_actions {
