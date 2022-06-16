@@ -11,7 +11,8 @@ model Mobile
 /* Insert your model definition here */
 
 
-import "LFAY.gaml"
+//import "LFAY.gaml"
+import "UI1.gaml"
 import "../NetworkManager.gaml"
  
 

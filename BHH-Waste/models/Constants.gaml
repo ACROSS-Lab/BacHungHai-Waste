@@ -95,129 +95,129 @@ global {
 	[
 		[	
 			'id'::A_COLLECTIVE_LOW,
-			'name'::'Collecte de déchets',
+			'name'::'Công tác thu gom rác thải',
 			'cost'::30,
 			'once_per_game'::false,
 			'mandatory'::true,
 			'asset_name'::IMAGE_COLLECT_WASTE_WEEK,
-			'description'::"↓Déchets solides dans les zones urbaines\n"
+			'description'::"↓Chất thải rắn từ khu đô thị"
 		],
 		[	
 			'id'::A_COLLECTIVE_HIGH,
-			'name'::'Collecte de déchets',
+			'name'::'Công tác thu gom rác thải',
 		   	'cost'::50,
 			'once_per_game'::false,
 			'mandatory'::true,
 			'asset_name':: IMAGE_COLLECT_WASTE_WEEK,
-			'description'::"↓Déchets solides dans les zones urbaines\n"
+			'description'::"↓Chất thải rắn từ khu đô thị"
 		],
 		[
 			'id'::A_DUMPHOLES,
-			'name'::'Construction de puits de collecte',
+			'name'::'Xây dựng các bể thu gom vỏ và bao bì thuốc sâu',
 			'cost'::40,
 			'once_per_game'::true,
 			'mandatory'::false,
 			'asset_name'::IMAGE_DUMPHOLES,
-			'description'::"↓Déchets solides dans les champs\n"
+			'description'::"↓Chất thải rắn từ ruộng\n"
 		],
 		[
 			'id'::A_PESTICIDES,
-			'name'::'Réduire le recours aux pesticides',
 			'cost'::40,
+			'name'::'Hỗ trợ nông dân để giảm thiểu sự dụng thuốc trừ sâu',
 			'once_per_game'::true,
 			'mandatory'::false,
 			'asset_name':: IMAGE_REDUCE_PESTICIDES,
-			'description'::"↓Déchets solides dans les champs\n↓Productivité"
+			'description'::"↓Nước thải từ ruộng\n↓Sản lượng nông nghiệp "
 		],
 		[
 			'id'::A_SENSIBILIZATION,
-			'name'::'Sensibilisation au tri des déchets',
+			'name'::'Tổ chức sự kiện hưởng ứng phân loại rác',
 			'cost'::20,
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_RAISE_AWAReNESS,
-			'description'::"↓Déchets solides dans le village\n"
+			'description'::"↓Chất thải rắn trên mặt đất\n"
 		],
 		[
 			'id'::A_DRAIN_DREDGES_LOW,
-			'name'::'Drainer et draguer',
+			'name'::'Nạo vét',
 			'cost'::25,
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_DRAIN_DREDGE,
-			"description"::"↓Eaux usées dans les canaux\n"
+			"description"::"↓Nước thải trong các kênh\n"
 		],
 		[	
 			'id'::A_DRAIN_DREDGES_HIGH,
-			'name'::'Drainer et draguer',
+			'name'::'Nạo vét',
 			'cost'::50,
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_DRAIN_DREDGE,
-			'description'::"↓Eaux usées dans les canaux\n"
+			'description'::"↓Nước thải trong các kênh\n"
 		],
 		[
 			'id'::A_MATURES_LOW,
-			'name'::'Aides pour l\'achat des engrais',
+			'name'::'Hỗ trợ mua phân bón',
 			'cost'::20,
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_FERTILIZERS,
-			'description'::"↑Productivité\n↑Eaux usées"
+			'description'::"↑Sản lượng nông nghiệp\n↑Nước thải"
 		],
 		[
 			'id'::A_MATURES_HIGH,
-			'name'::'Aides pour l\'achat des engrais',
+			'name'::'Hỗ trợ mua phân bón',
 			'cost'::40,
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_FERTILIZERS,
-			'description'::"↑Productivité\n↑Eaux usées"
+			'description'::"↑Sản lượng nông nghiệp\n↑Nước thải"
 		],
 		[
 			'id'::A_FALLOW,
-			'name'::'Jachère',
+			'name'::'Dừng canh tác 1/3 đất nông nghiệp',
 			'cost'::40,
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_FALLOW,
-			'description'::"↓Pollutions des terres\n↓Productivité ce tour-ci\n↑Production le prochain tour"
+			'description'::"↓Ô nhiễm dất\n↓Sản lượng nông nghiệp\n↑Trong vòng một năm"
 		],
 		[
 			'id'::A_COLLECTION_LOW,
-			'name'::'Collecte trimestriel de déchets dans les canaux',
-			'cost'::18,
+			'name'::'Huy động vớt rác ở các kênh theo kỳ',
+			'cost'::20,
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_WASTE_COLLECTION,
-			'description'::"↓Déchets solides dans les canaux\n"
+			'description'::"↓Chất thải rắn trong các kênh\n"
 		],
 		[
 			'id'::A_COLLECTION_HIGH,
-			'name'::'Collecte trimestriel de déchets dans les canaux',
+			'name'::'Huy động vớt rác ở các kênh theo kỳ',
 			'cost'::35,
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_WASTE_COLLECTION,
-			'description'::"↓Déchets solides dans les canaux\n"
+			'description'::"↓Chất thải rắn trong các kênh\n"
 		],
 		[
 			'id'::A_FILTERS,
-			'name'::'Système de traitement de eaux usées',
+			'name'::'Hệ thống xử lý nước thải cho các hộ',
    			'cost'::0,
 			'once_per_game'::true,
 			'mandatory'::false,
 			'asset_name':: IMAGE_COLLECTIVE_ACTION,
-			'description'::"↓Eaux usées des habitants\n"
+			'description'::"↓Nước thải từ các hộ\n"
 		],
 		[
 			'id'::A_FILTER_MAINTENANCE,
-			'name'::'Entretien du système de traitement',
+			'name'::'Bảo trì hệ thống xử lý nước thải',
 			'cost'::10,
 			'once_per_game'::false,
 			'mandatory'::false,
 			'asset_name'::IMAGE_COLLECTIVE_ACTION,
-			'description'::"↓Eaux usées des habitants\n"
+			'description'::"↓Nước thải từ các hộ\n"
 		]
 	];
  	
