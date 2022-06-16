@@ -126,9 +126,9 @@ global skills: [music] {
 		ask networkManager {
 		
 			write "sending pollution data for player " + (i+1);	
-			list<int> water;
-			list<int> solid;
-			list<int> prod;
+			list<float> water;
+			list<float> solid;
+			list<float> prod;
 			
 			if (i = 0){
 				water 	<- village1_water_pollution_values;

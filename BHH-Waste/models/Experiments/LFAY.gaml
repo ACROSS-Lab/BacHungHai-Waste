@@ -306,12 +306,12 @@ global {
 		village_actions <- nil;
 		cycle_count <- cycle_count + 1;
 		ask day_timer {
-			do set_value("Days", last(days_with_ecolabel_year));
+			do set_value("Days", float(last(days_with_ecolabel_year)));
 			do set_value("Total", 365.0-last(days_with_ecolabel_year));
 		}
 		ask score_timer {
-			do set_value("Days", days_with_ecolabel);
-			do set_value("Total",8*365 - days_with_ecolabel);
+			do set_value("Days",float(days_with_ecolabel));
+			do set_value("Total",8.0*365 - days_with_ecolabel);
 		}
 		
 		ask global_chart{
@@ -993,18 +993,18 @@ species pie_chart {
 	map<string, pair<rgb, float>> slices <- [];
 	
 	action add(string title, float value, rgb col) {
-			slices[title] <- pair(col, value);
+			slices[title] <- pair<rgb, float>(pair(col, value));
 	}
 	
 	action increment(string title, float value) {
 		if (slices.keys contains(title)) {
-			slices[title] <- pair(slices[title].key, slices[title].value + value);
+			slices[title] <-  pair<rgb, float>(pair(slices[title].key, slices[title].value + value));
 		} 
 	}
 	
 	action set_value(string title, float value) {
 		if (slices.keys contains(title)) {
-			slices[title] <- pair(slices[title].key, value);
+			slices[title] <-  pair<rgb, float>(pair(slices[title].key, value));
 		} 
 	}
 	
@@ -1063,7 +1063,7 @@ species stacked_chart {
  	}
  	
  	aspect horizontal {
- 		float x_margin <- (world.shape.width - size)/2 + size/6; 
+ 		float xx_margin <- (world.shape.width - size)/2 + size/6; 
  		//draw square(size) wireframe: true border: #white width: 2; 
  		
  		float col_width <- size / length(data);
@@ -1073,13 +1073,13 @@ species stacked_chart {
  			loop c over: data[col].keys {
  				float v <- data[col][c];
  				float height <- v * ratio;
- 				//draw  ""+v at:{col_index * col_width + x_margin,location.y + size/2 - height/2} font: font('Helvetica',32,#bold) color: c anchor: #center;
- 				draw rectangle(col_width,height) color: c at: {col_index * col_width + x_margin,current_y + location.y + size/2 - height/2};
- 				draw rectangle(col_width,height) wireframe: true border: #black width: 5 at: {col_index * col_width + x_margin,current_y + location.y + size/2 - height/2};
+ 				//draw  ""+v at:{col_index * col_width + xx_margin,location.y + size/2 - height/2} font: font('Helvetica',32,#bold) color: c anchor: #center;
+ 				draw rectangle(col_width,height) color: c at: {col_index * col_width + xx_margin,current_y + location.y + size/2 - height/2};
+ 				draw rectangle(col_width,height) wireframe: true border: #black width: 5 at: {col_index * col_width + xx_margin,current_y + location.y + size/2 - height/2};
  				current_y <- current_y + - height;
  			}
  			if (icons[col] != nil) {
- 				draw icons[col] at: {col_index * col_width + x_margin, size-size/10} size: {col_width/2, col_width/2};
+ 				draw icons[col] at: {col_index * col_width + xx_margin, size-size/10} size: {col_width/2, col_width/2};
  			}
  			col_index <- col_index + 1;
  		}
