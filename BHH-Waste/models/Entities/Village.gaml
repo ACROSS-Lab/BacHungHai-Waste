@@ -239,8 +239,8 @@ species village {
 	
 	//4:ACTION_COLLECTIVE_ACTION
 	bool trimestrial_collective_action (bool is_strong <- true, bool selection_possible <- true){
-		if (ACTION_COLLECTIVE_ACTION in actions_done_this_year) {
-			if not without_player {do tell_not_twice(ACTION_COLLECTIVE_ACTION);}
+		if (ACT_COLLECTIVE_ACTION in actions_done_this_year) {
+			if not without_player {do tell_not_twice(ACT_COLLECTIVE_ACTION);}
 		} else {
 			string weak_str <- LOW_FOR + " " + token_trimestrial_collective_action_weak + " " + TOKENS;
 			string strong_str <- HIGH_FOR + " " + token_trimestrial_collective_action_strong + " " + TOKENS;
@@ -251,7 +251,7 @@ species village {
 			
 			bool strong <- is_strong;
 			if selection_possible and not without_player {
-				map result <- user_input_dialog(PLAYER +" " + (int(self) + 1)+" - " + ACTION_COLLECTIVE_ACTION  ,[choose(LEVEL,string,weak_str, possibilities)]);
+				map result <- user_input_dialog(PLAYER +" " + (int(self) + 1)+" - " + ACT_COLLECTIVE_ACTION  ,[choose(LEVEL,string,weak_str, possibilities)]);
 				strong <- result[LEVEL] = strong_str;
 			}
 			
@@ -260,14 +260,14 @@ species village {
 				token_trimestrial_collective_action <- token_trimestrial_collective_action_weak;
 			}
 			if budget >= token_trimestrial_collective_action {
-				bool  is_ok <-without_player or confirm_action(ACTION_COLLECTIVE_ACTION, token_trimestrial_collective_action);
+				bool  is_ok <-without_player or confirm_action(ACT_COLLECTIVE_ACTION, token_trimestrial_collective_action);
 				if is_ok {
 					if not without_player {
-						player_actions[turn -1][ACTION_COLLECTIVE_ACTION] <- map([LEVEL::(strong ? "high":"low")]);
-						if display_info_action_console{write "ACTION : " +ACTION_COLLECTIVE_ACTION + " " + (strong ? "high":"low");}
+						player_actions[turn -1][ACT_COLLECTIVE_ACTION] <- map([LEVEL::(strong ? "high":"low")]);
+						if display_info_action_console{write "ACTION : " +ACT_COLLECTIVE_ACTION + " " + (strong ? "high":"low");}
 					}
 					//actions_done_total << ACTION_COLLECTIVE_ACTION;
-					actions_done_this_year << ACTION_COLLECTIVE_ACTION;
+					actions_done_this_year << ACT_COLLECTIVE_ACTION;
 					float impact_trimestrial_collective_action <- impact_trimestrial_collective_action_strong;
 					if not strong {
 						impact_trimestrial_collective_action <- impact_trimestrial_collective_action_weak;
@@ -280,7 +280,7 @@ species village {
 				}
 			} else {
 				
-				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACTION_COLLECTIVE_ACTION );}
+				if not without_player {do tell(NOT_ENOUGH_BUDGET + " " +ACT_COLLECTIVE_ACTION );}
 			}
 		}
 		return false;
@@ -473,7 +473,7 @@ species village {
 				match ACT_SUPPORT_MANURE {
 					do support_manure_buying(player_actions_turn[act][LEVEL] = "high");
 				}
-				match ACTION_COLLECTIVE_ACTION {
+				match ACT_COLLECTIVE_ACTION {
 					do trimestrial_collective_action(player_actions_turn[act][LEVEL] = "high");
 				}
 				

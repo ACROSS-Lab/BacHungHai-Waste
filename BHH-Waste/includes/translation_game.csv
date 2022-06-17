@@ -20,8 +20,6 @@ TOKENS,tokens,jetons,xu
 AGRICULTURAL_PROD_LOW,The agricultural production is too low,La production agricole est trop faible,Sản lượng nông nghiệp quá thấp
 POLLUTION_TOO_HIGH,The pollution is too high,La pollution est trop élevée,Ô nhiễm ở mức quá cao
 PLAYER,Player,Joueur,Người chơi
-CHOOSE_WASTE_COLLECTION_FREQ,Choose a waste collection frequency,Choisissez une fréquence de collecte des déchets,Lựa chọn tần suất thu gom rác
-PER_WEEK,per week,par semaine,theo tuần
 WISH_PAY_TREATMENT_FACILITY_MAINTENANCE,Do you wish to pay for the water treatment facility maintenance?,Souhaitez-vous payer l'entretien des installations de filtrage à domicile,Quý vị có sằn sàng trả tiền bảo dưỡng cơ sở xử lý chất thải cho các hộ dân không?
 PAY_TRAETMENT_FACILITY_MAINTENANCE,Pay for treatment facility maintenance,Payer pour l'entretien des installations de filtrage,Trả phí bảo dưỡng cơ sở xử lý nước thải
 TURN,Turn,tour,lượt
@@ -32,7 +30,8 @@ NOT_ENOUGH_BUDGET,Not enough budget for,Budget insuffisant pour,Ngân sách khô
 ACT_DRAIN_DREDGE,Drain and dredge,Drainer et draguer,Thoát nước và nạo vét
 ACT_FACILITY_TREATMENT,Install water treatment facilities for every home,Installer des installations de filtrage de l'eau pour chaque maison,Lắp đặt cơ sở xử lý nước thải cho các hộ dân
 ACT_SENSIBILIZATION,Organise sensibilization events about waste sorting,Organiser des évènements de sensibilisation au tri des déchets,Tổ chức các buổi hội thảo nâng cao ý thức phân loại rác thải tại trường học
-ACTION_COLLECTIVE_ACTION,Trimestrial collective waste collection,Collecte trimestrielle collective des déchets,Thu rác tập thể theo quý
+ACT_COLLECTIVE_ACTION,Trimestrial collective waste collection,Collecte trimestrielle collective des déchets,Thu rác tập thể theo quý
+ACT_COLLECT,Increase solid waste collect frequency,Augmente la fréquence de collecte des déchets solides,Tăng tần suất thu gom chất thải rắn
 ACT_PESTICIDE_REDUCTION,Help farmers to reduce pesticides use,Aider les agriculteurs pour réduire l'utilisation des pesticides,Giúp nông dân hạn chế sử dụng thuốc trừ sâu
 ACT_SUPPORT_MANURE,Help farmers to buy manure,Aides pour l’achat d'engrais,Giúp nông dân mua phân bón
 ACT_IMPLEMENT_FALLOW,Put part of the fields in fallow,Mettre une partie des terrains agricoles en jachère,Để hoang một phần ruộng 
