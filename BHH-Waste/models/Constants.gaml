@@ -59,13 +59,12 @@ global {
 	string A_MATURES_HIGH <- "Support manure high";
 	string A_FILTER_MAINTENANCE <- "Maintenance for filters";
 	
-	string A_COLLECTION_LOW <- "Collection teams low";
 	string A_COLLECTION_HIGH <- "Collection teams high";
 	
 	
 	
  	list<string> actions_name_short<- [A_DUMPHOLES, A_PESTICIDES, A_SENSIBILIZATION, A_FILTERS, A_COLLECTIVE_HIGH, A_COLLECTIVE_LOW, 
- 		A_DRAIN_DREDGES_HIGH, A_DRAIN_DREDGES_LOW, A_FALLOW, A_MATURES_HIGH, A_MATURES_LOW, A_FILTER_MAINTENANCE, A_COLLECTION_LOW, A_COLLECTION_HIGH, A_END_TURN
+ 		A_DRAIN_DREDGES_HIGH, A_DRAIN_DREDGES_LOW, A_FALLOW, A_MATURES_HIGH, A_MATURES_LOW, A_FILTER_MAINTENANCE, A_COLLECTION_HIGH, A_END_TURN
  	];
  	
  	
@@ -93,21 +92,13 @@ global {
 	
  	list<map<string,unknown>>	mobile_actions <- 
 	[
+		
 		[	
-			'id'::A_COLLECTIVE_LOW,
+			'id'::A_COLLECTION_HIGH,
 			'name'::'Công tác thu gom rác thải',
-			'cost'::30,
+		   	'cost'::40,
 			'once_per_game'::false,
-			'mandatory'::true,
-			'asset_name'::IMAGE_COLLECT_WASTE_WEEK,
-			'description'::"↓Chất thải rắn từ khu đô thị"
-		],
-		[	
-			'id'::A_COLLECTIVE_HIGH,
-			'name'::'Công tác thu gom rác thải',
-		   	'cost'::50,
-			'once_per_game'::false,
-			'mandatory'::true,
+			'mandatory'::false,
 			'asset_name':: IMAGE_COLLECT_WASTE_WEEK,
 			'description'::"↓Chất thải rắn từ khu đô thị"
 		],
@@ -184,7 +175,7 @@ global {
 			'description'::"↓Ô nhiễm dất\n↓Sản lượng nông nghiệp\n↑Trong vòng một năm"
 		],
 		[
-			'id'::A_COLLECTION_LOW,
+			'id'::A_COLLECTIVE_LOW,
 			'name'::'Huy động vớt rác ở các kênh theo kỳ',
 			'cost'::20,
 			'once_per_game'::false,
@@ -193,7 +184,7 @@ global {
 			'description'::"↓Chất thải rắn trong các kênh\n"
 		],
 		[
-			'id'::A_COLLECTION_HIGH,
+			'id'::A_COLLECTIVE_HIGH,
 			'name'::'Huy động vớt rác ở các kênh theo kỳ',
 			'cost'::35,
 			'once_per_game'::false,
@@ -294,7 +285,7 @@ global {
 	string PLAYER_DISCUSSION_TURN <- "player discussion turn";
 	string COMPUTE_INDICATORS <-  "compute indicators";
 	string ACT_FACILITY_TREATMENT_MAINTENANCE <- "Maintenance of water treatment facilities";
-	string ACT_COLLECT <- "Collect frequency";
+	string ACT_COLLECT <- "Increase solid waste collect frequency";
 		
 	string MAP_SOLID_WASTE <- "Map of solid waste";
 	string MAP_WATER_WASTE <- "Map of waster waste";
