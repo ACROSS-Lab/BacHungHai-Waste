@@ -13,7 +13,7 @@ import "Entities/Commune.gaml"
  
 import "Entities/Pollution Cell.gaml"
 
-import "Entities/Collection Team.gaml"
+import "Entities/Collection Team.gaml" 
 
 import "Entities/Landfill.gaml"
 
@@ -25,7 +25,7 @@ import "Entities/Agricultural Space.gaml"
 
 import "Entities/Urban Space.gaml" 
 
-import "Entities/Village.gaml"
+import "Entities/Village.gaml" 
 
 import "Parameters.gaml"
  
@@ -195,13 +195,11 @@ global {
 				if length(player_actions) <= t {
 					if player_actions = nil or empty(player_actions) {
 						player_actions <- [];
-						player_collect_policy <- [];
 						player_traitement_facility_maintenance <- [];
 					}
 					
 					loop times: t - length(player_actions) +1  {
 						player_actions << [];
-						player_collect_policy << 0;
 						player_traitement_facility_maintenance << true;
 					}
 				}
@@ -212,9 +210,7 @@ global {
 						list<string> a_s <- act_str split_with ":";
 						string act_name <- a_s[0];
 						string param <- a_s[1];
-						if act_name = ACT_COLLECT {
-							player_collect_policy[t] <- int(param);
-						}else if act_name = ACT_FACILITY_TREATMENT_MAINTENANCE {
+						if act_name = ACT_FACILITY_TREATMENT_MAINTENANCE {
 							player_traitement_facility_maintenance[t] <- bool(param);
 						} else {
 							act_name <- from_english[act_name];
@@ -401,7 +397,6 @@ global {
 			if without_player and not without_actions and players_actions_to_load = nil{
 				int id <- int(self);
 				player_actions <- players_actions = nil ? nil : players_actions[id];
-				player_collect_policy <- players_collect_policy = nil ? nil : players_collect_policy[id];
 				player_traitement_facility_maintenance <- players_traitement_facility_maintenance = nil ? nil : players_traitement_facility_maintenance[id];
 			} 
 		} 
@@ -457,14 +452,10 @@ global {
 				}
 				match A_COLLECTION_HIGH {
 					ask villages_order[index_player] {
-						is_ok <-  collection_team_action(true) ;
+						is_ok <-  increase_collection_team_frequency_action() ;
 					}
 				}
-				match A_COLLECTION_LOW {
-					ask villages_order[index_player] {
-						is_ok <-  collection_team_action(false) ;
-					}
-				}
+			
 				match A_PESTICIDES {
 					ask villages_order[index_player] {
 						is_ok <-  pesticide_reducing() ;

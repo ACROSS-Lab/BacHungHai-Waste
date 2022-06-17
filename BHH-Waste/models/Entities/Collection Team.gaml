@@ -8,13 +8,13 @@
 
 model CollectionTeam
 
-import "../Global.gaml"
+import "../Global.gaml" 
 
 
 species collection_team {
 	rgb color <- #gold;
 	float collection_capacity <- collection_team_collection_capacity_day;
-	list<int> collection_days <- days_collects_weak;
+	list<int> collection_days <- days_collects_default;
 	village my_village;
 	
 	

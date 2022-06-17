@@ -104,6 +104,7 @@ global {
 	}
 	
 	map<village,list<string>> village_actions <- nil;
+	
 	action action_executed(string action_name) {
 		if village_actions = nil or empty(village_actions) {
 			loop v over: village {
@@ -235,7 +236,7 @@ global {
 				A_MATURES_LOW::"8A",
 				A_MATURES_HIGH::"8B",
 				A_FILTER_MAINTENANCE::"2B",
-				A_COLLECTION_LOW::"1A",
+				//A_COLLECTION_LOW::"1A",
 				A_COLLECTION_HIGH::"1B"
 		];
 	map<string, string> numbers_actions <- reverse(action_numbers);
@@ -493,14 +494,14 @@ experiment Open {
 				draw simulation.paused or about_to_pause ? play_icon : pause_icon at: pause_location size: shape.width / 4;
 			}
 			
-						event "1" {
+			/*event "1" {
 				ask simulation {
 					do execute_action(A_COLLECTION_LOW);
 				}
 
-			}
+			}*/
 
-			event "a" {
+			event "1" {
 				ask simulation {
 					do execute_action(A_COLLECTION_HIGH);
 				}
