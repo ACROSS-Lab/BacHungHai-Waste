@@ -843,23 +843,29 @@ global {
 		current_day <- current_day + 1;
 	}
 	
+	action choose_village_for_pool {
+			commune_money <- 0;
+			ask village {
+				commune_money <- commune_money + budget;
+				budget <- 0;
+			}
+
+			map result <- user_input_dialog(SELECT_A_VILLAGE_TO_RECEIVE_COMMUNE_BUDGET, [choose(PLAYER_SELECTED, string, one_of(players_names), players_names)]);
+			int index <- index_of(players_names, result[PLAYER_SELECTED]);
+			villages_order << village[index];
+			ask village[index] {
+				budget <- commune_money;
+			}
+
+			do before_start_turn();
+			commune_money <- 0;
+			to_refresh <- true;
+	}
+	
 	reflex playerturn when: stage = PLAYER_ACTION_TURN{
 		if without_player or (index_player >= length(villages_order)) {
-			if not without_player and  use_money_pool and not commune_budget_dispatch{
-				commune_money <- 0;
-				ask village {
-					commune_money <- commune_money + budget;
-					budget <- 0;
-				}
-				map result <- user_input_dialog(SELECT_A_VILLAGE_TO_RECEIVE_COMMUNE_BUDGET,[choose(PLAYER_SELECTED,string,one_of(players_names),players_names )]);
-				int index <- index_of(players_names,result[PLAYER_SELECTED]);
-				villages_order <<  village[index];
-				 ask village[index] {
-				 	budget <- commune_money;
-				 }
-				 do before_start_turn();
-				commune_money <- 0;
-				to_refresh <- true;
+			if not without_player and  use_money_pool and not commune_budget_dispatch {
+				do choose_village_for_pool();
 			} else {
 				if (turn >= end_of_game) {
 					do pause;

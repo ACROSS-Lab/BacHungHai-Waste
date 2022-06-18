@@ -16,6 +16,48 @@ import "../Global.gaml"
  
 global {
 	
+	bool CHOOSING_VILLAGE_FOR_POOL <- false;
+	bool PASS_CHOOSING_VILLAGE <- false;
+	float initial_time_for_choosing_village <- 1#mn;
+	float time_for_choosing_village <- initial_time_for_choosing_village;
+	float start_choosing_village_time;
+	int remaining_time_for_choosing_village <- 0;
+	int chosen_village <- -1;
+	
+	
+	action choose_village_for_pool {
+		if (not CHOOSING_VILLAGE_FOR_POOL) {
+			commune_money <- 0;
+			ask village {
+				commune_money <- commune_money + budget;
+				budget <- 0;
+			}
+			CHOOSING_VILLAGE_FOR_POOL <- true;
+			start_choosing_village_time <- gama.machine_time;
+		}
+	}	
+	
+	
+	reflex end_of_choosing_village when: CHOOSING_VILLAGE_FOR_POOL {
+		remaining_time_for_choosing_village <- int(time_for_choosing_village - machine_time/1000.0  +start_choosing_village_time/1000.0); 
+		if remaining_time_for_choosing_village <= 0 or chosen_village > -1 or PASS_CHOOSING_VILLAGE{
+			write "time finished " + sample(commune_budget_dispatch);
+			if (chosen_village > -1){
+				villages_order << village[chosen_village];
+				ask village[chosen_village] {
+					budget <- commune_money;
+				}
+				do before_start_turn();
+			} else {
+				commune_budget_dispatch <- true;
+			}
+			CHOOSING_VILLAGE_FOR_POOL <- false;
+			PASS_CHOOSING_VILLAGE <- false;
+			chosen_village  <- -1;
+			commune_money <- 0;
+			to_refresh <- true;
+		}
+	}
 	
 	image_file soil_pollution_smiley (float v) {
 		switch(v) {
@@ -160,8 +202,9 @@ global {
 	float chart_line_width <- 4.0;
 	
 	/********************** FONTS ************************************************/
-	// UNCOMMENT FOR THE LATEST VERSION IN GAMA int text_size -> #hidpi ? (#fullscreen ? 100 : 30) : (#fullscreen ? 60 : 15);
-	int text_size <- 30;
+	// UNCOMMENT FOR THE LATEST VERSION IN GAMA 
+	int text_size -> #hidpi ? (#fullscreen ? 100 : 30) : (#fullscreen ? 60 : 15);
+	//int text_size <- 30;
 	font ui_font -> font("Impact", text_size, #bold);
 	
 	/******************* GENERAL PARAMETERS *************************************/
@@ -237,7 +280,7 @@ global {
 				A_MATURES_HIGH::"8B",
 				A_FILTER_MAINTENANCE::"2B",
 				//A_COLLECTION_LOW::"1A",
-				A_COLLECTION_HIGH::"1B"
+				A_COLLECTION_HIGH::"1"
 		];
 	map<string, string> numbers_actions <- reverse(action_numbers);
 	
@@ -298,9 +341,11 @@ global {
 experiment Open {
 	
 	map<string, point> action_locations <- [];
+	map<int,point> village_locations <- [];
 	point next_location <- {0,0};
 	point pause_location <- {0,0};
 	string over_action;
+	int over_village;
 	
 	
 	init {
@@ -437,7 +482,7 @@ experiment Open {
 			//	draw label_icon size: 2 * shape.width / 5;
 			//}
 
-			graphics "Jauge for the turns" {
+			graphics "Timer for the turns" {
 				float y <- location.y - shape.height/4 - shape.height/8;
 				float left <- location.x - shape.width/2;
 				float right <- location.x + shape.width/2;
@@ -448,7 +493,7 @@ experiment Open {
 				draw calendar_icon at: {left + width, y} size: shape.height/6;
 			}
 			
-			graphics "Jauge for the discussion" visible: stage = PLAYER_DISCUSSION_TURN and turn <= end_of_game {
+			graphics "Timer for the discussion" visible: stage = PLAYER_DISCUSSION_TURN and turn <= end_of_game {
 				float y <- location.y + 3*shape.height/8;
 				float left <- location.x - shape.width/2;
 				float right <- location.x + shape.width/2;
@@ -458,8 +503,39 @@ experiment Open {
 				draw line({left, y}, {left + width, y}) buffer (100, 200) color: #darkgreen;
 				draw sandclock_icon /*rotate: (180 - remaining_time)*3*/ at: {left + width, y} size: shape.height / 6;
 			}
+			
+			
+			graphics "Timer for the village choice" visible: CHOOSING_VILLAGE_FOR_POOL and turn <= end_of_game {
+				float y <- location.y + 3*shape.height/8;
+				float left <- location.x - shape.width/2;
+				float right <- location.x + shape.width/2;
+				draw "" + int(remaining_time_for_choosing_village) + "s" color: #white font: ui_font anchor: #left_center at: {right + 500, y};
+				draw line({left, y}, {right, y}) buffer (100, 200) color: #white;
+				float width <- (initial_time_for_choosing_village - remaining_time_for_choosing_village) * (right - left) / (initial_time_for_choosing_village);
+				draw line({left, y}, {left + width, y}) buffer (100, 200) color: #darkgreen;
+				draw sandclock_icon /*rotate: (180 - remaining_time)*3*/ at: {left + width, y} size: shape.height / 6;
+			}	
 
-			graphics "Actions of players" visible: stage = PLAYER_ACTION_TURN {
+			graphics "Choose village" visible: CHOOSING_VILLAGE_FOR_POOL {
+				float y <- location.y + 2*shape.height/8;
+				float left <- location.x - shape.width/2;
+				float right <- location.x + shape.width/2;
+				float gap <- (right - left) /4;
+				float index <- 0.5;
+				loop s over: numbers {
+					int village_index <- int(index - 0.5);
+					bool selected <- over_village = village_index;
+					draw s size: shape.width / 10 at: {left + gap * index, y};
+					if (selected) {
+						draw circle(shape.width / 10) wireframe: true width: line_width color: #white at: {left + gap * index, y};
+					}
+					village_locations[village_index] <- {left + gap * index, y};
+					index <- index + 1;
+				}
+
+			}		
+
+			graphics "Actions of players" visible: stage = PLAYER_ACTION_TURN and !CHOOSING_VILLAGE_FOR_POOL {
 				float y <- location.y + 3*shape.height/8;
 				float left <- location.x - shape.width + shape.width / 5;
 				float right <- location.x + shape.width - shape.width / 5;
@@ -468,7 +544,7 @@ experiment Open {
 				loop s over: (sort(simulation.numbers_actions.keys, each)) {
 					village v <- villages_order[index_player];
 					bool selected <- village_actions[v] != nil and village_actions[v] contains s;
-					draw s color: selected or over_action = s ? #white : rgb(255, 255, 255, 130) font: ui_font anchor: #center at: {left + gap * index, y};
+					draw s color:  s = over_action or selected ? #white : rgb(255, 255, 255, 130) font: ui_font anchor: #center at: {left + gap * index, y};
 					if (selected) {
 						draw circle(shape.width / 10) wireframe: true width: line_width color: #white at: {left + gap * index, y};
 					}
@@ -480,8 +556,23 @@ experiment Open {
 			}
 
 			graphics "Stage" position: {0,0 } {
-				image_file icon <- (stage = PLAYER_DISCUSSION_TURN) ? discussion_icon : ((stage = PLAYER_ACTION_TURN) ? numbers[int(villages_order[index_player])] : computer_icon);
+				image_file icon;
+				if (stage = PLAYER_DISCUSSION_TURN) {
+					icon <- discussion_icon; 
+				} else if (stage = PLAYER_ACTION_TURN) {
+					if (CHOOSING_VILLAGE_FOR_POOL) {
+						icon <- tokens_icon;
+					} else {
+						icon <- numbers[int(villages_order[index_player])];
+					}
+				} else {
+					icon <- computer_icon;
+				}
 				draw icon size: shape.width / 4;
+			}
+			
+			graphics "Money" position: {0,0 } visible: CHOOSING_VILLAGE_FOR_POOL {
+				draw ""+commune_money  at: {location.x, location.y- world.shape.width/10, 0.01}  color: #gold font: ui_font anchor: #bottom_center;
 			}
 
 			graphics "Next" transparency: ((stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN) and turn <= end_of_game) ? 0 : 0.6 {
@@ -630,54 +721,71 @@ experiment Open {
 			event #mouse_move {
 				using topology(simulation) {
 					if (stage = PLAYER_ACTION_TURN) {
-						loop s over: action_locations.keys {
-							if (action_locations[s] distance_to #user_location < world.shape.width / 10) {
-								over_action <- s;
-								return;
+						if (CHOOSING_VILLAGE_FOR_POOL) {
+							loop s over: [0, 1, 2, 3] {
+								if (village_locations[s] distance_to #user_location < world.shape.width / 10) {
+									over_village <- s;
+									return;
+								}
 							}
-
+						} else {
+							loop s over: action_locations.keys {
+								if (action_locations[s] distance_to #user_location < world.shape.width / 10) {
+									over_action <- s;
+									return;
+								}
+							}
 						}
-
 					}
-
 					over_action <- nil;
+					over_village <- -1;
 				}
 
 			}
 
 			event #mouse_down {
-				using topology(simulation) {
-					if (stage = PLAYER_ACTION_TURN and over_action != nil) {
-						ask simulation {
-							write "execute " + myself.over_action;
-							do execute_action(numbers_actions[myself.over_action]);
-						}
-
-						over_action <- nil;
-						return;
+				if (stage = PLAYER_ACTION_TURN and over_action != nil) {
+					ask simulation {
+						do execute_action(numbers_actions[myself.over_action]);
 					}
+
+					over_action <- nil;
+					return;
+				}
+
+				if (CHOOSING_VILLAGE_FOR_POOL and over_village > -1) {
+					write "Chosen : " + over_village;
+					chosen_village <- over_village;
+					over_village <- -1;
+					return;
+				}
+				using topology(simulation) {
 					if (next_location distance_to #user_location) < world.shape.width / 3 {
 						if (turn > end_of_game) {
 							return;
 						}
+
 						if (stage = PLAYER_DISCUSSION_TURN) {
 							ask simulation {
 								do end_of_discussion_phase;
 							}
 
 						} else if (stage != COMPUTE_INDICATORS) {
-							ask simulation {
-								ask villages_order[index_player] {
-									do end_of_turn;
+							if (CHOOSING_VILLAGE_FOR_POOL) {
+								PASS_CHOOSING_VILLAGE <- true;
+							} else {
+								ask simulation {
+									ask villages_order[index_player] {
+										do end_of_turn;
+									}
+
 								}
 
 							}
 
 						}
 
-					}
-
-					if (pause_location distance_to #user_location) < world.shape.width / 3 {
+					} else if (pause_location distance_to #user_location) < world.shape.width / 3 {
 						ask simulation {
 							if paused or about_to_pause {
 								if (pause_started_time > 0) {
@@ -694,8 +802,6 @@ experiment Open {
 						}
 
 					}
-
-					
 
 				}
 
@@ -822,7 +928,7 @@ species stacked_chart {
 		if (!(column in data.keys)) {
 			data[column] <- [];
 		}
-	}
+	} 
 	
 	action add_element(rgb element) {
 		loop c over: data.keys {

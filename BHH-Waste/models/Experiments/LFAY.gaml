@@ -295,7 +295,7 @@ global {
 				A_MATURES_LOW::"8A",
 				A_MATURES_HIGH::"8B",
 				A_FILTER_MAINTENANCE::"2B",
-				A_COLLECTION_LOW::"1A",
+//				A_COLLECTION_LOW::"1A",
 				A_COLLECTION_HIGH::"1B"
 		];
 		numbers_actions <- reverse(action_numbers);
@@ -673,12 +673,12 @@ experiment Open {
 				draw simulation.paused or about_to_pause ? play_icon : pause_icon at: pause_location size: shape.width / 4;
 			}
 
-			event "1" {
-				ask simulation {
-					do execute_action(A_COLLECTION_LOW);
-				}
-
-			}
+//			event "1" {
+//				ask simulation {
+//					do execute_action(A_COLLECTION_LOW);
+//				}
+//
+//			}
 
 			event "a" {
 				ask simulation {
