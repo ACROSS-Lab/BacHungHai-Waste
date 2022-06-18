@@ -227,6 +227,7 @@ global {
 	geometry show_players_button;
 	geometry show_map_button;
 	bool show_geography <- false;
+	bool show_player_numbers <- true;
 
 	/********************** COLORS ************************************************/
 	
@@ -866,13 +867,15 @@ experiment Open {
 			species village visible: (!show_geography and (stage != COMPUTE_INDICATORS)) {
 				draw shape color: color border: #black width: 2;
 			}
-			species village visible: !show_geography and (stage != COMPUTE_INDICATORS) transparency: 0.6{
-				draw circle(world.shape.width/8) 	color: #black at: shape.centroid;
+			species village transparency: 0.4  visible: ((show_geography or stage = COMPUTE_INDICATORS) and show_player_numbers) or !show_geography and (stage != COMPUTE_INDICATORS) {
+				int divider <- (show_geography or stage = COMPUTE_INDICATORS) ? 16 : 8;
+				draw circle(world.shape.width/divider)	color: stage != COMPUTE_INDICATORS ? #black :color at: shape.centroid + {0,0,0.4};
 			}
 			
-			species village visible: !show_geography and (stage != COMPUTE_INDICATORS){
+			species village visible: ((show_geography or stage = COMPUTE_INDICATORS) and show_player_numbers) or !show_geography and (stage != COMPUTE_INDICATORS)  {
 				float size <- world.shape.width/10;
-				draw numbers[int(self)] at: shape.centroid size: world.shape.width/15;
+				draw numbers[int(self)] at: shape.centroid + {0,0,0.5} size: world.shape.width/15;
+				if (show_geography or stage = COMPUTE_INDICATORS) {draw shape-(shape-40) color: color;}
 			}
 			
 			species village visible: !show_geography and (stage != COMPUTE_INDICATORS){
