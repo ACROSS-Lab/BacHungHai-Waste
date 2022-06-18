@@ -23,6 +23,9 @@ global {
 	float start_choosing_village_time;
 	int remaining_time_for_choosing_village <- 0;
 	int chosen_village <- -1;
+	int number_of_days_passed <- 0;
+	float w_height <- shape.height;
+	float w_width <- shape.width;
 	
 	
 	action choose_village_for_pool {
@@ -323,6 +326,7 @@ global {
 		// TODO remove this at some point ! 
 	time_for_discussion <- initial_time_for_discussion;			
 	pause_started_time <- 0.0;
+	number_of_days_passed <- number_of_days_passed + 1;
 	}
 	
 	reflex end_of_discussion_turn when:  stage = PLAYER_DISCUSSION_TURN {
@@ -383,7 +387,7 @@ experiment Open {
 		light #ambient intensity: ambient_intensity;
 		camera #default locked: true;
 				
-		 graphics "overlay" position: {-simulation.shape.width/4, 0} transparency: 0 {
+		 graphics "overlay" position: {-w_width/4, 0} transparency: 0 {
 				float y_gap <- 0.3;
 				float x_gap <- 0.1;
 				float x_init <- 0.1;
@@ -391,49 +395,49 @@ experiment Open {
 				float x <- x_init;
 				
 
-				draw plant_icon at: {x* shape.width,y*shape.height} size: x_gap*shape.width * 2;
+				draw plant_icon at: {x* w_width,y*shape.height} size: x_gap*w_width * 2;
 				x <- x + 2* x_gap;
 				loop c over: reverse(greens) {
-					draw square(x_gap*shape.width) color: c at: {x* shape.width,y*shape.height};
+					draw square(x_gap*w_width) color: c at: {x*w_width,y*w_height};
 					x <- x + x_gap;
 				}
 
 				y <- y + y_gap;
 				x <- x_init;
-				draw water_icon at: {x* shape.width,y*shape.height} size: x_gap*shape.width *2;
+				draw water_icon at: {x* w_width,y*w_height} size: x_gap*w_width*2;
 				x <- x + 2* x_gap;
 				loop c over: blues {
-					draw square(x_gap*shape.width) color: c at: {x* shape.width,y*shape.height};
+					draw square(x_gap*w_width) color: c at: {x*w_width,y*w_height};
 					x <- x + x_gap;
 				}
 
 				/*****/				
 				y <- y + y_gap;
 				x <- x_init;
-				draw garbage_icon at: {x* shape.width,y*shape.height} size: x_gap*shape.width * 2;
+				draw garbage_icon at: {x*w_width,y*w_height} size: x_gap*w_width * 2;
 				x <- x + 2 * x_gap;
-				draw square(x_gap*shape.width) color: landfill_color at: {x* shape.width,y*shape.height};
+				draw square(x_gap*w_width) color: landfill_color at: {x* w_width,y*w_height};
 				x <- x + 2 * x_gap;
-				draw city_icon at: {x* shape.width,y*shape.height} size: x_gap*shape.width * 2;
+				draw city_icon at: {x*w_width,y*w_height} size: x_gap*w_width * 2;
 				x <- x + 2*x_gap;
-				draw square(x_gap*shape.width) color: city_color at: {x* shape.width,y*shape.height};
+				draw square(x_gap*w_width) color: city_color at: {x* w_width,y*w_height};
 
 				x <- 1.2;
 				y <- 0.3;
-				show_map_button <- square(shape.width/2) at_location {x* shape.width,y*shape.height};
-				draw image_file("../../includes/icons/map.png") at: {x* shape.width,y*shape.height} size: shape.width/2;
+				show_map_button <- square(w_width/2) at_location {x*w_width,y*w_height};
+				draw image_file("../../includes/icons/map.png") at: {x*w_width,y*w_height} size: w_width/2;
 				y <- y + 0.5;
-				show_players_button <- square(shape.width/2) at_location {x* shape.width,y*shape.height};
-				draw image_file("../../includes/icons/players.png") at: {x* shape.width,y*shape.height} size: shape.width/2;
+				show_players_button <- square(w_width/2) at_location {x*w_width,y*w_height};
+				draw image_file("../../includes/icons/players.png") at: {x*w_width,y*w_height} size: w_width/2;
 			}
 			
 			event #mouse_down {
 				
 				using topology(simulation) {
-					if (show_map_button.centroid distance_to #user_location) < world.shape.width / 3{
+					if (show_map_button.centroid distance_to #user_location) < w_width / 3{
 						write "Show map";
 						show_geography <- true;
-					} else if (show_players_button.centroid distance_to #user_location) < world.shape.width / 3{
+					} else if (show_players_button.centroid distance_to #user_location) < w_width / 3{
 						write "Show players";
 						show_geography <- false;
 					}
@@ -443,92 +447,92 @@ experiment Open {
 
 		}
 		/********************** CENTER DISPLAY *************************************************/
-		display "Controls" type: opengl axes: false background: timer_background  {
+		display "Controls" type: opengl axes: false background: map_background  {
 			
 			camera #default locked: true;				
 
 			light #ambient intensity: ambient_intensity;
 			
-			graphics "Turn#" position: {-simulation.shape.width, 0} {
-				int value <- min(last(days_with_ecolabel_year),365);
-				float total <- 365.0;
-				float radius <- shape.width/2;
-				float start_angle <-  - 180.0;
-				float arc_angle <- (value * 180/total);
-				draw arc(radius, start_angle + arc_angle/2, arc_angle) color: #green  ;
-				start_angle <- start_angle + arc_angle;
-				arc_angle <- (total - value) * 180/total;
-				draw arc(radius, start_angle + arc_angle/2, arc_angle) color: #darkred ;
-				draw schedule_icon size: shape.width / 6;
-				draw ""+value at:{location.x, location.y- radius/2, 0.01} color: #white font: ui_font anchor: #bottom_center;
-			}
-			
-			
-			graphics "Score#" position: {simulation.shape.width, 0}{
-				int value <- days_with_ecolabel;
+			graphics "Turn#" position: {-w_width, 0} {
+				int value <- number_of_days_passed;
 				float total <- 365.0 * end_of_game;
-				float radius <- shape.width/2;
+				float radius <- w_width/2;
 				float start_angle <-  - 180.0;
 				float arc_angle <- (value * 180/total);
 				draw arc(radius, start_angle + arc_angle/2, arc_angle) color: #green;
 				start_angle <- start_angle + arc_angle;
 				arc_angle <- (total - value) * 180/total;
 				draw arc(radius, start_angle + arc_angle/2, arc_angle) color: #darkred;
-				draw score_icon size: shape.width / 6;
-				draw ""+value  at: {location.x, location.y- radius/2, 0.01}  color: #gold font: ui_font anchor: #bottom_center;
+				draw calendar_icon size: w_width / 6;
+				draw ""+value + " [" +value div 365 + "]" at: {location.x, location.y- radius/2, 0.01}  color: #white font: ui_font anchor: #bottom_center;
+			}
+			
+			
+			graphics "Score#" position: {w_width, 0}{
+				int value <- days_with_ecolabel;
+				float total <- 365.0 * end_of_game;
+				float radius <- w_width/2;
+				float start_angle <-  - 180.0;
+				float arc_angle <- (value * 180/total);
+				draw arc(radius, start_angle + arc_angle/2, arc_angle) color: #green;
+				start_angle <- start_angle + arc_angle;
+				arc_angle <- (total - value) * 180/total;
+				draw arc(radius, start_angle + arc_angle/2, arc_angle) color: #darkred;
+				draw score_icon size: w_width / 6;
+				draw ""+value  at: {location.x, location.y- radius/2, 0.01}  color: #white font: ui_font anchor: #bottom_center;
 			}
 		
 			
-			//graphics "Label" position: {0,-simulation.shape.height/3} transparency: last(days_with_ecolabel_year) >= 183 ? 0 : 0.8 {
+			//graphics "Label" position: {0,-w_height/3} transparency: last(days_with_ecolabel_year) >= 183 ? 0 : 0.8 {
 			//	draw label_icon size: 2 * shape.width / 5;
 			//}
 
-			graphics "Timer for the turns" {
-				float y <- location.y - shape.height/4 - shape.height/8;
-				float left <- location.x - shape.width/2;
-				float right <- location.x + shape.width/2;
-				draw ""+turn  color: #white font: ui_font anchor: #left_center at: {right + 500, y};
-				draw line({left, y}, {right, y}) buffer (100, 200) color: #white;
-				float width <- cycle_count * shape.width / (simulation.end_of_game * 365);
-				draw line({left, y}, {left + width, y}) buffer (100, 200) color: #darkred;
-				draw calendar_icon at: {left + width, y} size: shape.height/6;
-			}
+//			graphics "Timer for the turns" {
+//				float y <- location.y - shape.height/4 - shape.height/8;
+//				float left <- location.x - shape.width/2;
+//				float right <- location.x + shape.width/2;
+//				draw ""+turn  color: #white font: ui_font anchor: #left_center at: {right + 500, y};
+//				draw line({left, y}, {right, y}) buffer (100, 200) color: #white;
+//				float width <- cycle_count * shape.width / (simulation.end_of_game * 365);
+//				draw line({left, y}, {left + width, y}) buffer (100, 200) color: #darkred;
+//				draw calendar_icon at: {left + width, y} size: shape.height/6;
+//			}
 			
 			graphics "Timer for the discussion" visible: stage = PLAYER_DISCUSSION_TURN and turn <= end_of_game {
-				float y <- location.y + 3*shape.height/8;
-				float left <- location.x - shape.width/2;
-				float right <- location.x + shape.width/2;
+				float y <- location.y + w_height/5;
+				float left <- location.x - w_width/2;
+				float right <- location.x + w_width/2;
 				draw "" + int(remaining_time) + "s" color: #white font: ui_font anchor: #left_center at: {right + 500, y};
 				draw line({left, y}, {right, y}) buffer (100, 200) color: #white;
 				float width <- (initial_time_for_discussion - remaining_time) * (right - left) / (initial_time_for_discussion);
 				draw line({left, y}, {left + width, y}) buffer (100, 200) color: #darkgreen;
-				draw sandclock_icon /*rotate: (180 - remaining_time)*3*/ at: {left + width, y} size: shape.height / 6;
+				draw sandclock_icon /*rotate: (180 - remaining_time)*3*/ at: {left + width, y} size: w_height / 6;
 			}
 			
 			
 			graphics "Timer for the village choice" visible: CHOOSING_VILLAGE_FOR_POOL and turn <= end_of_game {
-				float y <- location.y + 3*shape.height/8;
-				float left <- location.x - shape.width/2;
-				float right <- location.x + shape.width/2;
+				float y <- location.y + 3*w_height/8;
+				float left <- location.x - w_width/2;
+				float right <- location.x + w_width/2;
 				draw "" + int(remaining_time_for_choosing_village) + "s" color: #white font: ui_font anchor: #left_center at: {right + 500, y};
 				draw line({left, y}, {right, y}) buffer (100, 200) color: #white;
 				float width <- (initial_time_for_choosing_village - remaining_time_for_choosing_village) * (right - left) / (initial_time_for_choosing_village);
 				draw line({left, y}, {left + width, y}) buffer (100, 200) color: #darkgreen;
-				draw sandclock_icon /*rotate: (180 - remaining_time)*3*/ at: {left + width, y} size: shape.height / 6;
+				draw sandclock_icon /*rotate: (180 - remaining_time)*3*/ at: {left + width, y} size: w_height / 6;
 			}	
 
 			graphics "Choose village" visible: CHOOSING_VILLAGE_FOR_POOL {
-				float y <- location.y + 2*shape.height/8;
-				float left <- location.x - shape.width/2;
-				float right <- location.x + shape.width/2;
+				float y <- location.y + w_height/5;
+				float left <- location.x - w_width/2;
+				float right <- location.x + w_width/2;
 				float gap <- (right - left) /4;
 				float index <- 0.5;
 				loop s over: numbers {
 					int village_index <- int(index - 0.5);
 					bool selected <- over_village = village_index;
-					draw s size: shape.width / 10 at: {left + gap * index, y};
+					draw s size: w_width / 10 at: {left + gap * index, y};
 					if (selected) {
-						draw circle(shape.width / 10) wireframe: true width: line_width color: #white at: {left + gap * index, y};
+						draw circle(w_width / 10) wireframe: true width: line_width color: #white at: {left + gap * index, y};
 					}
 					village_locations[village_index] <- {left + gap * index, y};
 					index <- index + 1;
@@ -537,9 +541,9 @@ experiment Open {
 			}		
 
 			graphics "Actions of players" visible: stage = PLAYER_ACTION_TURN and !CHOOSING_VILLAGE_FOR_POOL {
-				float y <- location.y + 3*shape.height/8;
-				float left <- location.x - shape.width + shape.width / 5;
-				float right <- location.x + shape.width - shape.width / 5;
+				float y <- location.y + w_height/5;
+				float left <- location.x - w_width + w_width / 5;
+				float right <- location.x + w_width - w_width / 5;
 				float gap <- (right - left) / length(simulation.numbers_actions);
 				float index <- 0.5;
 				loop s over: (sort(simulation.numbers_actions.keys, each)) {
@@ -547,7 +551,7 @@ experiment Open {
 					bool selected <- village_actions[v] != nil and village_actions[v] contains s;
 					draw s color:  s = over_action or selected ? #white : rgb(255, 255, 255, 130) font: ui_font anchor: #center at: {left + gap * index, y};
 					if (selected) {
-						draw circle(shape.width / 10) wireframe: true width: line_width color: #white at: {left + gap * index, y};
+						draw circle(w_width / 10) wireframe: true width: line_width color: #white at: {left + gap * index, y};
 					}
 
 					action_locations[s] <- {left + gap * index, y};
@@ -556,7 +560,7 @@ experiment Open {
 
 			}
 
-			graphics "Stage" position: {0,0 } {
+			graphics "Stage"  {
 				image_file icon;
 				if (stage = PLAYER_DISCUSSION_TURN) {
 					icon <- discussion_icon; 
@@ -569,20 +573,20 @@ experiment Open {
 				} else {
 					icon <- computer_icon;
 				}
-				draw icon size: shape.width / 4;
+				draw icon size: w_width / 3 at:  {location.x, location.y-w_height/8};
 			}
 			
 			graphics "Money" position: {0,0 } visible: CHOOSING_VILLAGE_FOR_POOL {
-				draw ""+commune_money  at: {location.x, location.y- world.shape.width/10, 0.01}  color: #gold font: ui_font anchor: #bottom_center;
+				draw ""+commune_money  at: {location.x, location.y- w_width/4, 0.01}  color: #gold font: ui_font anchor: #bottom_center;
 			}
 
 			graphics "Next" transparency: ((stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN) and turn <= end_of_game) ? 0 : 0.6 {
-				next_location <- {location.x + shape.width / 2, location.y};
-				draw next_icon at: next_location size: shape.width / 4;
+				next_location <- {location.x + w_width /2,  location.y-w_height/8};
+				draw next_icon at: next_location size: w_width / 4;
 			}
 
 			graphics "Play Pause" visible: turn <= end_of_game {
-				pause_location <- {location.x - shape.width / 2, location.y};
+				pause_location <- {location.x - w_width / 2, location.y- w_height/8};
 				draw simulation.paused or about_to_pause ? play_icon : pause_icon at: pause_location size: shape.width / 4;
 			}
 			
@@ -724,14 +728,14 @@ experiment Open {
 					if (stage = PLAYER_ACTION_TURN) {
 						if (CHOOSING_VILLAGE_FOR_POOL) {
 							loop s over: [0, 1, 2, 3] {
-								if (village_locations[s] distance_to #user_location < world.shape.width / 10) {
+								if (village_locations[s] distance_to #user_location < w_width / 10) {
 									over_village <- s;
 									return;
 								}
 							}
 						} else {
 							loop s over: action_locations.keys {
-								if (action_locations[s] distance_to #user_location < world.shape.width / 10) {
+								if (action_locations[s] distance_to #user_location < w_width / 10) {
 									over_action <- s;
 									return;
 								}
@@ -761,7 +765,7 @@ experiment Open {
 					return;
 				}
 				using topology(simulation) {
-					if (next_location distance_to #user_location) < world.shape.width / 3 {
+					if (next_location distance_to #user_location) < w_width / 3 {
 						if (turn > end_of_game) {
 							return;
 						}
@@ -786,7 +790,7 @@ experiment Open {
 
 						}
 
-					} else if (pause_location distance_to #user_location) < world.shape.width / 3 {
+					} else if (pause_location distance_to #user_location) < w_width / 3 {
 						ask simulation {
 							if paused or about_to_pause {
 								if (pause_started_time > 0) {
@@ -869,18 +873,18 @@ experiment Open {
 			}
 			species village transparency: 0.4  visible: ((show_geography or stage = COMPUTE_INDICATORS) and show_player_numbers) or !show_geography and (stage != COMPUTE_INDICATORS) {
 				int divider <- (show_geography or stage = COMPUTE_INDICATORS) ? 16 : 8;
-				draw circle(world.shape.width/divider)	color: stage != COMPUTE_INDICATORS ? #black :color at: shape.centroid + {0,0,0.4};
+				draw circle(w_width/divider)	color: stage != COMPUTE_INDICATORS ? #black :color at: shape.centroid + {0,0,0.4};
 			}
 			
 			species village visible: ((show_geography or stage = COMPUTE_INDICATORS) and show_player_numbers) or !show_geography and (stage != COMPUTE_INDICATORS)  {
-				float size <- world.shape.width/10;
-				draw numbers[int(self)] at: shape.centroid + {0,0,0.5} size: world.shape.width/15;
+				float size <- w_width/10;
+				draw numbers[int(self)] at: shape.centroid + {0,0,0.5} size: w_width/15;
 				if (show_geography or stage = COMPUTE_INDICATORS) {draw shape-(shape-40) color: color;}
 			}
 			
 			species village visible: !show_geography and (stage != COMPUTE_INDICATORS){
 				int i <- int(self);
-				float size <- world.shape.width/20;
+				float size <- w_width/20;
 				float spacing <- size * 1;
 				float smiley_vertical_spacing <- size/2;
 				float smiley_horizontal_spacing <- smiley_vertical_spacing;
@@ -916,13 +920,13 @@ experiment Open {
 
 
 species stacked_chart {
-	point location <- {world.shape.width/2 ,world.shape.height/2};
+	point location <- {w_width/2 ,w_height/2};
 	map<string, map<rgb,float>> data <- [];
 	map<string, image_file> icons <- [];
 	map<string, bool> inf_or_sup ;
 	map<string, bool> draw_smiley;
-	float chart_width <- 2* world.shape.width;
-	float chart_height <- world.shape.height;
+	float chart_width <- 2* w_width;
+	float chart_height <- w_height;
 	float max_value;
 	float desired_value;
 	
