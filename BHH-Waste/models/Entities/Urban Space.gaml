@@ -22,11 +22,13 @@ species urban_area {
 	aspect default {
 		int nb <- length(geometry_history) - 1;
 		loop i from: 0 to: nb {
-			float val <- 100 + (i/end_of_game) * 50; 
-			draw geometry_history[i] /*depth: 1*/  color: rgb(val,val,val);
-		}
+			float val <- 75 + (i/end_of_game) * 150; 
+			geometry g <- geometry_history[i];
+//			geometry g2 <- g - 20;
+			draw g  color: rgb(val,val,val) at: g.location + {0,0,i*0.1};
+//			draw (g - g2) color: #black;
 	}
-}
+}}
 species house {
 	bool inhabitant_to_create <- false;
 	int create_inhabitant_day <- -1;

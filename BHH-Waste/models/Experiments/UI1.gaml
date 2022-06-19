@@ -1,6 +1,6 @@
 /**
-* Name: LFAY
-* The model used for the LFAY 2-days demonstrations  
+* Name: U1
+* The model used for the main demonstrations
 * Author: A. Drogoul
 * 
 * This model has been designed using resources (icons) from Flaticon.com
@@ -227,8 +227,10 @@ global {
 	
 	
 	/********************* SPECIAL FOR LEGENDS AND THE MAP ****************************/
-	geometry show_players_button;
-	geometry show_map_button;
+	point show_players_button;
+	point show_map_button;
+	bool show_players_selected;
+	bool show_map_selected;
 	bool show_geography <- false;
 	bool show_player_numbers <- true;
 
@@ -263,7 +265,7 @@ global {
 	image_file play_icon <- image_file("../../includes/icons/play.png");
 	image_file pause_icon <- image_file("../../includes/icons/pause.png");
 	image_file garbage_icon <- image_file("../../includes/icons/garbage.png");
-	image_file city_icon <- image_file("../../includes/icons/office.png");
+	image_file city_icon <- image_file("../../includes/icons/city.png");
 	image_file score_icon <- image_file("../../includes/icons/trophy.png");
 	image_file schedule_icon <- image_file("../../includes/icons/schedule.png");
 	image_file danger_icon <- image_file("../../includes/icons/danger.png");
@@ -422,25 +424,34 @@ experiment Open {
 				x <- x + 2*x_gap;
 				draw square(x_gap*w_width) color: city_color at: {x* w_width,y*w_height};
 
-				x <- 1.2;
+				x <- 1;
 				y <- 0.3;
-				show_map_button <- square(w_width/2) at_location {x*w_width,y*w_height};
-				draw image_file("../../includes/icons/map.png") at: {x*w_width,y*w_height} size: w_width/2;
-				y <- y + 0.5;
-				show_players_button <- square(w_width/2) at_location {x*w_width,y*w_height};
-				draw image_file("../../includes/icons/players.png") at: {x*w_width,y*w_height} size: w_width/2;
+				show_map_button <-  {x*w_width,y*w_height};
+				draw square(w_width/4) color: show_map_selected ?  rgb(134,151,162) : #black at: show_map_button border: #black width: 5;
+				draw image_file("../../includes/icons/map.png") at: show_map_button size: w_width/4;
+				y <- y + 0.4;
+				show_players_button <- {x*w_width,y*w_height};
+				draw square(w_width/4) color: show_players_selected ?  rgb(134,151,162) : #black at: show_players_button border: #black width: 5;
+				draw image_file("../../includes/icons/players.png") at: show_players_button size: w_width/4;
+			}
+			
+			event #mouse_move {
+				using topology(simulation) {
+					show_map_selected <- (show_map_button distance_to #user_location) < w_width / 4;
+					show_players_selected <- (show_players_button distance_to #user_location) < w_width / 4;
+				}
+			}
+			
+			event #mouse_exit {
+					show_map_selected <- false;
+					show_players_selected <- false;
 			}
 			
 			event #mouse_down {
-				
-				using topology(simulation) {
-					if (show_map_button.centroid distance_to #user_location) < w_width / 3{
-						write "Show map";
-						show_geography <- true;
-					} else if (show_players_button.centroid distance_to #user_location) < w_width / 3{
-						write "Show players";
-						show_geography <- false;
-					}
+				if (show_map_selected) {
+					show_geography <- true;
+				} else if (show_players_selected) {
+					show_geography <- false;
 				}
 			}
 
@@ -765,7 +776,7 @@ experiment Open {
 					return;
 				}
 				using topology(simulation) {
-					if (next_location distance_to #user_location) < w_width / 3 {
+					if (next_location distance_to #user_location) < w_width / 5 {
 						if (turn > end_of_game) {
 							return;
 						}
@@ -790,7 +801,7 @@ experiment Open {
 
 						}
 
-					} else if (pause_location distance_to #user_location) < w_width / 3 {
+					} else if (pause_location distance_to #user_location) < w_width / 5 {
 						ask simulation {
 							if paused or about_to_pause {
 								if (pause_started_time > 0) {
