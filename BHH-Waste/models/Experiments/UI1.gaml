@@ -251,7 +251,7 @@ global {
 	
 	image_file label_icon <- image_file("../../includes/icons/eco.png");
 	image_file disabled_label_icon <- image_file("../../includes/icons/eco_disabled.png");
-	image_file soil_icon <- image_file("../../includes/icons/soil.png");
+	image_file soil_icon <- image_file("../../includes/icons/waste.png");
 	image_file tokens_icon <- image_file("../../includes/icons/tokens.png");
 	image_file water_icon <- image_file("../../includes/icons/water.png");
 	image_file plant_icon <- image_file("../../includes/icons/plant.png");
