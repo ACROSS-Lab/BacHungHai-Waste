@@ -206,8 +206,8 @@ global {
 	
 	/********************** FONTS ************************************************/
 	// UNCOMMENT FOR THE LATEST VERSION IN GAMA 
-	int text_size -> #hidpi ? (#fullscreen ? 100 : 30) : (#fullscreen ? 60 : 15);
-	//int text_size <- 30;
+	//int text_size -> #hidpi ? (#fullscreen ? 100 : 30) : (#fullscreen ? 60 : 15);
+	int text_size <- 30;
 	font ui_font -> font("Impact", text_size, #bold);
 	
 	/******************* GENERAL PARAMETERS *************************************/
@@ -921,7 +921,71 @@ experiment Open {
 			
 		}
 		
+display aaa fullscreen: 1 type:opengl background:map_background axes: false {
+			
+			light #ambient intensity: ambient_intensity;
+			
+			camera 'default' location: {3213.0194,2444.8489,6883.1631} target: {3213.0194,2444.7288,0.0};
+			
+			
 
+
+			species plot visible: stage = COMPUTE_INDICATORS or show_geography{
+				draw shape color: greens[world.production_class_current(self)] border: false;
+			}
+			species canal visible: stage = COMPUTE_INDICATORS or show_geography{
+				draw shape buffer (20,10) color: blues[world.water_pollution_class_current(self)] ;
+			}
+			species local_landfill visible: stage = COMPUTE_INDICATORS or show_geography{
+				draw  shape depth: waste_quantity / 100.0 color: landfill_color;
+			}
+			species communal_landfill visible: stage = COMPUTE_INDICATORS or show_geography{
+				draw  shape depth: waste_quantity / 100.0 color: landfill_color;
+			}
+			species urban_area visible: stage = COMPUTE_INDICATORS or show_geography;
+			
+			
+			species village visible: (!show_geography and (stage != COMPUTE_INDICATORS)) {
+				draw shape color: color border: #black width: 2;
+			}
+			species village transparency: 0.4  visible: ((show_geography or stage = COMPUTE_INDICATORS) and show_player_numbers) or !show_geography and (stage != COMPUTE_INDICATORS) {
+				int divider <- (show_geography or stage = COMPUTE_INDICATORS) ? 16 : 8;
+				draw circle(w_width/divider)	color: stage != COMPUTE_INDICATORS ? #black :color at: shape.centroid + {0,0,0.4};
+			}
+			
+			species village visible: ((show_geography or stage = COMPUTE_INDICATORS) and show_player_numbers) or !show_geography and (stage != COMPUTE_INDICATORS)  {
+				float size <- w_width/10;
+				draw numbers[int(self)] at: shape.centroid + {0,0,0.5} size: w_width/15;
+				if (show_geography or stage = COMPUTE_INDICATORS) {draw shape-(shape-40) color: color;}
+			}
+			
+			species village visible: !show_geography and (stage != COMPUTE_INDICATORS){
+				int i <- int(self);
+				float size <- w_width/20;
+				float spacing <- size * 1;
+				float smiley_vertical_spacing <- size/2;
+				float smiley_horizontal_spacing <- smiley_vertical_spacing;
+				float smiley_size <- 2*size/3;
+				float x <- shape.centroid.x - spacing;
+				float y <- shape.centroid.y - spacing;
+				draw soil_icon at: {x, y} size: size;
+				draw world.soil_pollution_class(self) at: {x - smiley_horizontal_spacing , y + smiley_vertical_spacing} size: smiley_size;
+				
+				x <- x + 2*spacing;
+				
+				draw water_icon at: {x,  y} size: size;
+				draw world.water_pollution_class(self) at: {x + smiley_horizontal_spacing , y + smiley_vertical_spacing} size: smiley_size;
+				
+				y <- y + 2*spacing;
+				draw tokens_icon at: {x,  y} size: size;
+				draw ""+budget at: {x, y + spacing} color: #white depth: 5 font: ui_font anchor: #bottom_center;
+				
+				x <- x - 2*spacing;
+				draw plant_icon at: {x, y} size: size;
+				draw world.production_class(self) at: {x - smiley_horizontal_spacing , y + smiley_vertical_spacing} size: smiley_size;
+			}
+			
+		}
 
 	}
 
