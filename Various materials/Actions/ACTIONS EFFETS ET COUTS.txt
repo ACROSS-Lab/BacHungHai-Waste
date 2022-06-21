@@ -47,3 +47,25 @@ YEARLY ACTIONS (can be chosen every year)
 - Drain and dredge
 - Fallow
 - Support manure
+
+
+
+
+
+
+
+NUMEROTATION DES ACTIONS
+
+1 = Equipe de collecte
+2a = Installation de filtrages
+2b = Entretien des installations de filtrage
+3 = Installation de poubelles dans les champs
+4 = Subventions pour la réduction de l'usage des pesticides
+5a = Collecte trimestrielle dans les canaux (weak)
+5b = Collecte trimestrielle dans les canaux (strong)
+6 = Sensibilisation de la population 
+7a = Drainer et draguer (weak)
+7b = Drainer et draguer (strong)
+8a = Achat d'engrais (weak)
+8b = Achat d'engrais (strong)
+9 = Jachère
