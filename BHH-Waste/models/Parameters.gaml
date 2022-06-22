@@ -66,8 +66,8 @@ global {
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
 	
 	float convertion_from_l_water_waste_to_kg_solid_waste <- 1.0;
-	float min_production_ecolabel <- 2750.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
-	float max_pollution_ecolabel <- 315000.0;// maximum threshold of production to get ecolabel, unities are converted in 
+	float min_production_ecolabel <- 3000.0;// minimum threshold of production to get EcoLabel, unities are tons of rice produced
+	float max_pollution_ecolabel <- 300000.0;// maximum threshold of production to get ecolabel, unities are converted in 
 	
 	/************* PARAMETERS RELATED TO DEMOGRAPHIC AND ECONOMIC ASPECT  ***************/
 	
@@ -174,7 +174,7 @@ global {
 	}
 	int token_pesticide_reducing <- 40; // 
 	float impact_pesticide_reducing_production  <- 0.1 min: 0.0 max: 1.0; //decrease of the agricultural production
-	float impact_pesticide_reducing_waste  <- 0.60 min: 0.0 max: 1.0; //decrease water waste production from farmers
+	float impact_pesticide_reducing_waste  <- 0.70 min: 0.0 max: 1.0; //decrease water waste production from farmers
 	
 	int token_implement_fallow <- 40; //per year
 	float part_of_plots_in_fallow  <- 0.30 min: 0.0 max: 1.0; //decrease the agricultural production
@@ -189,7 +189,7 @@ global {
 	
 	
 	int token_installation_dumpholes <- 40; //
-	float impact_installation_dumpholes  <- 0.60 min: 0.0 max: 1.0; //decreasse the quantity of solid waste produced by people outside of urban areas (farmers)
+	float impact_installation_dumpholes  <- 0.70 min: 0.0 max: 1.0; //decreasse the quantity of solid waste produced by people outside of urban areas (farmers)
 	
 	
 	

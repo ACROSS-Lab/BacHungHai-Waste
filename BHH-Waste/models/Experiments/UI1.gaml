@@ -121,16 +121,16 @@ global {
 			switch(w) {
 				match_between [0, 199] {return smileys[4];}
 				match_between [200, 499] {return smileys[3];}
-				match_between [500, 899] {return smileys[2];}
-				match_between [900, 1149] {return smileys[1];}
+				match_between [500, 799] {return smileys[2];}
+				match_between [800, 1149] {return smileys[1];}
 				default {return smileys[0];}
 			}
 		} else {
 			switch(w) {
 				match_between [0, 299] {return smileys[4];}
 				match_between [300, 699] {return smileys[3];}
-				match_between [700, 1099] {return smileys[2];}
-				match_between [1100, 1499] {return smileys[1];}
+				match_between [700, 999] {return smileys[2];}
+				match_between [1000, 1499] {return smileys[1];}
 				default {return smileys[0];}
 			}
 		}
