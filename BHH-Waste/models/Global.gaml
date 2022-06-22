@@ -51,7 +51,7 @@ global {
 	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display" ;
 	bool display_water_waste <- false parameter:"Display water waste" category: "Display" ;
 	bool display_total_waste <- false parameter:"Display total waste" category: "Display" ;
-	bool display_water_flow <- false;
+	bool display_water_flow <- true;
 	bool draw_territory <- false;
 	
 	map<string,string> to_english;

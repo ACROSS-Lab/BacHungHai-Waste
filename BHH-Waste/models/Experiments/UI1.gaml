@@ -26,6 +26,8 @@ global {
 	int number_of_days_passed <- 0;
 	float w_height <- shape.height;
 	float w_width <- shape.width;
+	bool display_water_flow <- false;
+	
 	
 	
 	action choose_village_for_pool {
@@ -44,7 +46,6 @@ global {
 	reflex end_of_choosing_village when: CHOOSING_VILLAGE_FOR_POOL {
 		remaining_time_for_choosing_village <- int(time_for_choosing_village - machine_time/1000.0  +start_choosing_village_time/1000.0); 
 		if remaining_time_for_choosing_village <= 0 or chosen_village > -1 or PASS_CHOOSING_VILLAGE{
-			write "time finished " + sample(commune_budget_dispatch);
 			if (chosen_village > -1){
 				villages_order << village[chosen_village];
 				ask village[chosen_village] {
@@ -227,10 +228,12 @@ global {
 	
 	
 	/********************* SPECIAL FOR LEGENDS AND THE MAP ****************************/
-	point show_players_button;
+	//point show_players_button;
+	point show_waterflow_button;
 	point show_map_button;
-	bool show_players_selected;
+	//bool show_players_selected;
 	bool show_map_selected;
+	bool show_waterflow_selected;
 	bool show_geography <- false;
 	bool show_player_numbers <- true;
 
@@ -340,9 +343,50 @@ global {
 	}
 	
 
+	// DISPLAY OF WATER DYNAMICS
+	graph canal_network_<- nil;
+	int number_to_add <- 10;
+	map<point, list<point>> possible_targets;
+	
+	reflex add_waste when: display_water_flow and every(25 #cycle){
+		if canal_network_ = nil {
+			canal_network_ <- directed(as_edge_graph(canal));
+			list<point> sources <- canal_network_.vertices where (empty(canal_network_ in_edges_of each));
+			list<point> targets <- canal_network_.vertices where (empty(canal_network_ out_edges_of each));
+			loop s over: sources {
+				list<point> ts <- [];
+				loop t over: targets {
+					if (canal_network_ path_between(s,t)) != nil {
+						ts << t;
+					}
+				}
+				
+				possible_targets[s] <- ts;
+			}
+		}
+		
+		
+		create waste_on_canal number: number_to_add {
+			location <- one_of(possible_targets.keys);
+			target <- one_of (possible_targets[location]);
+		}
+	}
 }
 
 
+species waste_on_canal skills: [moving]{
+	point target;
+	point prev_loc <- copy(location);
+	
+	reflex move {
+	 	speed <- ((int(duration) = 0) ? 50 : ( int(duration))) / step;
+		prev_loc <- copy(location);
+		do goto target: target on:canal_network_ ;
+		if location = target or location = prev_loc{
+			do die;
+		}
+	}
+}
 
 
 experiment Open {
@@ -356,7 +400,7 @@ experiment Open {
 	
 	
 	init {
-		gama.pref_display_slice_number <- 128;
+		gama.pref_display_slice_number <- 12; /* 128 too slow ! */
 		gama.pref_display_show_rotation <- false;
 		gama.pref_display_show_errors <- false;
 		gama.pref_errors_display <- false;
@@ -428,30 +472,30 @@ experiment Open {
 				y <- 0.3;
 				show_map_button <-  {x*w_width,y*w_height};
 				draw square(w_width/4) color: show_map_selected ?  rgb(134,151,162) : #black at: show_map_button border: #black width: 5;
-				draw image_file("../../includes/icons/map.png") at: show_map_button size: w_width/4;
+				draw image_file(show_geography ? "../../includes/icons/map_off.png":"../../includes/icons/map_on.png") at: show_map_button size: w_width/4;
 				y <- y + 0.4;
-				show_players_button <- {x*w_width,y*w_height};
-				draw square(w_width/4) color: show_players_selected ?  rgb(134,151,162) : #black at: show_players_button border: #black width: 5;
-				draw image_file("../../includes/icons/players.png") at: show_players_button size: w_width/4;
+				show_waterflow_button <- {x*w_width,y*w_height};
+				draw square(w_width/4) at: show_waterflow_button border: #black width: 5;
+				draw image_file(display_water_flow ? "../../includes/icons/waterflow_off.png":"../../includes/icons/waterflow_on.png") at: show_waterflow_button size: w_width/4;
 			}
 			
 			event #mouse_move {
 				using topology(simulation) {
 					show_map_selected <- (show_map_button distance_to #user_location) < w_width / 4;
-					show_players_selected <- (show_players_button distance_to #user_location) < w_width / 4;
+					show_waterflow_selected <- (show_waterflow_button distance_to #user_location) < w_width / 4;
 				}
 			}
 			
 			event #mouse_exit {
 					show_map_selected <- false;
-					show_players_selected <- false;
+					//show_waterfall_selected <- false;
 			}
 			
 			event #mouse_down {
 				if (show_map_selected) {
-					show_geography <- true;
-				} else if (show_players_selected) {
-					show_geography <- false;
+					show_geography <- !show_geography;
+				} else if (show_waterflow_selected) {
+					display_water_flow <- !display_water_flow;
 				}
 			}
 
@@ -770,7 +814,6 @@ experiment Open {
 				}
 
 				if (CHOOSING_VILLAGE_FOR_POOL and over_village > -1) {
-					write "Chosen : " + over_village;
 					chosen_village <- over_village;
 					over_village <- -1;
 					return;
@@ -861,14 +904,16 @@ experiment Open {
 			
 			camera 'default' location: {3213.0194,2444.8489,6883.1631} target: {3213.0194,2444.7288,0.0};
 			
-			
+			species waste_on_canal visible: (stage = COMPUTE_INDICATORS or show_geography) and display_water_flow  {
+					draw sphere(20) color: #lightblue;
+			}
 
 
 			species plot visible: stage = COMPUTE_INDICATORS or show_geography{
 				draw shape color: greens[world.production_class_current(self)] border: false;
 			}
 			species canal visible: stage = COMPUTE_INDICATORS or show_geography{
-				draw shape buffer (20,10) color: blues[world.water_pollution_class_current(self)] ;
+				draw shape buffer (20,10) color: display_water_flow ? #darkblue : blues[world.water_pollution_class_current(self)]  ;
 			}
 			species local_landfill visible: stage = COMPUTE_INDICATORS or show_geography{
 				draw  shape depth: waste_quantity / 100.0 color: landfill_color;
