@@ -186,7 +186,7 @@ species village {
 						if (p1 + p2 + p3 + p4) > token_install_filter_for_homes_construction {
 							int to_remove <- token_install_filter_for_homes_construction - (p1 + p2 + p3 + p4) ;
 							loop while: to_remove > 0 and (p1 + p2 + p3 + p4) > 0{
-								int i <- rnd(3);
+								int i <- rnd(6);
 								int c <- min(1, to_remove, ps[i] );
 								to_remove <- to_remove - c;
 								ps[i] <- ps[i] - c;
