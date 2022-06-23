@@ -164,7 +164,7 @@ global {
 	
 	int token_install_filter_for_homes_construction <- 240 ; //construction
 	int token_install_filter_for_homes_maintenance <- 10; //per year	
-	list<float> treatment_facility_decrease <- [0.10,0.25,0.35, 0.55, 0.65, 0,75] ; // impact of treatement facility for year 1, year 2, and after. Comprised between 0 and 1
+	list<float> treatment_facility_decrease <- [0.10,0.35,0.55, 0.75] ; // impact of treatement facility for year 1, year 2, and after. Comprised between 0 and 1
 	
 	int token_sensibilization <- 20; //each time
 	float impact_sensibilization <- 1.0 min: 0.0 max: 1.0; //add this value to the environmental sensibility of people leaving in urban areas
