@@ -281,23 +281,7 @@ global {
 			}
 		}
 		global_chart <- stacked_chart[0];
-			action_numbers <- [
-				A_DUMPHOLES::"3",
-				A_PESTICIDES::"4",
-				//A_END_TURN::"",
-				A_SENSIBILIZATION::"6",
-				A_FILTERS::"2A",
-				A_COLLECTIVE_LOW::"5A",
-				A_COLLECTIVE_HIGH::"5B",
-				A_DRAIN_DREDGES_HIGH::"7B",
-				A_DRAIN_DREDGES_LOW::"7A",
-				A_FALLOW::"9",
-				A_MATURES_LOW::"8A",
-				A_MATURES_HIGH::"8B",
-				A_FILTER_MAINTENANCE::"2B",
-//				A_COLLECTION_LOW::"1A",
-				A_COLLECTION_HIGH::"1B"
-		];
+		
 		numbers_actions <- reverse(action_numbers);
 
 	}
@@ -682,119 +666,119 @@ experiment Open {
 
 			event "a" {
 				ask simulation {
-					do execute_action(A_COLLECTION_HIGH);
+					do execute_action(A_1);
 				}
 
 			}
 
 			event "2" {
 				ask simulation {
-					do execute_action(A_FILTERS);
+					do execute_action(A_2a);
 				}
 
 			}
 
 			event "b" {
 				ask simulation {
-					do execute_action(A_FILTER_MAINTENANCE);
+					do execute_action(A_2b);
 				}
 
 			}
 
 			event "3" {
 				ask simulation {
-					do execute_action(A_DUMPHOLES);
+					do execute_action(A_3);
 				}
 
 			}
 
 			event "c" {
 				ask simulation {
-					do execute_action(A_DUMPHOLES);
+					do execute_action(A_3);
 				}
 
 			}
 
 			event "4" {
 				ask simulation {
-					do execute_action(A_PESTICIDES);
+					do execute_action(A_4);
 				}
 
 			}
 
 			event "d" {
 				ask simulation {
-					do execute_action(A_PESTICIDES);
+					do execute_action(A_4);
 				}
 
 			}
 
 			event "5" {
 				ask simulation {
-					do execute_action(A_COLLECTIVE_LOW);
+					do execute_action(A_5a);
 				}
 
 			}
 
 			event "e" {
 				ask simulation {
-					do execute_action(A_COLLECTIVE_HIGH);
+					do execute_action(A_5b);
 				}
 
 			}
 
 			event "6" {
 				ask simulation {
-					do execute_action(A_SENSIBILIZATION);
+					do execute_action(A_6);
 				}
 
 			}
 
 			event "f" {
 				ask simulation {
-					do execute_action(A_SENSIBILIZATION);
+					do execute_action(A_6);
 				}
 
 			}
 
 			event "7" {
 				ask simulation {
-					do execute_action(A_DRAIN_DREDGES_LOW);
+					do execute_action(A_7a);
 				}
 
 			}
 
 			event "g" {
 				ask simulation {
-					do execute_action(A_DRAIN_DREDGES_HIGH);
+					do execute_action(A_7b);
 				}
 
 			}
 
 			event "8" {
 				ask simulation {
-					do execute_action(A_MATURES_LOW);
+					do execute_action(A_8a);
 				}
 
 			}
 
 			event "h" {
 				ask simulation {
-					do execute_action(A_MATURES_HIGH);
+					do execute_action(A_8b);
 				}
 
 			}
 
 			event "9" {
 				ask simulation {
-					do execute_action(A_FALLOW);
+					do execute_action(A_9);
 				}
 
 			}
 
 			event "i" {
 				ask simulation {
-					do execute_action(A_FALLOW);
+					do execute_action(A_9);
 				}
 
 			}

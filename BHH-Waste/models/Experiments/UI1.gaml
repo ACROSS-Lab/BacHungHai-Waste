@@ -11,7 +11,7 @@
 model UI1
 
 
-
+ 
 import "../Global.gaml"
  
 global {
@@ -159,7 +159,7 @@ global {
 		}
 		list the_list <- village_actions[villages_order[index_player]];
 		if the_list != nil {
-				the_list <+ action_numbers[action_name];
+				the_list <+ action_name;
 		}
 
 	} 
@@ -273,26 +273,6 @@ global {
 	image_file schedule_icon <- image_file("../../includes/icons/schedule.png");
 	image_file danger_icon <- image_file("../../includes/icons/danger.png");
 
-
-	map<string, string> action_numbers <- [
-				A_DUMPHOLES::"3",
-				A_PESTICIDES::"4",
-				//A_END_TURN::"",
-				A_SENSIBILIZATION::"6",
-				A_FILTERS::"2A",
-				A_COLLECTIVE_LOW::"5A",
-				A_COLLECTIVE_HIGH::"5B",
-				A_DRAIN_DREDGES_HIGH::"7B",
-				A_DRAIN_DREDGES_LOW::"7A",
-				A_FALLOW::"9",
-				A_MATURES_LOW::"8A",
-				A_MATURES_HIGH::"8B",
-				A_FILTER_MAINTENANCE::"2B",
-				//A_COLLECTION_LOW::"1A",
-				A_COLLECTION_HIGH::"1"
-		];
-	map<string, string> numbers_actions <- reverse(action_numbers);
-	
 	
 	stacked_chart global_chart;
 	int cycle_count;
@@ -468,7 +448,7 @@ experiment Open {
 				x <- x + 2*x_gap;
 				draw square(x_gap*w_width) color: city_color at: {x* w_width,y*w_height};
 
-				x <- 1;
+				x <- 1.0;
 				y <- 0.3;
 				show_map_button <-  {x*w_width,y*w_height};
 				draw square(w_width/4) color: show_map_selected ?  rgb(134,151,162) : #black at: show_map_button border: #black width: 5;
@@ -596,12 +576,13 @@ experiment Open {
 			}		
 
 			graphics "Actions of players" visible: stage = PLAYER_ACTION_TURN and !CHOOSING_VILLAGE_FOR_POOL {
+				
 				float y <- location.y + w_height/5;
 				float left <- location.x - w_width + w_width / 5;
 				float right <- location.x + w_width - w_width / 5;
-				float gap <- (right - left) / length(simulation.numbers_actions);
+				float gap <- (right - left) / length(actions_name_without_end);
 				float index <- 0.5;
-				loop s over: (sort(simulation.numbers_actions.keys, each)) {
+				loop s over: (sort(actions_name_without_end, each)) {
 					village v <- villages_order[index_player];
 					bool selected <- village_actions[v] != nil and village_actions[v] contains s;
 					draw s color:  s = over_action or selected ? #white : rgb(255, 255, 255, 130) font: ui_font anchor: #center at: {left + gap * index, y};
@@ -654,119 +635,119 @@ experiment Open {
 
 			event "1" {
 				ask simulation {
-					do execute_action(A_COLLECTION_HIGH);
+					do execute_action(A_1);
 				}
 
 			}
 
 			event "2" {
 				ask simulation {
-					do execute_action(A_FILTERS);
+					do execute_action(A_2a);
 				}
 
 			}
 
 			event "b" {
 				ask simulation {
-					do execute_action(A_FILTER_MAINTENANCE);
+					do execute_action(A_2b);
 				}
 
 			}
 
 			event "3" {
 				ask simulation {
-					do execute_action(A_DUMPHOLES);
+					do execute_action(A_3);
 				}
 
 			}
 
 			event "c" {
 				ask simulation {
-					do execute_action(A_DUMPHOLES);
+					do execute_action(A_3);
 				}
 
 			}
 
 			event "4" {
 				ask simulation {
-					do execute_action(A_PESTICIDES);
+					do execute_action(A_4);
 				}
 
 			}
 
 			event "d" {
 				ask simulation {
-					do execute_action(A_PESTICIDES);
+					do execute_action(A_4);
 				}
 
 			}
 
 			event "5" {
 				ask simulation {
-					do execute_action(A_COLLECTIVE_LOW);
+					do execute_action(A_5a);
 				}
 
 			}
 
 			event "e" {
 				ask simulation {
-					do execute_action(A_COLLECTIVE_HIGH);
+					do execute_action(A_5b);
 				}
 
 			}
 
 			event "6" {
 				ask simulation {
-					do execute_action(A_SENSIBILIZATION);
+					do execute_action(A_6);
 				}
 
 			}
 
 			event "f" {
 				ask simulation {
-					do execute_action(A_SENSIBILIZATION);
+					do execute_action(A_6);
 				}
 
 			}
 
 			event "7" {
 				ask simulation {
-					do execute_action(A_DRAIN_DREDGES_LOW);
+					do execute_action(A_7b);
 				}
 
 			}
 
 			event "g" {
 				ask simulation {
-					do execute_action(A_DRAIN_DREDGES_HIGH);
+					do execute_action(A_7b);
 				}
 
 			}
 
 			event "8" {
 				ask simulation {
-					do execute_action(A_MATURES_LOW);
+					do execute_action(A_8a);
 				}
 
 			}
 
 			event "h" {
 				ask simulation {
-					do execute_action(A_MATURES_HIGH);
+					do execute_action(A_8b);
 				}
 
 			}
 
 			event "9" {
 				ask simulation {
-					do execute_action(A_FALLOW);
+					do execute_action(A_9);
 				}
 
 			}
 
 			event "i" {
 				ask simulation {
-					do execute_action(A_FALLOW);
+					do execute_action(A_9);
 				}
 
 			}
@@ -806,7 +787,7 @@ experiment Open {
 			event #mouse_down {
 				if (stage = PLAYER_ACTION_TURN and over_action != nil) {
 					ask simulation {
-						do execute_action(numbers_actions[myself.over_action]);
+						do execute_action(myself.over_action);
 					}
 
 					over_action <- nil;

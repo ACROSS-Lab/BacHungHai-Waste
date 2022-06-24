@@ -419,69 +419,68 @@ global {
 		if ((action_name in actions_name_short)){// and not(actions_name_short[action_name] in village[index_player].actions_done_this_year) and not(actions_name_short[action_name] in village[index_player].actions_done_total)) {
 			bool is_ok <- false;
 			switch action_name {
-				match A_DRAIN_DREDGES_LOW{
+				match A_7a{
 					ask villages_order[index_player] {
 						is_ok <- drain_dredge(false, false);
 					}
 				} 
-				match A_DRAIN_DREDGES_HIGH{
+				match A_7b{
 					ask villages_order[index_player] {
 						is_ok <-  drain_dredge(true, false);
 					}
 				} 
-				match A_FILTERS {
-					write "install filters";
+				match A_2a {
 					ask villages_order[index_player] {
 						is_ok <-  install_facility_treatment_for_homes() ;
 					}
 				}
-				match A_SENSIBILIZATION {
+				match A_6 {
 					ask villages_order[index_player] {
 						is_ok <-  sensibilization() ;
 					}
 				}
-				match A_COLLECTIVE_HIGH {
+				match A_5b {
 					ask villages_order[index_player] {
 						is_ok <-  trimestrial_collective_action(true, false) ;
 					}
 				}
-				match A_COLLECTIVE_LOW {
+				match A_5a {
 					ask villages_order[index_player] {
 						is_ok <-  trimestrial_collective_action(false, false) ;
 					}
 				}
-				match A_COLLECTION_HIGH {
+				match A_1 {
 					ask villages_order[index_player] {
 						is_ok <-  increase_collection_team_frequency_action() ;
 					}
 				}
 			
-				match A_PESTICIDES {
+				match A_4 {
 					ask villages_order[index_player] {
 						is_ok <-  pesticide_reducing() ;
 					}
 				}
-				match A_MATURES_HIGH {
+				match A_8b {
 					ask villages_order[index_player] {
 						is_ok <-  support_manure_buying(true, false) ;
 					}
 				}
-				match A_MATURES_LOW {
+				match A_8a {
 					ask villages_order[index_player] {
 						is_ok <-  support_manure_buying(false, false) ;
 					}
 				}
-				match A_FALLOW {
+				match A_9 {
 					ask villages_order[index_player] {
 						is_ok <-  implement_fallow();
 					}
 				}
-				match A_DUMPHOLES {
+				match A_3 {
 					ask villages_order[index_player] {
 						is_ok <-  install_dumpholes() ;
 					}
 				}
-				match A_FILTER_MAINTENANCE {
+				match A_2b {
 					ask villages_order[index_player] {
 						is_ok <-  install_fiter_maintenance() ;
 					}

@@ -44,10 +44,30 @@ global {
 	
 	string SELECT_A_VILLAGE_TO_RECEIVE_COMMUNE_BUDGET <- "Choose a village to receive the remaining budget";
 	string PLAYER_SELECTED <- "Village selected";
-	
-	string A_DUMPHOLES <- "Dumpholes";
-	string A_PESTICIDES <- "Pesticides";
 	string A_END_TURN <- "End of turn";
+	
+	string A_1 <- "1";
+	string A_2a <- "2a";
+	string A_2b <- "2b";
+	string A_3 <- "3";
+	string A_4 <- "4";
+	string A_5a <- "5a";
+	string A_5b <- "5b";
+	string A_6 <- "6";
+	string A_7a <- "7a";
+	string A_7b <- "7b";
+	string A_8a <- "8a";
+	string A_8b <- "8b";
+	string A_9 <- "9";
+	
+	list<string> actions_name_without_end<- [A_1, A_2a, A_2b, A_3, A_4, A_5a, 
+ 		A_5b, A_6, A_7a, A_7b, A_8a, A_8b, A_9];
+	
+	
+	list<string> actions_name_short<- actions_name_without_end + [A_END_TURN];
+	
+	/*string A_DUMPHOLES <- "Dumpholes";
+	string A_PESTICIDES <- "Pesticides";
 	string A_SENSIBILIZATION <- "Sensibilization";
 	string A_FILTERS <- "Filters for every home";
 	string A_COLLECTIVE_LOW <- "Trimestrial collective action low";
@@ -60,12 +80,12 @@ global {
 	string A_FILTER_MAINTENANCE <- "Maintenance for filters";
 	
 	string A_COLLECTION_HIGH <- "Collection teams high";
+	*/
 	
 	
-	
- 	list<string> actions_name_short<- [A_DUMPHOLES, A_PESTICIDES, A_SENSIBILIZATION, A_FILTERS, A_COLLECTIVE_HIGH, A_COLLECTIVE_LOW, 
+ 	/*list<string> actions_name_short<- [A_DUMPHOLES, A_PESTICIDES, A_SENSIBILIZATION, A_FILTERS, A_COLLECTIVE_HIGH, A_COLLECTIVE_LOW, 
  		A_DRAIN_DREDGES_HIGH, A_DRAIN_DREDGES_LOW, A_FALLOW, A_MATURES_HIGH, A_MATURES_LOW, A_FILTER_MAINTENANCE, A_COLLECTION_HIGH, A_END_TURN
- 	];
+ 	];*/
  	
  	
  	// ==============	MOBILE 
@@ -94,7 +114,7 @@ global {
 	[
 		
 		[	
-			'id'::A_COLLECTION_HIGH,
+			'id'::A_1,
 			'name'::'Công tác thu gom rác thải',
 		   	'cost'::40,
 			'once_per_game'::false,
@@ -103,7 +123,7 @@ global {
 			'description'::"↓Chất thải rắn từ khu đô thị"
 		],
 		[
-			'id'::A_DUMPHOLES,
+			'id'::A_3,
 			'name'::'Xây dựng các bể thu gom vỏ và bao bì thuốc sâu',
 			'cost'::40,
 			'once_per_game'::true,
@@ -112,7 +132,7 @@ global {
 			'description'::"↓Chất thải rắn từ ruộng\n"
 		],
 		[
-			'id'::A_PESTICIDES,
+			'id'::A_4,
 			'cost'::40,
 			'name'::'Hỗ trợ nông dân để giảm thiểu sự dụng thuốc trừ sâu',
 			'once_per_game'::true,
@@ -121,7 +141,7 @@ global {
 			'description'::"↓Nước thải từ ruộng\n↓Sản lượng nông nghiệp "
 		],
 		[
-			'id'::A_SENSIBILIZATION,
+			'id'::A_3,
 			'name'::'Tổ chức sự kiện hưởng ứng phân loại rác',
 			'cost'::20,
 			'once_per_game'::false,
@@ -130,7 +150,7 @@ global {
 			'description'::"↓Chất thải rắn trên mặt đất\n"
 		],
 		[
-			'id'::A_DRAIN_DREDGES_LOW,
+			'id'::A_7a,
 			'name'::'Nạo vét',
 			'cost'::25,
 			'once_per_game'::false,
@@ -139,7 +159,7 @@ global {
 			"description"::"↓Nước thải trong các kênh\n"
 		],
 		[	
-			'id'::A_DRAIN_DREDGES_HIGH,
+			'id'::A_7b,
 			'name'::'Nạo vét',
 			'cost'::50,
 			'once_per_game'::false,
@@ -148,7 +168,7 @@ global {
 			'description'::"↓Nước thải trong các kênh\n"
 		],
 		[
-			'id'::A_MATURES_LOW,
+			'id'::A_8a,
 			'name'::'Hỗ trợ mua phân bón',
 			'cost'::20,
 			'once_per_game'::false,
@@ -157,7 +177,7 @@ global {
 			'description'::"↑Sản lượng nông nghiệp\n↑Nước thải"
 		],
 		[
-			'id'::A_MATURES_HIGH,
+			'id'::A_8b,
 			'name'::'Hỗ trợ mua phân bón',
 			'cost'::40,
 			'once_per_game'::false,
@@ -166,7 +186,7 @@ global {
 			'description'::"↑Sản lượng nông nghiệp\n↑Nước thải"
 		],
 		[
-			'id'::A_FALLOW,
+			'id'::A_9,
 			'name'::'Dừng canh tác 1/3 đất nông nghiệp',
 			'cost'::40,
 			'once_per_game'::false,
@@ -175,7 +195,7 @@ global {
 			'description'::"↓Ô nhiễm dất\n↓Sản lượng nông nghiệp\n↑Trong vòng một năm"
 		],
 		[
-			'id'::A_COLLECTIVE_LOW,
+			'id'::A_5a,
 			'name'::'Huy động vớt rác ở các kênh theo kỳ',
 			'cost'::20,
 			'once_per_game'::false,
@@ -184,7 +204,7 @@ global {
 			'description'::"↓Chất thải rắn trong các kênh\n"
 		],
 		[
-			'id'::A_COLLECTIVE_HIGH,
+			'id'::A_5b,
 			'name'::'Huy động vớt rác ở các kênh theo kỳ',
 			'cost'::35,
 			'once_per_game'::false,
@@ -193,7 +213,7 @@ global {
 			'description'::"↓Chất thải rắn trong các kênh\n"
 		],
 		[
-			'id'::A_FILTERS,
+			'id'::A_2a,
 			'name'::'Hệ thống xử lý nước thải cho các hộ',
    			'cost'::0,
 			'once_per_game'::true,
@@ -202,7 +222,7 @@ global {
 			'description'::"↓Nước thải từ các hộ\n"
 		],
 		[
-			'id'::A_FILTER_MAINTENANCE,
+			'id'::A_2b,
 			'name'::'Bảo trì hệ thống xử lý nước thải',
 			'cost'::10,
 			'once_per_game'::false,

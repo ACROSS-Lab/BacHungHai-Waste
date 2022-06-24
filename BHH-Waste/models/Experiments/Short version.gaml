@@ -10,7 +10,7 @@ model Shortversion
 
 import "LFAY.gaml"
 
-
+ 
 global {
 	string langage <- "Français";
 	int end_of_game <- 9; // Number of turns of the game (1 turn = 1 year)

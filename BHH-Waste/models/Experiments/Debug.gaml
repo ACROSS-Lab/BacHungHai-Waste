@@ -39,7 +39,7 @@ experiment simulation_without_players parent: base_debug type: gui {
 		[ACT_IMPLEMENT_FALLOW::nil, ACT_INSTALL_DUMPHOLES::nil], //year 2
 		[ACT_SUPPORT_MANURE::[LEVEL::"high"], ACT_SENSIBILIZATION::nil], //year 3
 		[ACT_DRAIN_DREDGE::[LEVEL::"low"]], //year 4
-		[ACTION_COLLECTIVE_ACTION::[LEVEL::"high"]], //year 5
+		//[ACTION_COLLECTIVE_ACTION::[LEVEL::"high"]], //year 5
 		map<string,map>([]),//year 6
 		map<string,map>([]), //year 7
 		map<string,map>([])//year 8

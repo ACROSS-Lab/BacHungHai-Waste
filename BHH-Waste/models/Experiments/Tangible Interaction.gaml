@@ -17,11 +17,11 @@ global skills: [music] {
 	
 	bool confirmation_popup <- false;
 	bool no_starting_actions <- true;
-	
+	bool play_beep <- false;
 	
 
 	
-	int webcam <- 0;
+	int webcam <- 1;
 	float delay_between_actions<- 1#s;
 	int image_width <- 640;
 	int image_height <- 480;
@@ -38,11 +38,33 @@ global skills: [music] {
 			latest_action <- "";
 		}
 		if result != latest_action and result = A_END_TURN {
-			bool is_ok <- play_sound("../../includes/BEEP.wav");
+			if play_beep {bool is_ok <- play_sound("../../includes/BEEP.wav");}
 			ready_action <- false;
 			latest_action <- result;
 			last_action_time <- machine_time;
 			do end_of_discussion_phase;	
+		}
+	}
+	
+	
+	reflex detect_interaction_choosing_village when: CHOOSING_VILLAGE_FOR_POOL {
+		string result <- string(decodeQR(image_width, image_height,webcam));
+		if result = nil { 
+			ready_action <- true;
+		}
+		if ready_action and machine_time > (last_action_time + (1000.0 * 2 * delay_between_actions)) {
+			latest_action <- "";
+		}
+		if result != latest_action {
+			if result in  ["1","2","3","4"] {
+				if play_beep {bool is_ok <- play_sound("../../includes/BEEP.wav");}
+				ready_action <- false;
+				latest_action <- result;
+				last_action_time <- machine_time;
+				chosen_village <- int(result) - 1;
+			} else if result = END_OF_TURN {
+				PASS_CHOOSING_VILLAGE <- true;
+			}
 		}
 	}
 	

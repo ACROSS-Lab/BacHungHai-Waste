@@ -105,13 +105,13 @@ species plot {
 		if does_implement_fallow {
 			current_productivity <- 0.0;
 			current_production <- 0.0;
-			write name + " does_implement_fallow";
+	//		write name + " does_implement_fallow";
 		} else {
 			current_productivity <- base_productivity;
 			if not empty(productitivy_improvement) {
 				current_productivity <- current_productivity * (1 + first(productitivy_improvement));
 				
-				write name + " current_productivity improved";
+		//		write name + " current_productivity improved";
 			}
 			if use_more_manure_strong {
 				current_productivity <- current_productivity * (1 + impact_support_manure_buying_production_strong);
