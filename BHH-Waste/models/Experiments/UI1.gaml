@@ -213,7 +213,7 @@ global {
 	bool use_timer_for_discussion <- true;
 	
 	bool timer_just_for_warning <- false; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player - for the moment, some issue with the automatic change of step
-	float initial_time_for_discussion <- 2 #mn const: true; // time before the player turns
+	float initial_time_for_discussion <- 2.5 #mn const: true; // time before the player turns
 	//float time_for_discussion <- initial_time_for_discussion;
 	
 	
