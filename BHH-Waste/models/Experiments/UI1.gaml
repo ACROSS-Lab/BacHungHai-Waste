@@ -194,7 +194,7 @@ global {
 	
 	/********************** POSITIONS AND SIZES ****************************/
 	
-	float chart_line_width -> #fullscreen ? 4.0 : 4.0;
+	float chart_line_width -> #fullscreen ? 10.0 : 4.0;
 	
 	/********************** FONTS ************************************************/
 	// UNCOMMENT FOR THE LATEST VERSION IN GAMA 
@@ -214,7 +214,7 @@ global {
 	bool use_timer_for_discussion <- true;
 	
 	bool timer_just_for_warning <- false; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player - for the moment, some issue with the automatic change of step
-	float initial_time_for_discussion <- 2 #mn const: true; // time before the player turns
+	float initial_time_for_discussion <- 2.5 #mn const: true; // time before the player turns
 	//float time_for_discussion <- initial_time_for_discussion;
 	
 	
@@ -407,15 +407,6 @@ experiment Open {
 		light #ambient intensity: ambient_intensity;
 		camera #default locked: true;
 		
-		
-//		graphics "Frame (new version of GAMA)" refresh: true border: #white size: {w_width*2, 1} position: {-w_width/4,0}{
-//		}
-		
-//	graphics "Frame (old version of GAMA)" refresh: true visible: show_geography {
-			//draw rectangle(w_width, 0.7*w_height) at_location {0.35*w_width + w_width/2 - w_width/6, w_height/2 + w_width/12} border: #white width: 5 color: legend_background;
-//		}
-		
-				
 		 graphics "overlay" position: {0, 0} transparency: 0 refresh: true visible: show_geography {
 				float y_gap <- 0.25;
 				float x_gap <- 0.1;
@@ -458,7 +449,6 @@ experiment Open {
 				float x <- 0.0;
 				float y <- 0.25;
 				show_map_button <-  circle(w_width/8) at_location {x*w_width,y*w_height};
-				//draw show_map_button color: (show_map_selected ?  #white : #black) ;
 				draw image_file(show_geography ? "../../includes/icons/button_map_off.png":"../../includes/icons/button_map_on.png") color: show_map_selected ? selected_color:unselected_color size: w_width/4 at: {x*w_width,y*w_height} ;
 			}
 			
@@ -466,7 +456,6 @@ experiment Open {
 				float x <- 0.0;
 				float y <- 0.65;
 				show_waterflow_button <- circle(w_width/8) at_location {x*w_width,y*w_height};
-				//draw show_waterflow_button color: (show_waterflow_selected ?  #white : #black);
 				draw image_file(display_water_flow ? "../../includes/icons/button_waterflow_off.png":"../../includes/icons/button_waterflow_on.png") color: show_waterflow_selected ? selected_color:unselected_color size: w_width/4 at: {x*w_width,y*w_height} ;
 			}
 			
@@ -496,7 +485,6 @@ experiment Open {
 		display "Controls" type: opengl axes: false background: map_background  {
 			
 			camera #default locked: true;				
-
 			light #ambient intensity: ambient_intensity;
 			
 			graphics "Turn#" position: {-w_width, 0} {
@@ -509,13 +497,6 @@ experiment Open {
 				start_angle <- start_angle + arc_angle;
 				arc_angle <- (total - value) * 180/total;
 				draw arc(radius, start_angle + arc_angle/2, arc_angle) color: #darkred;
-//				start_angle <-  -180;
-//				float aa <- 180/end_of_game;
-//				loop i from: 0 to: end_of_game-1 {
-//					draw arc(radius, start_angle + aa*i + aa/2, aa) color: #black wireframe: true width: 5;
-//				}
-				
-				
 				draw calendar_icon size: w_width / 6;
 				draw ""+value + " [" +value div 365 + "]" at: {location.x, location.y- radius/2, 0.01}  color: #white font: ui_font anchor: #bottom_center;
 			}
@@ -556,7 +537,7 @@ experiment Open {
 				draw line({left, y}, {right, y}) buffer (100, 200) color: #white;
 				float width <- (initial_time_for_choosing_village - remaining_time_for_choosing_village) * (right - left) / (initial_time_for_choosing_village);
 				draw line({left, y}, {left + width, y}) buffer (100, 200) color: #darkgreen;
-				draw sandclock_icon /*rotate: (180 - remaining_time)*3*/ at: {left + width, y} size: w_height / 6;
+				draw sandclock_icon at: {left + width, y} size: w_height / 6;
 			}	
 
 			graphics "Choose village" visible: CHOOSING_VILLAGE_FOR_POOL {
@@ -868,44 +849,50 @@ experiment Open {
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #orange marker: false thickness: chart_line_width ;
 				data WATER_WASTE_POLLUTION value: rows_list(matrix([time_step,total_water_pollution_values])) color: rgb(0,159,233) marker: false thickness: chart_line_width;
 		 		data TOTAL_POLLUTION value:rows_list(matrix([time_step,total_pollution_values])) color:rgb(130,86,157) marker: false thickness: chart_line_width;
-		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: #white marker: false thickness: chart_line_width;
+		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: is_pollution_ok ? #white : #red marker: false thickness: chart_line_width;
 			}
 			
 			chart PRODUCTION type: xy position:{0, 0.5}  size:{1, 0.5} background: legend_background color: #white y_range:[0,6000] visible: !show_chart series_label_position: none y_tick_values_visible: false x_tick_values_visible: true x_tick_line_visible: true title_visible: false x_label: ""{
-				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: is_production_ok ? #green : #red thickness: chart_line_width marker: false; 
-				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: chart_line_width color: #white marker: false; 
+				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: #green thickness: chart_line_width marker: false; 
+				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: chart_line_width color: is_production_ok ? #white : #red marker: false; 
 			}	
 			
 			 graphics "overlay" position: {0, 0} transparency: 0 refresh: true visible: !show_chart {
-				float y_gap <- 0.15;
 				float x_gap <- 0.05;
-				float x_init <- -0.15;
+				float x_init <- x_gap * 2;
 				float icon_size <-  w_height / 8;
-				float y <- 0.2;
+				float y <- 0.9;
 				float x <- x_init;
+				float y2 <- 0.9;
 				
+				draw square(x_gap*w_width) color: rgb(130,86,157) at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
 				draw danger_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: rgb(130,86,157) at: {x*w_width,y*w_height};
-				y <- y + y_gap;
-				x <- x_init;
+		
+				//y <- y + y_gap;
+				//x <- x_init;
+				draw square(x_gap*w_width) color: #orange at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
 				draw soil_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: #orange at: {x*w_width,y*w_height};
-				y <- y + y_gap;
-				x <- x_init;
-				
+
+				//y <- y + y_gap;
+				//x <- x_init;
+				draw square(x_gap*w_width) color: rgb(0,159,233) at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
 				draw water_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: rgb(0,159,233) at: {x*w_width,y*w_height};
-				y <- y + y_gap;
-				x <- x_init;
-				
+
+				//y <- y + y_gap;
+				//x <- x_init;
+				draw square(x_gap*w_width) color: #green at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
 				draw plant_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: #green at: {x*w_width,y*w_height};
-				y <- y + y_gap;
-				x <- x_init;
+
+				//y <- y + y_gap;
+				//x <- x_init;
 
 
 
