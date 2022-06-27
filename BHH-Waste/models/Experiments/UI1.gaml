@@ -16,19 +16,114 @@ import "../Global.gaml"
  
 global {
 	
+	
+	/********************** COLORS ************************************************/
+	
+	list<rgb> greens <- palette(rgb(237, 248, 233), rgb(186, 228, 179), rgb(116, 196, 118), rgb(49, 163, 84), rgb(0, 109, 44));
+	list<rgb> blues <- reverse(palette(rgb(239, 243, 255), rgb(189, 215, 231), rgb(107, 174, 214), rgb(49, 130, 189), rgb(8, 81, 156)));
+	list<rgb> reds <- palette(rgb(254, 229, 217), rgb(252, 174, 145), rgb(251, 106, 74), rgb(222, 45, 38), rgb(165, 15, 21));
+	rgb landfill_color <- #chocolate;
+	rgb city_color <- #gray;
+	rgb selected_color <- rgb(255,255,255);
+	rgb unselected_color <- rgb(200,200,200,0.7);
+	list<rgb> village_color <- [rgb(207, 41, 74), rgb(255, 201, 0), rgb(49, 69, 143), rgb(62, 184, 99)]; // color for the 4 villages
+	
+	/********************** PROPORTION OF THE DISPLAYS ****************************/
+	
+	int small_vertical_prop <- 1000;
+	int large_vertical_prop <- 3500;
+	int small_horizontal_prop <- 1500;
+	int large_horizontal_prop <- 3000;
+	
+	/********************** POSITIONS AND SIZES ****************************/
+	
+	float chart_line_width -> #fullscreen ? 10.0 : 4.0;
+	float w_height <- shape.height;
+	float w_width <- shape.width;
+	
+	/********************** FONTS ************************************************/
+	// UNCOMMENT FOR THE LATEST VERSION IN GAMA 
+	int text_size -> #hidpi ? (#fullscreen ? 100 : 30) : (#fullscreen ? 60 : 15);
+	font ui_font -> font("Impact", text_size, #bold);
+	
+	/******************* GENERAL PARAMETERS *************************************/
+	
+	bool confirmation_popup <- false;
+	bool no_starting_actions <- true;
+	bool about_to_pause <- false;
 	bool CHOOSING_VILLAGE_FOR_POOL <- false;
 	bool PASS_CHOOSING_VILLAGE <- false;
+	bool display_water_flow <- false;
+	stacked_chart global_chart;
+	int chosen_village <- -1;
+	int number_of_days_passed <- 0;
+	map<village,list<string>> village_actions <- nil;
+		
+	/****************** DISPLAY OF WATER DYNAMICS *****************************/ 
+	
+	graph canal_network_<- nil;
+	int number_to_add <- 10;
+	map<point, list<point>> possible_targets;
+	
+	/******************* TIMERS *************************************/
+	
+	bool use_timer_player_turn <- false;	
+	bool use_timer_for_discussion <- true;
+	bool timer_just_for_warning <- false; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player - for the moment, some issue with the automatic change of step
+	float initial_time_for_discussion <- 2.5 #mn const: true; // time before the player turns
 	float initial_time_for_choosing_village <- 1#mn;
 	float time_for_choosing_village <- initial_time_for_choosing_village;
 	float start_choosing_village_time;
 	int remaining_time_for_choosing_village <- 0;
-	int chosen_village <- -1;
-	int number_of_days_passed <- 0;
-	float w_height <- shape.height;
-	float w_width <- shape.width;
-	bool display_water_flow <- false;
+	float pause_started_time <- 0.0;
 	
+	/********************* MANAGEMENT OF BUTTONS ****************************/
 	
+	geometry show_waterflow_button;
+	geometry show_map_button;
+	geometry show_chart_button;
+	bool show_map_selected;
+	bool show_chart_selected;
+	bool show_waterflow_selected;
+	bool show_geography <- true;
+	bool show_chart <- false;
+	bool show_player_numbers <- true;
+	bool play_pause_selected <- false;
+	bool next_selected <- false;
+	map<string, point> action_locations <- [];
+	map<int,point> village_locations <- [];
+	point next_location <- {0,0};
+	point pause_location <- {0,0};
+	string over_action;
+	int over_village;
+
+
+	
+	/********************** ICONS *************************************************/
+	
+	image_file label_icon <- image_file("../../includes/icons/eco.png");
+	image_file disabled_label_icon <- image_file("../../includes/icons/eco_disabled.png");
+	image_file soil_icon <- image_file("../../includes/icons/waste.png");
+	image_file tokens_icon <- image_file("../../includes/icons/tokens.png");
+	image_file water_icon <- image_file("../../includes/icons/water.png");
+	image_file plant_icon <- image_file("../../includes/icons/plant.png");
+	list<image_file> numbers <- [1,2,3,4] collect image_file("../../includes/icons/"+each+"w.png");
+	list<image_file> smileys <- [0,1,2,3,4] collect image_file("../../includes/icons/smiley"+each+".png");
+	image_file calendar_icon <- image_file("../../includes/icons/upcoming.png");
+	image_file discussion_icon <- image_file("../../includes/icons/conversation.png");
+	image_file sandclock_icon <- image_file("../../includes/icons/hourglass.png");
+	image_file computer_icon <- image_file("../../includes/icons/simulation.png");
+	image_file next_icon <- image_file("../../includes/icons/button_fast-forward.png");
+	image_file play_icon <- image_file("../../includes/icons/button_play.png");
+	image_file pause_icon <- image_file("../../includes/icons/button_pause.png");
+	image_file garbage_icon <- image_file("../../includes/icons/garbage.png");
+	image_file city_icon <- image_file("../../includes/icons/city.png");
+	image_file score_icon <- image_file("../../includes/icons/trophy.png");
+	image_file danger_icon <- image_file("../../includes/icons/pollution.png");
+
+
+	
+	/********************** VARIOUS FUNCTIONS  ***************************/
 	
 	action choose_village_for_pool {
 		if (not CHOOSING_VILLAGE_FOR_POOL) {
@@ -149,8 +244,7 @@ global {
 			default {return 4;}
 		}
 	}
-	
-	map<village,list<string>> village_actions <- nil;
+
 	
 	action action_executed(string action_name) {
 		if village_actions = nil or empty(village_actions) {
@@ -183,94 +277,7 @@ global {
 		about_to_pause <- false;
 		invoke resume;
 	}
-	
-	/********************** PROPORTION OF THE DISPLAYS ****************************/
-	
-	int small_vertical_prop <- 1000;
-	int large_vertical_prop <- 3500;
-	int small_horizontal_prop <- 1500;
-	int large_horizontal_prop <- 3000;
 
-	
-	/********************** POSITIONS AND SIZES ****************************/
-	
-	float chart_line_width -> #fullscreen ? 10.0 : 4.0;
-	
-	/********************** FONTS ************************************************/
-	// UNCOMMENT FOR THE LATEST VERSION IN GAMA 
-	int text_size -> #hidpi ? (#fullscreen ? 100 : 30) : (#fullscreen ? 60 : 15);
-	//int text_size <- 30;
-	font ui_font -> font("Impact", text_size, #bold);
-	
-	/******************* GENERAL PARAMETERS *************************************/
-	
-	bool confirmation_popup <- false;
-	bool no_starting_actions <- true;
-	bool about_to_pause <- false;
-	float pause_started_time <- 0.0;
-	
-	/******************* USE TIMERS *************************************/
-	bool use_timer_player_turn <- false;	
-	bool use_timer_for_discussion <- true;
-	
-	bool timer_just_for_warning <- false; //if true, if the timer is finished, just a warning message is displayed; if false, the turn passes to the next player - for the moment, some issue with the automatic change of step
-	float initial_time_for_discussion <- 2.5 #mn const: true; // time before the player turns
-	//float time_for_discussion <- initial_time_for_discussion;
-	
-	
-	/********************* SPECIAL FOR LEGENDS AND THE MAP ****************************/
-	geometry show_waterflow_button;
-	geometry show_map_button;
-	geometry show_chart_button;
-	bool show_map_selected;
-	bool show_chart_selected;
-	bool show_waterflow_selected;
-	bool show_geography <- true;
-	bool show_chart <- false;
-	bool show_player_numbers <- true;
-	bool play_pause_selected <- false;
-	bool next_selected <- false;
-
-	/********************** COLORS ************************************************/
-	
-	list<rgb> greens <- palette(rgb(237, 248, 233), rgb(186, 228, 179), rgb(116, 196, 118), rgb(49, 163, 84), rgb(0, 109, 44));
-	list<rgb> blues <- reverse(palette(rgb(239, 243, 255), rgb(189, 215, 231), rgb(107, 174, 214), rgb(49, 130, 189), rgb(8, 81, 156)));
-	list<rgb> reds <- palette(rgb(254, 229, 217), rgb(252, 174, 145), rgb(251, 106, 74), rgb(222, 45, 38), rgb(165, 15, 21));
-	rgb map_background <- #black;
-	rgb timer_background <- rgb(60,60,60);
-	rgb legend_background <- rgb(60,60,60);
-	int ambient_intensity <- 100;
-	rgb landfill_color <- #chocolate;
-	rgb city_color <- #gray;
-	rgb selected_color <- rgb(255,255,255);
-	rgb unselected_color <- rgb(200,200,200,0.7);
-	list<rgb> village_color <- [rgb(207, 41, 74), rgb(255, 201, 0), rgb(49, 69, 143), rgb(62, 184, 99)]; // color for the 4 villages
-	
-	/********************** ICONS *************************************************/
-	
-	image_file label_icon <- image_file("../../includes/icons/eco.png");
-	image_file disabled_label_icon <- image_file("../../includes/icons/eco_disabled.png");
-	image_file soil_icon <- image_file("../../includes/icons/waste.png");
-	image_file tokens_icon <- image_file("../../includes/icons/tokens.png");
-	image_file water_icon <- image_file("../../includes/icons/water.png");
-	image_file plant_icon <- image_file("../../includes/icons/plant.png");
-	list<image_file> numbers <- [1,2,3,4] collect image_file("../../includes/icons/"+each+"w.png");
-	list<image_file> smileys <- [0,1,2,3,4] collect image_file("../../includes/icons/smiley"+each+".png");
-	image_file calendar_icon <- image_file("../../includes/icons/upcoming.png");
-	image_file discussion_icon <- image_file("../../includes/icons/conversation.png");
-	image_file sandclock_icon <- image_file("../../includes/icons/hourglass.png");
-	image_file computer_icon <- image_file("../../includes/icons/simulation.png");
-	image_file next_icon <- image_file("../../includes/icons/button_fast-forward.png");
-	image_file play_icon <- image_file("../../includes/icons/button_play.png");
-	image_file pause_icon <- image_file("../../includes/icons/button_pause.png");
-	image_file garbage_icon <- image_file("../../includes/icons/garbage.png");
-	image_file city_icon <- image_file("../../includes/icons/city.png");
-	image_file score_icon <- image_file("../../includes/icons/trophy.png");
-	image_file danger_icon <- image_file("../../includes/icons/pollution.png");
-	
-	stacked_chart global_chart;
-	int cycle_count;
-	
 	
 	init {
 		create stacked_chart {
@@ -295,17 +302,16 @@ global {
 	
 	reflex update_charts when: stage = COMPUTE_INDICATORS{
 		village_actions <- nil;
-		cycle_count <- cycle_count + 1;
-		
-		ask global_chart{
+		ask global_chart {
 			loop i from: 0 to: 3 {
-				do update_all(village_color[i], ["Total"::(village_water_pollution[i] + village_solid_pollution[i])/max_pollution_ecolabel, "Water"::village_water_pollution[i]/max_pollution_ecolabel, "Soil"::village_solid_pollution[i]/max_pollution_ecolabel, "Production"::village_production[i]/min_production_ecolabel ]);
+				do
+				update_all(village_color[i], ["Total"::(village_water_pollution[i] + village_solid_pollution[i]) / max_pollution_ecolabel, "Water"::village_water_pollution[i] / max_pollution_ecolabel, "Soil"::village_solid_pollution[i] / max_pollution_ecolabel, "Production"::village_production[i] / min_production_ecolabel]);
 			}
-		}	
+		}
 		// TODO remove this at some point ! 
-	time_for_discussion <- initial_time_for_discussion;			
-	pause_started_time <- 0.0;
-	number_of_days_passed <- number_of_days_passed + 1;
+		time_for_discussion <- initial_time_for_discussion;
+		pause_started_time <- 0.0;
+		number_of_days_passed <- number_of_days_passed + 1;
 	}
 	
 	reflex end_of_discussion_turn when:  stage = PLAYER_DISCUSSION_TURN {
@@ -315,12 +321,7 @@ global {
 		}
 
 	}
-	
 
-	// DISPLAY OF WATER DYNAMICS
-	graph canal_network_<- nil;
-	int number_to_add <- 10;
-	map<point, list<point>> possible_targets;
 	
 	reflex add_waste when: display_water_flow and every(25 #cycle){
 		if canal_network_ = nil {
@@ -365,13 +366,11 @@ species waste_on_canal skills: [moving]{
 
 experiment Open {
 	
-	map<string, point> action_locations <- [];
-	map<int,point> village_locations <- [];
-	point next_location <- {0,0};
-	point pause_location <- {0,0};
-	string over_action;
-	int over_village;
-	
+	rgb map_background <- #black;
+	rgb timer_background <- rgb(60,60,60);
+	rgb legend_background <- #black; //rgb(60,60,60);
+	int ambient_intensity <- 100;
+
 	
 	init {
 		gama.pref_display_slice_number <- 12; /* 128 too slow ! */
@@ -394,7 +393,7 @@ experiment Open {
 			3::large_vertical_prop]
 		)
 
-		toolbars: false tabs: false parameters: false consoles: false navigator: false controls: false tray: false background: #black;
+		toolbars: false tabs: false parameters: false consoles: false navigator: false controls: false tray: false background: map_background;
 		
 
 
@@ -614,126 +613,108 @@ experiment Open {
 				ask simulation {
 					do execute_action(A_1);
 				}
-
 			}
 
 			event "2" {
 				ask simulation {
 					do execute_action(A_2a);
 				}
-
 			}
 
 			event "b" {
 				ask simulation {
 					do execute_action(A_2b);
 				}
-
 			}
 
 			event "3" {
 				ask simulation {
 					do execute_action(A_3);
 				}
-
 			}
 
 			event "c" {
 				ask simulation {
 					do execute_action(A_3);
 				}
-
 			}
 
 			event "4" {
 				ask simulation {
 					do execute_action(A_4);
 				}
-
 			}
 
 			event "d" {
 				ask simulation {
 					do execute_action(A_4);
 				}
-
 			}
 
 			event "5" {
 				ask simulation {
 					do execute_action(A_5a);
 				}
-
 			}
 
 			event "e" {
 				ask simulation {
 					do execute_action(A_5b);
 				}
-
 			}
 
 			event "6" {
 				ask simulation {
 					do execute_action(A_6);
 				}
-
 			}
 
 			event "f" {
 				ask simulation {
 					do execute_action(A_6);
 				}
-
 			}
 
 			event "7" {
 				ask simulation {
 					do execute_action(A_7a);
 				}
-
 			}
 
 			event "g" {
 				ask simulation {
 					do execute_action(A_7b);
 				}
-
 			}
 
 			event "8" {
 				ask simulation {
 					do execute_action(A_8a);
 				}
-
 			}
 
 			event "h" {
 				ask simulation {
 					do execute_action(A_8b);
 				}
-
 			}
 
 			event "9" {
 				ask simulation {
 					do execute_action(A_9);
 				}
-
 			}
 
 			event "i" {
 				ask simulation {
 					do execute_action(A_9);
 				}
-
 			}
 
 			event "0" {
 				ask simulation { 
 					do before_start_turn;
 				}
-
 			}
 			
 			event #mouse_exit {
@@ -765,19 +746,16 @@ experiment Open {
 					over_action <- nil;
 					over_village <- -1;
 				}
-
 			}
 
 			event #mouse_down {
 				if (stage = PLAYER_ACTION_TURN and over_action != nil) {
 					ask simulation {
-						do execute_action(myself.over_action);
+						do execute_action(over_action);
 					}
-
 					over_action <- nil;
 					return;
 				}
-
 				if (CHOOSING_VILLAGE_FOR_POOL and over_village > -1) {
 					chosen_village <- over_village;
 					over_village <- -1;
@@ -788,12 +766,10 @@ experiment Open {
 						if (turn > end_of_game) {
 							return;
 						}
-
 						if (stage = PLAYER_DISCUSSION_TURN) {
 							ask simulation {
 								do end_of_discussion_phase;
 							}
-
 						} else if (stage != COMPUTE_INDICATORS) {
 							if (CHOOSING_VILLAGE_FOR_POOL) {
 								PASS_CHOOSING_VILLAGE <- true;
@@ -802,11 +778,8 @@ experiment Open {
 									ask villages_order[index_player] {
 										do end_of_turn;
 									}
-
 								}
-
 							}
-
 						}
 
 					} else if (pause_location distance_to #user_location) < w_width / 5 {
@@ -830,36 +803,32 @@ experiment Open {
 				}
 
 			}
-			
-		
 	}
 		
 
 
 		/********************** CHARTS DISPLAY ***************************************************/
 		
-		display "Chart 4" type: opengl axes: false background: #fullscreen ? #black:legend_background refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle) {
+		display "Chart 4" type: opengl axes: false background: legend_background refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle) {
 			
 			light #ambient intensity: ambient_intensity;
 			camera #default locked: true;
-			
-			
 						
-			chart WASTE_POLLUTION  size:{1, 0.5} type: xy background: legend_background color: #white visible: !show_chart label_font: ui_font series_label_position: none y_tick_values_visible: false x_tick_values_visible: false x_tick_line_visible: true title_visible: false x_label: ""{
+			chart WASTE_POLLUTION memorize: false tick_line_color:#white size:{1, 0.5} position: {-0.1, 0} type: xy background: legend_background color: #white visible: !show_chart label_font: ui_font series_label_position: none y_tick_values_visible: false x_tick_values_visible: false x_tick_line_visible: true title_visible: false x_label: ""{
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #orange marker: false thickness: chart_line_width ;
 				data WATER_WASTE_POLLUTION value: rows_list(matrix([time_step,total_water_pollution_values])) color: rgb(0,159,233) marker: false thickness: chart_line_width;
 		 		data TOTAL_POLLUTION value:rows_list(matrix([time_step,total_pollution_values])) color:rgb(130,86,157) marker: false thickness: chart_line_width;
 		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: is_pollution_ok ? #white : #red marker: false thickness: chart_line_width;
 			}
 			
-			chart PRODUCTION type: xy position:{0, 0.5}  size:{1, 0.5} background: legend_background color: #white y_range:[0,6000] visible: !show_chart series_label_position: none y_tick_values_visible: false x_tick_values_visible: true x_tick_line_visible: true title_visible: false x_label: ""{
+			chart PRODUCTION memorize: false tick_line_color: #white type: xy position:{-0.1, 0.5}  size:{1, 0.5} background: legend_background color: #white y_range:[0,6000] visible: !show_chart series_label_position: none y_tick_values_visible: false x_tick_values_visible: true x_tick_line_visible: true title_visible: false x_label: ""{
 				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: #green thickness: chart_line_width marker: false; 
 				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: chart_line_width color: is_production_ok ? #white : #red marker: false; 
 			}	
 			
 			 graphics "overlay" position: {0, 0} transparency: 0 refresh: true visible: !show_chart {
 				float x_gap <- 0.05;
-				float x_init <- x_gap * 2;
+				float x_init <- x_gap;
 				float icon_size <-  w_height / 8;
 				float y <- 0.9;
 				float x <- x_init;
@@ -869,71 +838,40 @@ experiment Open {
 				x <- x + 2* x_gap;
 				draw danger_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-		
-				//y <- y + y_gap;
-				//x <- x_init;
 				draw square(x_gap*w_width) color: #orange at: {x*w_width,y2*w_height};
 				x <- x + 2* x_gap;
 				draw soil_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-
-				//y <- y + y_gap;
-				//x <- x_init;
 				draw square(x_gap*w_width) color: rgb(0,159,233) at: {x*w_width,y2*w_height};
 				x <- x + 2* x_gap;
 				draw water_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-
-				//y <- y + y_gap;
-				//x <- x_init;
 				draw square(x_gap*w_width) color: #green at: {x*w_width,y2*w_height};
 				x <- x + 2* x_gap;
 				draw plant_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-
-				//y <- y + y_gap;
-				//x <- x_init;
-
-
-
 			}
 			
 			graphics "Button " {
 				float x <- 1.0;
 				float y <- 0.25;
 				show_chart_button <- circle(w_width/8) at_location {x*w_width,y*w_height};
-				//draw show_chart_button + 30 color: (show_chart_selected ?  #white : #black);
 				draw image_file(show_chart ? "../../includes/icons/button_series_chart.png":"../../includes/icons/button_stacked_chart.png") color: show_chart_selected ? selected_color:unselected_color size: w_width/4 at: {x*w_width,y*w_height};
 			}
-			
 			event #mouse_move {
 				using topology(simulation) {
 					show_chart_selected <- (show_chart_button covers #user_location) ;
 				}
 			}
-			
 			event #mouse_exit {
 					show_chart_selected <- false;
 			}
-			
 			event #mouse_down {
 				if (show_chart_selected) {
 					show_chart <- !show_chart;}
 			}
 			
-			//camera 'default' location: {3213.0194,2461.1095,7816.3615} target: {3213.0194,2460.973,0.0};	
-			
-			//		graphics "Frame (new version of GAMA)" refresh: true border: #white size: {w_width*2, 1} position: {-w_width/4,0}{
-//		}
-		
-	//	graphics "Frame (old version of GAMA)" refresh: true visible: !#fullscreen{
-	//		draw rectangle(w_width, w_height) at_location {w_width/2 - w_width/6, w_height/2} border: #white width: 5 color: legend_background;
-	//	}
-							
-			
 			agents "Global" value: [global_chart] aspect: horizontal visible: show_chart position: {0.2,0};
-
-			
 				
 		}
 		
@@ -945,13 +883,11 @@ experiment Open {
 			
 			light #ambient intensity: ambient_intensity;
 			camera 'default' location: {3170.7531,5600.8795,5037.7866} target: {3170.7531,2957.9814,0.0};
-			
 			//camera 'default' location: {3213.0194,2444.8489,6883.1631} target: {3213.0194,2444.7288,0.0};
 			
 			species waste_on_canal visible: (show_geography) and display_water_flow  {
 					draw sphere(20) color: #lightblue;
 			}
-
 
 			species plot visible: show_geography {
 				draw shape color: greens[world.production_class_current(self)] border: false;
@@ -993,28 +929,18 @@ experiment Open {
 				float y <- shape.centroid.y - spacing;
 				draw soil_icon at: {x, y} size: size;
 				draw world.soil_pollution_class(self) at: {x - smiley_horizontal_spacing , y + smiley_vertical_spacing} size: smiley_size;
-				
 				x <- x + 2*spacing;
-				
 				draw water_icon at: {x,  y} size: size;
 				draw world.water_pollution_class(self) at: {x + smiley_horizontal_spacing , y + smiley_vertical_spacing} size: smiley_size;
-				
 				y <- y + 2*spacing;
 				draw tokens_icon at: {x,  y} size: size;
 				draw ""+budget at: {x, y + spacing} color: #white depth: 5 font: ui_font anchor: #bottom_center;
-				
 				x <- x - 2*spacing;
 				draw plant_icon at: {x, y} size: size;
 				draw world.production_class(self) at: {x - smiley_horizontal_spacing , y + smiley_vertical_spacing} size: smiley_size;
 			}
-			
 		}
-		
-
-
 	}
-
-	
 }
 
 
@@ -1043,10 +969,6 @@ species stacked_chart {
 		}
  	}
  	
- 	action update(string column, rgb element, float value) {
- 		data[column][element] <- value;
- 	}
- 	
  	action update_all(rgb element, map<string, float> values) {
  		loop col over: data.keys {
  			data[col][element] <- values[col];
@@ -1060,7 +982,6 @@ species stacked_chart {
 		float col_width <- original_col_width;
  		bool gap_added <- false;
  		
-// 		draw circle(100) color:#red; // the center
  		draw rectangle(2.5*original_col_width, chart_height/2) at: {location.x-original_col_width*1.5, location.y +chart_height/4} border: #white wireframe: true;
  		draw rectangle(2.5*original_col_width, chart_height/2) at: {location.x-original_col_width*1.5, location.y-chart_height/4} border: #white wireframe: true;
  		float current_x <- 0.0;
@@ -1077,7 +998,6 @@ species stacked_chart {
  			loop c over: data[col].keys {
  				float v <- data[col][c];
  				total <- total+v;
- 				
  				float col_height <- (v * chart_height)/max_value;
  				draw rectangle(col_width,col_height) color: c at: {current_x,my_height  + current_y - col_height/2};
  				draw rectangle(col_width,col_height) wireframe: true border: #black width: 2 at: {current_x,my_height  + current_y -  col_height/2};
@@ -1092,11 +1012,6 @@ species stacked_chart {
  			}
  			current_x <- current_x + col_width;
  		}
- 		
-
- 		
- 	//	draw line({location.x - 3*col_width, location.y + chart_height/2 - desired_value*chart_height/max_value},{location.x, location.y + chart_height/2 - desired_value*chart_height/max_value}) color: #white width: 5;
- 		//draw (is_pollution_ok and is_production_ok) ? label_icon:disabled_label_icon at: {location.x, location.y + chart_height/2.5 - desired_value*chart_height/max_value} size: 1.5*col_width ;
  	}
 
  	
