@@ -170,7 +170,7 @@ global {
 	float impact_sensibilization <- 1.0 min: 0.0 max: 1.0; //add this value to the environmental sensibility of people leaving in urban areas
 	
 	float sensibilisation_function(float x) { //function that returns the coefficient of solid production according to the environmental_sensibility of inahbitants 'x'
-		return (1 - 2/(1 +exp(x/3)));
+		return (1 - 2/(1 +exp(x/2)));
 	}
 	int token_pesticide_reducing <- 40; // 
 	float impact_pesticide_reducing_production  <- 0.1 min: 0.0 max: 1.0; //decrease of the agricultural production

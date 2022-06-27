@@ -53,9 +53,12 @@ global {
 	bool display_total_waste <- false parameter:"Display total waste" category: "Display" ;
 	bool display_water_flow <- true;
 	bool draw_territory <- false;
+	bool extra_turn <- false;
 	
-	map<string,string> to_english;
-	map<string,string> from_english;
+//	map<string,string> to_english;
+//	map<string,string> from_english;
+	
+	
 	//string type_of_map_display <- MAP_SOLID_WASTE;// category: "Display" among: ["Map of solid waste", "Map of waster waste", "Map of total pollution", "Map of agricultural productivity"] parameter: "Type of map display" ;//on_change: update_display;
 	string stage <-COMPUTE_INDICATORS;
 	int commune_money <- 0;
@@ -131,7 +134,7 @@ global {
 		do generate_info_action;
 		name <- GAME_NAME;
 		create village from: villages_shape_file sort_by (location.x + location.y * 2);
-		if without_player and  (players_actions_to_load != nil) {do load_actions_file;}
+		//if without_player and  (players_actions_to_load != nil) {do load_actions_file;}
 		
 		do create_canals;
 		create commune from: Limites_commune_shape_file;
@@ -147,7 +150,7 @@ global {
 		
 		if save_log {
 			save "turn,player,productivity,solid_pollution,water_pollution,days_with_ecolabel"  to: systeme_evolution_log_path type: text rewrite: true;
-			save "turn,player,budget,action1,action2,action3,action4,action5,action6" to: village_action_log_path type: text rewrite: true;
+			save "turn,player,budget,exra_turn,action" to: village_action_log_path type: text rewrite: true;
 		}
 	}
 	action generate_info_action {
@@ -179,12 +182,12 @@ global {
 			string word_tlan <- mat[index_col,i];
 			string word_eng <- mat[index_english,i];
 			shape.attributes[mat[0,i]] <- mat[index_col,i];
-			to_english[word_tlan] <-word_eng; 
-			from_english[word_eng] <-word_tlan; 
+		//	to_english[word_tlan] <-word_eng; 
+		//	from_english[word_eng] <-word_tlan; 
 		}
 	}
 	
-	action load_actions_file {
+	/*action load_actions_file {
 		matrix mat <- matrix(players_actions_to_load);
 		end_of_game <- 0;
 		loop j from: 0 to: mat.rows - 1 {
@@ -195,12 +198,12 @@ global {
 				if length(player_actions) <= t {
 					if player_actions = nil or empty(player_actions) {
 						player_actions <- [];
-						player_traitement_facility_maintenance <- [];
+						//player_traitement_facility_maintenance <- [];
 					}
 					
 					loop times: t - length(player_actions) +1  {
 						player_actions << [];
-						player_traitement_facility_maintenance << true;
+						//player_traitement_facility_maintenance << true;
 					}
 				}
 				loop i from: 3 to: mat.columns -1 {
@@ -211,9 +214,9 @@ global {
 						string act_name <- a_s[0];
 						string param <- a_s[1];
 						if act_name = ACT_FACILITY_TREATMENT_MAINTENANCE {
-							player_traitement_facility_maintenance[t] <- bool(param);
+							//player_traitement_facility_maintenance[t] <- bool(param);
 						} else {
-							act_name <- from_english[act_name];
+							act_name <- from_id[act_name];
 							if act_name != ACT_FACILITY_TREATMENT {
 								player_actions[t][act_name] <- [LEVEL::param];
 							} else {
@@ -230,7 +233,7 @@ global {
 							}
 						}
 					} else {
-						player_actions[t][from_english[act_str]] <- nil;
+						player_actions[t][from_id[act_str]] <- nil;
 					}
 				}
 			}
@@ -238,7 +241,7 @@ global {
 		}
 		
 		
-	}
+	}*/
 	
 	action update_display {
 		if (stage = PLAYER_ACTION_TURN) {
@@ -397,7 +400,7 @@ global {
 			if without_player and not without_actions and players_actions_to_load = nil{
 				int id <- int(self);
 				player_actions <- players_actions = nil ? nil : players_actions[id];
-				player_traitement_facility_maintenance <- players_traitement_facility_maintenance = nil ? nil : players_traitement_facility_maintenance[id];
+			//	player_traitement_facility_maintenance <- players_traitement_facility_maintenance = nil ? nil : players_traitement_facility_maintenance[id];
 			} 
 		} 
 		village1_production <-  (village[0].plots sum_of each.current_production);	
@@ -629,6 +632,7 @@ global {
 	
 	action manage_end_of_indicator_computation {
 		if (current_day = 365) {
+			extra_turn <- false;
 			commune_budget_dispatch <- false;
 			ask village {
 				treatment_facility_is_activated <- false;
