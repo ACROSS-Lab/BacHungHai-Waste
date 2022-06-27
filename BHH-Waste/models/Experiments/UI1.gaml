@@ -867,44 +867,50 @@ experiment Open {
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #orange marker: false thickness: chart_line_width ;
 				data WATER_WASTE_POLLUTION value: rows_list(matrix([time_step,total_water_pollution_values])) color: rgb(0,159,233) marker: false thickness: chart_line_width;
 		 		data TOTAL_POLLUTION value:rows_list(matrix([time_step,total_pollution_values])) color:rgb(130,86,157) marker: false thickness: chart_line_width;
-		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: #white marker: false thickness: chart_line_width;
+		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: is_pollution_ok ? #white : #red marker: false thickness: chart_line_width;
 			}
 			
 			chart PRODUCTION type: xy position:{0, 0.5}  size:{1, 0.5} background: legend_background color: #white y_range:[0,6000] visible: !show_chart series_label_position: none y_tick_values_visible: false x_tick_values_visible: true x_tick_line_visible: true title_visible: false x_label: ""{
-				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: is_production_ok ? #green : #red thickness: chart_line_width marker: false; 
-				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: chart_line_width color: #white marker: false; 
+				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: #green thickness: chart_line_width marker: false; 
+				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: chart_line_width color: is_production_ok ? #white : #red marker: false; 
 			}	
 			
 			 graphics "overlay" position: {0, 0} transparency: 0 refresh: true visible: !show_chart {
-				float y_gap <- 0.15;
 				float x_gap <- 0.05;
-				float x_init <- -0.15;
+				float x_init <- x_gap * 2;
 				float icon_size <-  w_height / 8;
-				float y <- 0.2;
+				float y <- 0.9;
 				float x <- x_init;
+				float y2 <- 0.9;
 				
+				draw square(x_gap*w_width) color: rgb(130,86,157) at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
 				draw danger_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: rgb(130,86,157) at: {x*w_width,y*w_height};
-				y <- y + y_gap;
-				x <- x_init;
+		
+				//y <- y + y_gap;
+				//x <- x_init;
+				draw square(x_gap*w_width) color: #orange at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
 				draw soil_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: #orange at: {x*w_width,y*w_height};
-				y <- y + y_gap;
-				x <- x_init;
-				
+
+				//y <- y + y_gap;
+				//x <- x_init;
+				draw square(x_gap*w_width) color: rgb(0,159,233) at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
 				draw water_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: rgb(0,159,233) at: {x*w_width,y*w_height};
-				y <- y + y_gap;
-				x <- x_init;
-				
+
+				//y <- y + y_gap;
+				//x <- x_init;
+				draw square(x_gap*w_width) color: #green at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
 				draw plant_icon at: {x* w_width,y*w_height} size: icon_size;
 				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: #green at: {x*w_width,y*w_height};
-				y <- y + y_gap;
-				x <- x_init;
+
+				//y <- y + y_gap;
+				//x <- x_init;
 
 
 
