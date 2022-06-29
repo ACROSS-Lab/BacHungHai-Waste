@@ -91,11 +91,11 @@ global {
 	bool play_pause_selected <- false;
 	bool next_selected <- false;
 	map<string, point> action_locations <- [];
-	map<int,point> village_locations <- [];
+	map<int,geometry> village_buttons <- [];
 	point next_location <- {0,0};
 	point pause_location <- {0,0};
 	string over_action;
-	int over_village;
+	int village_selected;
 
 
 	
@@ -545,14 +545,14 @@ experiment Open {
 				float right <- location.x + w_width/2;
 				float gap <- (right - left) /4;
 				float index <- 0.5;
-				loop s over: numbers {
+				loop s over: numbers { 
 					int village_index <- int(index - 0.5);
-					bool selected <- over_village = village_index;
+					bool selected <- village_selected = village_index;
 					draw s size: w_width / 10 at: {left + gap * index, y};
 					if (selected) {
 						draw circle(w_width / 10) wireframe: true width: 2 color: #white at: {left + gap * index, y};
 					}
-					village_locations[village_index] <- {left + gap * index, y};
+					village_buttons[village_index] <- square(w_width / 10) at_location {left + gap * index, y};
 					index <- index + 1;
 				}
 
@@ -565,12 +565,15 @@ experiment Open {
 				float right <- location.x + w_width - w_width / 5;
 				float gap <- (right - left) / length(actions_name_without_end);
 				float index <- 0.5;
+				// Used as a mask for the position of the mouse
+				draw rectangle(right-left,w_width / 8) color: legend_background at: {location.x, y};
+				
 				loop s over: (sort(actions_name_without_end, each)) {
 					village v <- villages_order[index_player];
 					bool selected <- village_actions[v] != nil and village_actions[v] contains s;
-					draw s color:  s = over_action or selected ? #white : rgb(255, 255, 255, 130) font: ui_font anchor: #center at: {left + gap * index, y};
+					draw s color:  s = over_action or selected ? #white : rgb(255, 255, 255, 130) font: ui_font anchor: #center at: {left + gap * index, y} depth: 5;
 					if (selected) {
-						draw circle(w_width / 10) wireframe: true width: 2 color: #white at: {left + gap * index, y};
+						draw circle(w_width / 10) wireframe: true width: 2 color: #white at: {left + gap * index, y, 0.1};
 					}
 
 					action_locations[s] <- {left + gap * index, y};
@@ -727,14 +730,14 @@ experiment Open {
 					if (stage = PLAYER_ACTION_TURN) {
 						if (CHOOSING_VILLAGE_FOR_POOL) {
 							loop s over: [0, 1, 2, 3] {
-								if (village_locations[s] distance_to #user_location < w_width / 10) {
-									over_village <- s;
+								if ((village_buttons[s] covers #user_location)) {
+									village_selected <- s;
 									return;
 								}
 							}
 						} else {
 							loop s over: action_locations.keys {
-								if (action_locations[s] distance_to #user_location < w_width / 10) {
+								if (action_locations[s] distance_to #user_location < w_width / 8) {
 									over_action <- s;
 									return;
 								}
@@ -744,7 +747,7 @@ experiment Open {
 					next_selected <- (next_location distance_to #user_location) < w_width / 5;
 					play_pause_selected <- (pause_location distance_to #user_location) < w_width / 5;
 					over_action <- nil;
-					over_village <- -1;
+					village_selected <- -1;
 				}
 			}
 
@@ -756,9 +759,9 @@ experiment Open {
 					over_action <- nil;
 					return;
 				}
-				if (CHOOSING_VILLAGE_FOR_POOL and over_village > -1) {
-					chosen_village <- over_village;
-					over_village <- -1;
+				if (CHOOSING_VILLAGE_FOR_POOL and village_selected > -1) {
+					chosen_village <- village_selected;
+					village_selected <- -1;
 					return;
 				}
 				using topology(simulation) {
@@ -908,17 +911,17 @@ experiment Open {
 				draw shape color: color border: #black width: 2;
 			}
 			species village transparency: 0.4  visible: ((show_geography) and show_player_numbers) or !show_geography  {
-				int divider <- (show_geography) ? 16 : 8;
+				int divider <- (show_geography) ? 8 : 8; // 16:8;
 				draw circle(w_width/divider)	color: !show_geography ? #black :color at: shape.centroid + {0,0,0.4};
 			}
 			
 			species village visible: ((show_geography) and show_player_numbers) or !show_geography   {
 				float size <- w_width/10;
-				draw numbers[int(self)] at: shape.centroid + {0,0,0.5} size: w_width/15;
+				draw numbers[int(self)] at: shape.centroid + {0,0,2} size: w_width/15;
 				if (show_geography or stage = COMPUTE_INDICATORS) {draw shape-(shape-40) color: color;}
 			}
 			
-			species village visible: !show_geography {
+			species village position: {0,0,0.01}/*visible: !show_geography*/ {
 				int i <- int(self);
 				float size <- w_width/20;
 				float spacing <- size * 1;
@@ -928,17 +931,19 @@ experiment Open {
 				float x <- shape.centroid.x - spacing;
 				float y <- shape.centroid.y - spacing;
 				draw soil_icon at: {x, y} size: size;
-				draw world.soil_pollution_class(self) at: {x - smiley_horizontal_spacing , y + smiley_vertical_spacing} size: smiley_size;
+				draw world.soil_pollution_class(self) at: {x - smiley_horizontal_spacing , y + smiley_vertical_spacing, 0.01} size: smiley_size;
 				x <- x + 2*spacing;
 				draw water_icon at: {x,  y} size: size;
-				draw world.water_pollution_class(self) at: {x + smiley_horizontal_spacing , y + smiley_vertical_spacing} size: smiley_size;
+				draw world.water_pollution_class(self) at: {x + smiley_horizontal_spacing , y + smiley_vertical_spacing, 0.01} size: smiley_size;
 				y <- y + 2*spacing;
 				draw tokens_icon at: {x,  y} size: size;
 				draw ""+budget at: {x, y + spacing} color: #white depth: 5 font: ui_font anchor: #bottom_center;
 				x <- x - 2*spacing;
 				draw plant_icon at: {x, y} size: size;
-				draw world.production_class(self) at: {x - smiley_horizontal_spacing , y + smiley_vertical_spacing} size: smiley_size;
+				draw world.production_class(self) at: {x - smiley_horizontal_spacing , y + smiley_vertical_spacing, 0.01} size: smiley_size;
 			}
+			
+
 		}
 	}
 }
