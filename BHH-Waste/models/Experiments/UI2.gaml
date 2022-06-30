@@ -387,7 +387,7 @@ experiment Open {
 		/********************** LAYOUT ***********************************************************/
 		
 		
-		 layout vertical([0::82,horizontal([1::650,2::450])::368]) consoles: false tabs:false toolbars:false controls:false editors: false navigator: false tray: false parameters: false background: #black;
+		 layout vertical([0::82,horizontal([1::650,2::450])::368]) consoles: false tabs:false toolbars:false controls:false editors: false navigator: false tray: false parameters: false background: rgb(50,50,50);
 		
 //		
 //		layout
