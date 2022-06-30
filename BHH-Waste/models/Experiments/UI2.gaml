@@ -37,7 +37,7 @@ global {
 	
 	/********************** POSITIONS AND SIZES ****************************/
 	
-	float chart_line_width -> #fullscreen ? 10.0 : 4.0;
+	float chart_line_width -> #fullscreen ? 10.0 : 10.0;
 	float w_height <- shape.height;
 	float w_width <- shape.width;
 	
@@ -386,100 +386,22 @@ experiment Open {
 		
 		/********************** LAYOUT ***********************************************************/
 		
-		layout
 		
-		vertical ([
-			horizontal([0::small_horizontal_prop, 1::large_horizontal_prop, 2::small_horizontal_prop])::small_vertical_prop,
-			3::large_vertical_prop]
-		)
-
-		toolbars: false tabs: false parameters: false consoles: false navigator: false controls: false tray: false background: map_background;
+		 layout vertical([0::82,horizontal([1::650,2::450])::368]) consoles: false tabs:false toolbars:false controls:false editors: false navigator: false tray: false parameters: false background: #black;
+		
+//		
+//		layout
+//		
+//		horizontal ([
+//			vertical([0::small_horizontal_prop, 1::large_horizontal_prop])::small_vertical_prop,
+//			2::large_vertical_prop]
+//		)
+//
+//		toolbars: false tabs: false parameters: false consoles: false navigator: false controls: false tray: false background: #white; //map_background;
 		
 
 
 
-		
-		/********************** LEGEND DISPLAY *************************************************/
-		
-		display "LEGEND" type: opengl axes: false background: legend_background /*refresh: stage = COMPUTE_INDICATORS*/ {
-			
-		light #ambient intensity: ambient_intensity;
-		camera #default locked: true;
-		
-		 graphics "overlay" position: {0, 0} transparency: 0 refresh: true visible: show_geography {
-				float y_gap <- 0.25;
-				float x_gap <- 0.1;
-				float x_init <- 0.35;
-				float icon_size <-  w_height / 6;
-				float y <- 0.2;
-				float x <- x_init;
-				
-
-				draw plant_icon at: {x* w_width,y*w_height} size: icon_size;
-				x <- x + 2* x_gap;
-				loop c over: reverse(greens) {
-					draw square(x_gap*w_width) color: c at: {x*w_width,y*w_height};
-					x <- x + x_gap;
-				}
-
-				y <- y + y_gap;
-				x <- x_init;
-				draw water_icon at: {x* w_width,y*w_height} size: icon_size;
-				x <- x + 2* x_gap;
-				loop c over: blues {
-					draw square(x_gap*w_width) color: c at: {x*w_width,y*w_height};
-					x <- x + x_gap;
-				}
-
-				/*****/				
-				y <- y + y_gap;
-				x <- x_init;
-				draw garbage_icon at: {x*w_width,y*w_height} size:  icon_size;
-				x <- x + 2 * x_gap;
-				draw square(x_gap*w_width) color: landfill_color at: {x* w_width,y*w_height};
-				x <- x + 2 * x_gap;
-				draw city_icon at: {x*w_width,y*w_height} size:  icon_size;
-				x <- x + 2*x_gap;
-				draw square(x_gap*w_width) color: city_color at: {x* w_width,y*w_height};
-
-			}
-			
-			graphics "Buttons" {
-				float x <- 0.0;
-				float y <- 0.25;
-				show_map_button <-  circle(w_width/8) at_location {x*w_width,y*w_height};
-				draw image_file(show_geography ? "../../includes/icons/button_map_off.png":"../../includes/icons/button_map_on.png") color: show_map_selected ? selected_color:unselected_color size: w_width/4 at: {x*w_width,y*w_height} ;
-			}
-			
-			graphics "Button flow" visible: show_geography{
-				float x <- 0.0;
-				float y <- 0.65;
-				show_waterflow_button <- circle(w_width/8) at_location {x*w_width,y*w_height};
-				draw image_file(display_water_flow ? "../../includes/icons/button_waterflow_off.png":"../../includes/icons/button_waterflow_on.png") color: show_waterflow_selected ? selected_color:unselected_color size: w_width/4 at: {x*w_width,y*w_height} ;
-			}
-			
-			event #mouse_move {
-				using topology(simulation) {
-					show_map_selected <- (show_map_button covers #user_location) ;
-					show_waterflow_selected <- (show_waterflow_button covers #user_location) ;
-				}
-			}
-			
-			event #mouse_exit {
-					show_map_selected <- false;
-					show_waterflow_selected <- false;
-			}
-			
-			event #mouse_down {
-				if (show_map_selected) {
-					show_geography <- !show_geography;
-				} else if (show_waterflow_selected) {
-					display_water_flow <- !display_water_flow;
-				}
-			}
-
-
-		}
 		/********************** CENTER DISPLAY *************************************************/
 		display "Controls" type: opengl axes: false background: map_background  {
 			
@@ -614,6 +536,62 @@ experiment Open {
 				pause_location <- {location.x - w_width / 2, location.y- w_height/8};
 				draw simulation.paused or about_to_pause ? play_icon : pause_icon at: pause_location color: play_pause_selected ? selected_color:unselected_color size: shape.width / 4;
 			}
+			
+			graphics "Button chart" {
+				float x <- 2.0;
+				float y <- 0.5;
+				show_chart_button <- circle(w_width/8) at_location {x*w_width, location.y- w_height/8};
+				draw image_file(show_chart ? "../../includes/icons/button_series_chart.png":"../../includes/icons/button_stacked_chart.png") color: show_chart_selected ? selected_color:unselected_color size: w_width/4 at: show_chart_button.location;
+			}
+			event #mouse_move {
+				using topology(simulation) {
+					show_chart_selected <- (show_chart_button covers #user_location) ;
+				}
+			}
+			event #mouse_exit {
+					show_chart_selected <- false;
+			}
+			event #mouse_down {
+				if (show_chart_selected) {
+					show_chart <- !show_chart;}
+			}
+			
+			graphics "Button geography" {
+				float x <- -1.0;
+				float y <- 0.5;
+				show_map_button <-  circle(w_width/8) at_location {x*w_width, location.y- w_height/8};
+				draw image_file(show_geography ? "../../includes/icons/button_map_off.png":"../../includes/icons/button_map_on.png") color: show_map_selected ? selected_color:unselected_color size: w_width/4 at: show_map_button.location ;
+			}
+			
+//			graphics "Button flow" visible: show_geography{
+//				float x <- -0.25;
+//				float y <- 0.85;
+//				show_waterflow_button <- circle(w_width/8) at_location {x*w_width,y*w_height};
+//				draw image_file(display_water_flow ? "../../includes/icons/button_waterflow_off.png":"../../includes/icons/button_waterflow_on.png") color: show_waterflow_selected ? selected_color:unselected_color size: w_width/4 at: {x*w_width,y*w_height} ;
+//			}
+			
+			event #mouse_move {
+				using topology(simulation) {
+					show_map_selected <- (show_map_button covers #user_location) ;
+					//show_waterflow_selected <- (show_waterflow_button covers #user_location) ;
+				}
+			}
+			
+			event #mouse_exit {
+					show_map_selected <- false;
+					//show_waterflow_selected <- false;
+			}
+			
+			event #mouse_down {
+				if (show_map_selected) {
+					show_geography <- !show_geography;
+				} 
+//				else if (show_waterflow_selected) {
+//					display_water_flow <- !display_water_flow;
+//				}
+			}
+			
+			
 			
 			event "1" {
 				ask simulation {
@@ -812,83 +790,52 @@ experiment Open {
 	}
 		
 
-
-		/********************** CHARTS DISPLAY ***************************************************/
-		
-		display "Chart 4" type: opengl axes: false background: legend_background refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle) {
-			
-			light #ambient intensity: ambient_intensity;
-			camera #default locked: true;
-						
-			chart WASTE_POLLUTION memorize: false tick_line_color:#white size:{1, 0.5} position: {-0.1, 0} type: xy background: legend_background color: #white visible: !show_chart label_font: ui_font series_label_position: none y_tick_values_visible: false x_tick_values_visible: false x_tick_line_visible: true title_visible: false x_label: ""{
-				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #orange marker: false thickness: chart_line_width ;
-				data WATER_WASTE_POLLUTION value: rows_list(matrix([time_step,total_water_pollution_values])) color: rgb(0,159,233) marker: false thickness: chart_line_width;
-		 		data TOTAL_POLLUTION value:rows_list(matrix([time_step,total_pollution_values])) color:rgb(130,86,157) marker: false thickness: chart_line_width;
-		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: is_pollution_ok ? #white : #red marker: false thickness: chart_line_width;
-			}
-			
-			chart PRODUCTION memorize: false tick_line_color: #white type: xy position:{-0.1, 0.5}  size:{1, 0.5} background: legend_background color: #white y_range:[0,6000] visible: !show_chart series_label_position: none y_tick_values_visible: false x_tick_values_visible: true x_tick_line_visible: true title_visible: false x_label: ""{
-				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: #green thickness: chart_line_width marker: false; 
-				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: chart_line_width color: is_production_ok ? #white : #red marker: false; 
-			}	
-			
-			 graphics "overlay" position: {0, 0} transparency: 0 refresh: true visible: !show_chart {
-				float x_gap <- 0.05;
-				float x_init <- x_gap;
-				float icon_size <-  w_height / 8;
-				float y <- 0.9;
-				float x <- x_init;
-				float y2 <- 0.9;
-				
-				draw square(x_gap*w_width) color: rgb(130,86,157) at: {x*w_width,y2*w_height};
-				x <- x + 2* x_gap;
-				draw danger_icon at: {x* w_width,y*w_height} size: icon_size;
-				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: #orange at: {x*w_width,y2*w_height};
-				x <- x + 2* x_gap;
-				draw soil_icon at: {x* w_width,y*w_height} size: icon_size;
-				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: rgb(0,159,233) at: {x*w_width,y2*w_height};
-				x <- x + 2* x_gap;
-				draw water_icon at: {x* w_width,y*w_height} size: icon_size;
-				x <- x + 2* x_gap;
-				draw square(x_gap*w_width) color: #green at: {x*w_width,y2*w_height};
-				x <- x + 2* x_gap;
-				draw plant_icon at: {x* w_width,y*w_height} size: icon_size;
-				x <- x + 2* x_gap;
-			}
-			
-			graphics "Button " {
-				float x <- 1.0;
-				float y <- 0.25;
-				show_chart_button <- circle(w_width/8) at_location {x*w_width,y*w_height};
-				draw image_file(show_chart ? "../../includes/icons/button_series_chart.png":"../../includes/icons/button_stacked_chart.png") color: show_chart_selected ? selected_color:unselected_color size: w_width/4 at: {x*w_width,y*w_height};
-			}
-			event #mouse_move {
-				using topology(simulation) {
-					show_chart_selected <- (show_chart_button covers #user_location) ;
-				}
-			}
-			event #mouse_exit {
-					show_chart_selected <- false;
-			}
-			event #mouse_down {
-				if (show_chart_selected) {
-					show_chart <- !show_chart;}
-			}
-			
-			agents "Global" value: [global_chart] aspect: horizontal visible: show_chart position: {0.2,0};
-				
-		}
-		
 		
 		
 		/********************** MAIN MAP DISPLAY ***************************************************/
 		
 		display "MAIN MAP" type: opengl background:map_background axes: false {
 			
+		 overlay position: {0.8, 0.9} size: {0,0} transparency: 0 visible: show_geography or !show_chart {
+				float y_gap <- 0.25/3;
+				float x_gap <- 0.1/3;
+				float x_init <- 0.35/3;
+				float icon_size <-  w_height / 18;
+				float y <- 0.2/3;
+				float x <- x_init;
+				
+
+				draw plant_icon at: {x* w_width,y*w_height} size: icon_size;
+				x <- x + 2* x_gap;
+				loop c over: reverse(greens) {
+					draw square(x_gap*w_width) color: c at: {x*w_width,y*w_height};
+					x <- x + x_gap;
+				}
+
+				y <- y + y_gap;
+				x <- x_init;
+				draw water_icon at: {x* w_width,y*w_height} size: icon_size;
+				x <- x + 2* x_gap;
+				loop c over: blues {
+					draw square(x_gap*w_width) color: c at: {x*w_width,y*w_height};
+					x <- x + x_gap;
+				}
+
+				/*****/				
+				y <- y + y_gap;
+				x <- x_init;
+				draw garbage_icon at: {x*w_width,y*w_height} size:  icon_size;
+				x <- x + 2 * x_gap;
+				draw square(x_gap*w_width) color: landfill_color at: {x* w_width,y*w_height};
+				x <- x + 2 * x_gap;
+				draw city_icon at: {x*w_width,y*w_height} size:  icon_size;
+				x <- x + 2*x_gap;
+				draw square(x_gap*w_width) color: city_color at: {x* w_width,y*w_height};
+
+			}
+			camera 'default' location: {3154.8761,3145.9738,7969.9466} target: {3154.8761,3145.8347,0.0};
 			light #ambient intensity: ambient_intensity;
-			camera 'default' location: {3170.7531,5600.8795,5037.7866} target: {3170.7531,2957.9814,0.0};
+			//camera 'default' location: {3170.7531,5600.8795,5037.7866} target: {3170.7531,2957.9814,0.0};
 			//camera 'default' location: {3213.0194,2444.8489,6883.1631} target: {3213.0194,2444.7288,0.0};
 			
 			species waste_on_canal visible: (show_geography) and display_water_flow  {
@@ -948,6 +895,58 @@ experiment Open {
 			
 
 		}
+		
+
+		/********************** CHARTS DISPLAY ***************************************************/
+		
+		display "Chart 4" type: opengl axes: false background: legend_background refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle) {
+			
+			light #ambient intensity: ambient_intensity;
+			camera #default locked: true;
+						
+			chart WASTE_POLLUTION memorize: false tick_line_color:#white size:{0.8, 0.5} position: {0.1, 0} type: xy background: legend_background color: #white visible: !show_chart label_font: ui_font series_label_position: none y_tick_values_visible: false x_tick_values_visible: false x_tick_line_visible: true title_visible: false x_label: ""{
+				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #orange marker: false thickness: chart_line_width ;
+				data WATER_WASTE_POLLUTION value: rows_list(matrix([time_step,total_water_pollution_values])) color: rgb(0,159,233) marker: false thickness: chart_line_width;
+		 		data TOTAL_POLLUTION value:rows_list(matrix([time_step,total_pollution_values])) color:rgb(130,86,157) marker: false thickness: chart_line_width;
+		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: is_pollution_ok ? #white : #red marker: false thickness: chart_line_width;
+			}
+			
+			chart PRODUCTION memorize: false tick_line_color: #white type: xy position:{0.1, 0.5}  size:{0.8, 0.5} background: legend_background color: #white y_range:[0,6000] visible: !show_chart series_label_position: none y_tick_values_visible: false x_tick_values_visible: true x_tick_line_visible: true title_visible: false x_label: ""{
+				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: #green thickness: chart_line_width marker: false; 
+				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: chart_line_width color: is_production_ok ? #white : #red marker: false; 
+			}	
+			
+			 graphics "Chart Legend" position: {0, 0} transparency: 0 refresh: true visible: !show_chart and #fullscreen {
+				float x_gap <- 0.02;
+				float x_init <- 0.1;
+				float icon_size <-  w_height / 20;
+				float y <- 0.95;
+				float x <- x_init;
+				float y2 <- 0.95;
+				
+				draw square(x_gap*w_width) color: rgb(130,86,157) at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
+				draw danger_icon at: {x* w_width,y*w_height} size: icon_size;
+				x <- x + 2* x_gap;
+				draw square(x_gap*w_width) color: #orange at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
+				draw soil_icon at: {x* w_width,y*w_height} size: icon_size;
+				x <- x + 2* x_gap;
+				draw square(x_gap*w_width) color: rgb(0,159,233) at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
+				draw water_icon at: {x* w_width,y*w_height} size: icon_size;
+				x <- x + 2* x_gap;
+				draw square(x_gap*w_width) color: #green at: {x*w_width,y2*w_height};
+				x <- x + 2* x_gap;
+				draw plant_icon at: {x* w_width,y*w_height} size: icon_size;
+				x <- x + 2* x_gap;
+			}
+
+			
+			agents "Global" value: [global_chart] aspect: horizontal visible: show_chart position: {0.25,0} size: {0.7,0.7};
+				
+		}
+		
 	}
 }
 
@@ -999,7 +998,7 @@ species stacked_chart {
  			float total <- 0.0;
  			if (!draw_smiley[col] and !gap_added) {
  				gap_added <- true;
- 				col_width<-original_col_width/2;
+ 				col_width<-original_col_width/3;
  				current_x <- current_x + col_width;
  			}
 
@@ -1012,7 +1011,7 @@ species stacked_chart {
  				current_y <- current_y - col_height;
  			}
  			if (icons[col] != nil) {
- 				draw icons[col] at: {current_x, gap_added ? my_height  + current_y - original_col_width/3 :( location.y - chart_height/2)} size: {original_col_width/(gap_added? 3:2), original_col_width/(gap_added? 3:2)};
+ 				draw icons[col] at: {current_x, gap_added ? my_height  + current_y - original_col_width/4 :( location.y - chart_height/2)} size: {original_col_width/(gap_added? 4:2), original_col_width/(gap_added? 4:2)};
  				if draw_smiley[col] {
  				if (total <= 1 and inf_or_sup[col] or total > 1 and !inf_or_sup[col]) {
  					draw smileys[0]  at: {current_x, my_height+original_col_width/2} size: {original_col_width/2, original_col_width/2};
