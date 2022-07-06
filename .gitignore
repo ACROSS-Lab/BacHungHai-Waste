@@ -4,3 +4,7 @@
 .gama_application_workspace
 test/*
 BHH-Waste/results/*
+.DS_Store
+BHH-Waste/.DS_Store
+BHH-Waste/results/.DS_Store
+Various materials/.DS_Store
