@@ -893,6 +893,12 @@ experiment Open {
 				draw world.production_class(self) at: {x - smiley_horizontal_spacing , y + smiley_vertical_spacing, 0.01} size: smiley_size;
 			}
 			
+			event #mouse_down {
+				if (show_geography) {
+					display_water_flow <- !display_water_flow;
+				}
+			}
+			
 
 		}
 		
