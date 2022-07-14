@@ -376,7 +376,9 @@ experiment Open {
 	
 	
 	action _init_ {
-		map<string, unknown> params <- user_input_dialog("",[enter("Dark theme",true), choose("Language", string, "English",["English","Français","Tiếng Việt"])]);
+		//Requires latest version of GAMA 1.8.2
+		//map<string, unknown> params <- user_input_dialog("Welcome to RÁC",[enter("Dark theme",true), choose("Language", string, "English",["English","Français","Tiếng Việt"])], font("Helvetica",18, #bold), nil, false);
+		map<string, unknown> params <- user_input_dialog("Welcome to RÁC",[enter("Dark theme",true), choose("Language", string, "English",["English","Français","Tiếng Việt"])], font("Helvetica",18, #bold), #white);
 		gama.pref_display_slice_number <- 12; /* 128 too slow ! */
 		gama.pref_display_show_rotation <- false;
 		gama.pref_display_show_errors <- false;
