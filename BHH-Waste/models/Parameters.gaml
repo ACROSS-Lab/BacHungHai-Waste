@@ -11,11 +11,11 @@ model Parameters
 global {
 	
 	/******************* GENERAL PARAMETERS *************************************/
-	bool parallel_computation <- true;
+	bool parallel_computation <- false;
 	string GAME_NAME <- "EcoGame";
 	string langage <- "English";
 
-	//string langage <- "Tiếng Việt";
+	//string langage <- "Tiếng Việt"; 
 	
 	
 	bool use_money_pool <- true;

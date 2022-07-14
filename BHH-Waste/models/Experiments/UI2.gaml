@@ -16,6 +16,8 @@ import "../Global.gaml"
  
 global {
 	
+	bool dark_theme;
+	
 	
 	/********************** COLORS ************************************************/
 	
@@ -25,8 +27,11 @@ global {
 	rgb landfill_color <- #chocolate;
 	rgb city_color <- #gray;
 	rgb selected_color <- rgb(255,255,255);
-	rgb unselected_color <- rgb(200,200,200,0.7);
+	rgb unselected_color <-rgb(200,200,200,0.7);
 	list<rgb> village_color <- [rgb(207, 41, 74), rgb(255, 201, 0), rgb(49, 69, 143), rgb(62, 184, 99)]; // color for the 4 villages
+	rgb map_background <- dark_theme ? #black: #white;
+	rgb timer_background <- dark_theme ? rgb(60,60,60): rgb(200,200,200);
+	rgb legend_background <- dark_theme ? #black: #white; //rgb(60,60,60);
 	
 	/********************** PROPORTION OF THE DISPLAYS ****************************/
 	
@@ -107,7 +112,7 @@ global {
 	image_file tokens_icon <- image_file("../../includes/icons/tokens.png");
 	image_file water_icon <- image_file("../../includes/icons/water.png");
 	image_file plant_icon <- image_file("../../includes/icons/plant.png");
-	list<image_file> numbers <- [1,2,3,4] collect image_file("../../includes/icons/"+each+"w.png");
+	list<image_file> numbers <- [1,2,3,4] collect image_file("../../includes/icons/"+each+ (dark_theme ? "w.png": ".png"));
 	list<image_file> smileys <- [0,1,2,3,4] collect image_file("../../includes/icons/smiley"+each+".png");
 	image_file calendar_icon <- image_file("../../includes/icons/upcoming.png");
 	image_file discussion_icon <- image_file("../../includes/icons/conversation.png");
@@ -366,13 +371,12 @@ species waste_on_canal skills: [moving]{
 
 experiment Open {
 	
-	rgb map_background <- #black;
-	rgb timer_background <- rgb(60,60,60);
-	rgb legend_background <- #black; //rgb(60,60,60);
-	int ambient_intensity <- 100;
 
+	int ambient_intensity <- 100;
 	
-	init {
+	
+	action _init_ {
+		map<string, unknown> params <- user_input_dialog("",[enter("Dark theme",true), choose("Language", string, "English",["English","Français","Tiếng Việt"])]);
 		gama.pref_display_slice_number <- 12; /* 128 too slow ! */
 		gama.pref_display_show_rotation <- false;
 		gama.pref_display_show_errors <- false;
@@ -380,14 +384,17 @@ experiment Open {
 		gama.pref_errors_stop <- false;
 		gama.pref_errors_in_editor <- false;
 		gama.pref_display_numkeyscam <- false;
+		create simulation with: [dark_theme::bool(params["Dark theme"]), langage::params["Language"]];
 	}
+
+
 	
 	output {
 		
 		/********************** LAYOUT ***********************************************************/
 		
 		
-		 layout vertical([0::82,horizontal([1::650,2::450])::368]) consoles: false tabs:false toolbars:false controls:false editors: false navigator: false tray: false parameters: false background: rgb(50,50,50);
+		 layout vertical([0::82,horizontal([1::650,2::450])::368]) consoles: false tabs:false toolbars:false controls:false editors: false navigator: false tray: false parameters: false background: dark_theme ? #black : #white;
 		
 //		
 //		layout
@@ -419,7 +426,7 @@ experiment Open {
 				arc_angle <- (total - value) * 180/total;
 				draw arc(radius, start_angle + arc_angle/2, arc_angle) color: #darkred;
 				draw calendar_icon size: w_width / 6;
-				draw ""+value + " [" +value div 365 + "]" at: {location.x, location.y- radius/2, 0.01}  color: #white font: ui_font anchor: #bottom_center;
+				draw ""+value + " [" +value div 365 + "]" at: {location.x, location.y- 6*radius/10, 0.01}  color: dark_theme ? #white : #black font: ui_font anchor: #bottom_center;
 			}
 			
 			
@@ -434,7 +441,7 @@ experiment Open {
 				arc_angle <- (total - value) * 180/total;
 				draw arc(radius, start_angle + arc_angle/2, arc_angle) color: #darkred;
 				draw (is_pollution_ok and is_production_ok) ? label_icon:disabled_label_icon size: w_width / 4;
-				draw ""+value  at: {location.x, location.y- radius/2, 0.01}  color: #white font: ui_font anchor: #bottom_center;
+				draw ""+value  at: {location.x, location.y- 6*radius/10, 0.01}  color: dark_theme ? #white : #black font: ui_font anchor: #bottom_center;
 			}
 		
 			
@@ -442,8 +449,8 @@ experiment Open {
 				float y <- location.y + w_height/5;
 				float left <- location.x - w_width/2;
 				float right <- location.x + w_width/2;
-				draw "" + int(remaining_time) + "s" color: #white font: ui_font anchor: #left_center at: {right + 500, y};
-				draw line({left, y}, {right, y}) buffer (100, 200) color: #white;
+				draw "" + int(remaining_time) + "s" color: dark_theme ? #white : #black font: ui_font anchor: #left_center at: {right + 500, y};
+				draw line({left, y}, {right, y}) buffer (100, 200) color: dark_theme ? #white : #gray;
 				float width <- (initial_time_for_discussion - remaining_time) * (right - left) / (initial_time_for_discussion);
 				draw line({left, y}, {left + width, y}) buffer (100, 200) color: #darkgreen;
 				draw sandclock_icon /*rotate: (180 - remaining_time)*3*/ at: {left + width, y} size: w_height / 6;
@@ -454,8 +461,8 @@ experiment Open {
 				float y <- location.y + 3*w_height/8;
 				float left <- location.x - w_width/2;
 				float right <- location.x + w_width/2;
-				draw "" + int(remaining_time_for_choosing_village) + "s" color: #white font: ui_font anchor: #left_center at: {right + 500, y};
-				draw line({left, y}, {right, y}) buffer (100, 200) color: #white;
+				draw "" + int(remaining_time_for_choosing_village) + "s" color: dark_theme ? #white : #black font: ui_font anchor: #left_center at: {right + 500, y};
+				draw line({left, y}, {right, y}) buffer (100, 200) color: dark_theme ? #white : #gray;
 				float width <- (initial_time_for_choosing_village - remaining_time_for_choosing_village) * (right - left) / (initial_time_for_choosing_village);
 				draw line({left, y}, {left + width, y}) buffer (100, 200) color: #darkgreen;
 				draw sandclock_icon at: {left + width, y} size: w_height / 6;
@@ -475,7 +482,7 @@ experiment Open {
 					draw s size: w_width / 10 at: {left + gap * index, y};
 					village_buttons[village_index] <- circle(w_width / 10) at_location {left + gap * index, y};
 					if (selected) {
-						draw village_buttons[village_index] wireframe: true width: 2 color: #white;
+						draw village_buttons[village_index] wireframe: true width: 2 color: dark_theme ? #white : #black;
 					}
 
 					index <- index + 1;
@@ -484,7 +491,7 @@ experiment Open {
 			}		
 
 			graphics "Actions of players" visible: stage = PLAYER_ACTION_TURN and !CHOOSING_VILLAGE_FOR_POOL {
-				
+				village v <- villages_order[index_player];
 				float y <- location.y + w_height/5;
 				float left <- location.x - w_width + w_width / 5;
 				float right <- location.x + w_width - w_width / 5;
@@ -494,11 +501,11 @@ experiment Open {
 				draw rectangle(right-left,w_width / 8) color: legend_background at: {location.x, y};
 				
 				loop s over: (sort(actions_name_without_end, each)) {
-					village v <- villages_order[index_player];
+
 					bool selected <- village_actions[v] != nil and village_actions[v] contains s;
-					draw s color:  s = over_action or selected ? #white : rgb(255, 255, 255, 130) font: ui_font anchor: #center at: {left + gap * index, y} depth: 5;
+					draw s color:  s = over_action or selected ? (dark_theme ? #white : #black) : (dark_theme ? rgb(255, 255, 255, 130) : rgb(0, 0, 0, 130)) font: ui_font anchor: #center at: {left + gap * index, y} depth: 1;
 					if (selected) {
-						draw circle(w_width / 10) wireframe: true width: 2 color: #white at: {left + gap * index, y, 0.1};
+						draw circle(w_width / 10) wireframe: true width: 2 color: dark_theme ? #white : #black at: {left + gap * index, y, 0.1};
 					}
 
 					action_locations[s] <- {left + gap * index, y};
@@ -524,7 +531,8 @@ experiment Open {
 			}
 			
 			graphics "Money" position: {0,0 } visible: CHOOSING_VILLAGE_FOR_POOL {
-				draw ""+commune_money  at: {location.x, location.y- w_width/4, 0.01}  color: #gold font: ui_font anchor: #bottom_center;
+				float radius <- w_width/2;
+				draw ""+commune_money  at: {location.x, location.y- 6*radius/10, 0.01}  color: dark_theme ? #gold : rgb (225, 126, 21, 255) font: ui_font anchor: #bottom_center;
 			}
 
 			graphics "Next" transparency: ((stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN) and turn <= end_of_game) ? 0 : 0.6 {
@@ -910,16 +918,16 @@ experiment Open {
 			light #ambient intensity: ambient_intensity;
 			camera #default locked: true;
 						
-			chart WASTE_POLLUTION memorize: false tick_line_color:#white size:{0.8, 0.5} position: {0.1, 0} type: xy background: legend_background color: #white visible: !show_chart label_font: ui_font series_label_position: none y_tick_values_visible: false x_tick_values_visible: false x_tick_line_visible: true title_visible: false x_label: ""{
+			chart WASTE_POLLUTION memorize: false tick_line_color:(dark_theme ? #white : #black) size:{0.8, 0.5} position: {0.1, 0} type: xy background: legend_background color: dark_theme ? #white : #black visible: !show_chart label_font: ui_font series_label_position: none y_tick_values_visible: false x_tick_values_visible: false x_tick_line_visible: true title_visible: false x_label: ""{
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #orange marker: false thickness: chart_line_width ;
 				data WATER_WASTE_POLLUTION value: rows_list(matrix([time_step,total_water_pollution_values])) color: rgb(0,159,233) marker: false thickness: chart_line_width;
 		 		data TOTAL_POLLUTION value:rows_list(matrix([time_step,total_pollution_values])) color:rgb(130,86,157) marker: false thickness: chart_line_width;
-		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: is_pollution_ok ? #white : #red marker: false thickness: chart_line_width;
+		 		data ECOLABEL_MAX_POLLUTION value:rows_list(matrix([time_step,ecolabel_max_pollution_values])) color: is_pollution_ok ? (dark_theme ? #white : #black) : #red marker: false thickness: chart_line_width;
 			}
 			
-			chart PRODUCTION memorize: false tick_line_color: #white type: xy position:{0.1, 0.5}  size:{0.8, 0.5} background: legend_background color: #white y_range:[0,6000] visible: !show_chart series_label_position: none y_tick_values_visible: false x_tick_values_visible: true x_tick_line_visible: true title_visible: false x_label: ""{
+			chart PRODUCTION memorize: false tick_line_color: (dark_theme ? #white : #black) type: xy position:{0.1, 0.5}  size:{0.8, 0.5} background: legend_background color: dark_theme ? #white : #black y_range:[0,6000] visible: !show_chart series_label_position: none y_tick_values_visible: false x_tick_values_visible: true x_tick_line_visible: true title_visible: false x_label: ""{
 				data TOTAL_PRODUCTION value: rows_list(matrix([time_step,total_production_values])) color: #green thickness: chart_line_width marker: false; 
-				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: chart_line_width color: is_production_ok ? #white : #red marker: false; 
+				data ECOLABEL_MIN_PRODUCTION value: rows_list(matrix([time_step,ecolabel_min_production_values])) thickness: chart_line_width color: is_production_ok ? (dark_theme ? #white : #black) : #red marker: false; 
 			}	
 			
 			 graphics "Chart Legend" position: {0, 0} transparency: 0 refresh: true visible: !show_chart and #fullscreen {
@@ -995,8 +1003,8 @@ species stacked_chart {
 		float col_width <- original_col_width;
  		bool gap_added <- false;
  		
- 		draw rectangle(2.5*original_col_width, chart_height/2) at: {location.x-original_col_width*1.5, location.y +chart_height/4} border: #white wireframe: true;
- 		draw rectangle(2.5*original_col_width, chart_height/2) at: {location.x-original_col_width*1.5, location.y-chart_height/4} border: #white wireframe: true;
+ 		draw rectangle(2.5*original_col_width, chart_height/2) at: {location.x-original_col_width*1.5, location.y +chart_height/4} border: dark_theme ? #white : #black wireframe: true;
+ 		draw rectangle(2.5*original_col_width, chart_height/2) at: {location.x-original_col_width*1.5, location.y-chart_height/4} border: dark_theme ? #white : #black wireframe: true;
  		float current_x <- 0.0;
  		loop col over: data.keys {
  			float current_y <-chart_height/6;
@@ -1013,7 +1021,7 @@ species stacked_chart {
  				total <- total+v;
  				float col_height <- (v * chart_height)/max_value;
  				draw rectangle(col_width,col_height) color: c at: {current_x,my_height  + current_y - col_height/2};
- 				draw rectangle(col_width,col_height) wireframe: true border: #black width: 2 at: {current_x,my_height  + current_y -  col_height/2};
+ 				draw rectangle(col_width,col_height) wireframe: true border: dark_theme ? #black : #black width: 2 at: {current_x,my_height  + current_y -  col_height/2};
  				current_y <- current_y - col_height;
  			}
  			if (icons[col] != nil) {
