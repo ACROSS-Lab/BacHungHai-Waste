@@ -13,9 +13,9 @@ global {
 	/******************* GENERAL PARAMETERS *************************************/
 	bool parallel_computation <- false;
 	string GAME_NAME <- "EcoGame";
-	string langage <- "English";
+	//string langage <- "English";
 
-	//string langage <- "Tiếng Việt"; 
+	string langage <- "Tiếng Việt"; 
 	
 	
 	bool use_money_pool <- true;
@@ -60,7 +60,7 @@ global {
 	float step <- 1#day;// one simulation step = 1 day 
 	float house_size <- 50.0 #m; // size of a house plot
 	
-	int end_of_game <- 13; // Number of turns of the game (1 turn = 1 year)
+	int end_of_game <- 11; // Number of turns of the game (1 turn = 1 year)
 	float tolerance_dist <- 1#m;
 	
 	/*************** PARAMETERS ON ECO-LABEL ****************************/
