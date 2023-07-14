@@ -149,8 +149,8 @@ global {
 		}
 		
 		if save_log {
-			save "turn,player,productivity,solid_pollution,water_pollution,days_with_ecolabel"  to: systeme_evolution_log_path type: text rewrite: true;
-			save "turn,player,budget,exra_turn,action" to: village_action_log_path type: text rewrite: true;
+			save "turn,player,productivity,solid_pollution,water_pollution,days_with_ecolabel"  to: systeme_evolution_log_path format: text rewrite: true;
+			save "turn,player,budget,exra_turn,action" to: village_action_log_path format: text rewrite: true;
 		}
 	}
 	action generate_info_action {
@@ -399,7 +399,7 @@ global {
 			budget <- world.compute_budget(length(inhabitants), length(farmers), production_level, days_with_ecolabel);
 			if without_player and not without_actions and players_actions_to_load = nil{
 				int id <- int(self);
-				player_actions <- players_actions = nil ? nil : players_actions[id];
+				player_actions <- list<map<string, map>>(players_actions = nil ? nil : players_actions[id]);
 			//	player_traitement_facility_maintenance <- players_traitement_facility_maintenance = nil ? nil : players_traitement_facility_maintenance[id];
 			} 
 		} 
@@ -432,7 +432,7 @@ global {
 						is_ok <-  drain_dredge(true, false);
 					}
 				} 
-				match A_2a {
+				match A_2a { 
 					ask villages_order[index_player] {
 						is_ok <-  install_facility_treatment_for_homes() ;
 					}
@@ -685,11 +685,11 @@ global {
 			}
 			
 			if save_log {
-				save ("" + turn  + ",0," + total_production + ","+ total_solid_pollution + "," + total_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",1," + village1_production + ","+ village1_solid_pollution + "," + village1_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",2," + village2_production + ","+ village2_solid_pollution + "," + village2_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",3," + village3_production + ","+ village3_solid_pollution + "," + village3_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
-				save ("" + turn  + ",4," + village4_production + ","+ village4_solid_pollution + "," + village4_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path type: text rewrite: false;
+				save ("" + turn  + ",0," + total_production + ","+ total_solid_pollution + "," + total_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
+				save ("" + turn  + ",1," + village1_production + ","+ village1_solid_pollution + "," + village1_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
+				save ("" + turn  + ",2," + village2_production + ","+ village2_solid_pollution + "," + village2_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
+				save ("" + turn  + ",3," + village3_production + ","+ village3_solid_pollution + "," + village3_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
+				save ("" + turn  + ",4," + village4_production + ","+ village4_solid_pollution + "," + village4_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
 			}
 		}
 	}

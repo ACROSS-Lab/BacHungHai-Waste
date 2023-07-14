@@ -180,6 +180,17 @@ experiment abstract_debug virtual: true {
 	}
 }
 experiment base_debug parent: abstract_debug virtual: true {
+	action activate_act1 {ask world {do activate_act1;}}
+	action activate_act2 {ask world {do activate_act2;}}
+	
+	action activate_act3 {ask world {do activate_act3;}}
+	action activate_act4 {ask world {do activate_act4;}}
+	action activate_act5 {ask world {do activate_act5;}}
+	action activate_act6 {ask world {do activate_act6;}}
+	action activate_act7 {ask world {do activate_act7;}}
+	action activate_act8 {ask world {do activate_act8;}}
+	action activate_act9 {ask world {do activate_act9;}}
+	
 	output{
 		 layout horizontal([vertical([1::5000,2::5000])::4541,vertical([horizontal([3::5000,4::5000])::5000,horizontal([5::5000,6::5000])::5000])::5459]) tabs:true editors: false;
 		display "Timer" background: #black type: opengl axes: false toolbar: false{

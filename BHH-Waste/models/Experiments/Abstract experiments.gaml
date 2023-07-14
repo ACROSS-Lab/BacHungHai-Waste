@@ -18,6 +18,18 @@ import "../Global.gaml"
 
 
 experiment base_display virtual: true {
+	
+	action activate_act1 {ask world {do activate_act1;}}
+	action activate_act2 {ask world {do activate_act2;}}
+	
+	action activate_act3 {ask world {do activate_act3;}}
+	action activate_act4 {ask world {do activate_act4;}}
+	action activate_act5 {ask world {do activate_act5;}}
+	action activate_act6 {ask world {do activate_act6;}}
+	action activate_act7 {ask world {do activate_act7;}}
+	action activate_act8 {ask world {do activate_act8;}}
+	action activate_act9 {ask world {do activate_act9;}}
+	
 	output {
 		
 		display "Player 1"  type:opengl axes: false background: #black refresh: stage = COMPUTE_INDICATORS { 
@@ -57,6 +69,8 @@ experiment base_display virtual: true {
 			}
 		}
 		display map type: opengl  background: #black axes: false refresh: stage = COMPUTE_INDICATORS  {
+			
+			
 			event "1" action: activate_act1;
 			event "2" action: activate_act2;
 			event "3" action: activate_act3;
@@ -128,7 +142,7 @@ experiment base_display_layout_test virtual: true {
 			species house;
 			species plot;
 			species canal;
-			species cell transparency: 0.5 ;
+			species cell transparency: 0.5 ; 
 			species inhabitant;
 			species farmer;
 			species collection_team;

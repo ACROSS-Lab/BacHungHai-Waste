@@ -89,7 +89,7 @@ global {
 	}
 	
 	user_command save_canal {
-		save canal to:clean_canal_path type: shp attributes:["WIDTH"::width];
+		save canal to:clean_canal_path format: shp attributes:["WIDTH"::width];
 	}
 }
 

@@ -17,7 +17,7 @@ import "../NetworkManager.gaml"
  
 
 
-global skills: [music] {
+global  {
 	
 	
 	NetworkManager networkManager;

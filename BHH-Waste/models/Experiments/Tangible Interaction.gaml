@@ -13,7 +13,7 @@ import "UI2.gaml"
 
 
 
-global skills: [music] {
+global  {
 	
 	bool confirmation_popup <- false;
 	bool no_starting_actions <- true;
@@ -21,7 +21,7 @@ global skills: [music] {
 	
 
 	
-	int webcam <- 1;
+	webcam cam <- webcam(0);
 	float delay_between_actions<- 1#s;
 	int image_width <- 640;
 	int image_height <- 480;
@@ -30,7 +30,7 @@ global skills: [music] {
 	string latest_action <- "";
 	
 	reflex detect_interaction_discussion_phase when: stage = PLAYER_DISCUSSION_TURN {
-		string result <- string(decodeQR(image_width, image_height,webcam));
+		string result <- string(decodeQR(cam,image_width::image_height, false));
 		if result = nil { 
 			ready_action <- true;
 		}
@@ -48,7 +48,7 @@ global skills: [music] {
 	
 	
 	reflex detect_interaction_choosing_village when: CHOOSING_VILLAGE_FOR_POOL {
-		string result <- string(decodeQR(image_width, image_height,webcam));
+		string result <- string(decodeQR(cam,image_width::image_height, false));
 		if result = nil { 
 			ready_action <- true;
 		}
@@ -69,7 +69,7 @@ global skills: [music] {
 	}
 	
 	reflex detect_interaction when: stage = PLAYER_ACTION_TURN and (machine_time > (last_action_time + (1000.0 * delay_between_actions))){
-		string result <- string(decodeQR(image_width, image_height,webcam));
+		string result <- string(decodeQR(cam,image_width::image_height, false));
 		if result = nil {
 			ready_action <- true;
 		}
