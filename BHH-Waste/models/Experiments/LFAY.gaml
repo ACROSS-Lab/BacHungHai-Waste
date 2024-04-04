@@ -623,17 +623,17 @@ experiment Open {
 				float left <- location.x - 7 * shape.width / 5;
 				float right <- location.x + 7 * shape.width / 5;
 				float gap <- (right - left) / length(simulation.numbers_actions);
-				float index <- 0.5;
+				float index_ <- 0.5;
 				loop s over: (sort(simulation.numbers_actions.keys, each)) {
 					village v <- villages_order[index_player];
 					bool selected <- village_actions[v] != nil and village_actions[v] contains s;
-					draw s color: selected or over_action = s ? #white : rgb(255, 255, 255, 130) font: font("Impact", 36, #bold) anchor: #center at: {left + gap * index, y};
+					draw s color: selected or over_action = s ? #white : rgb(255, 255, 255, 130) font: font("Impact", 36, #bold) anchor: #center at: {left + gap * index_, y};
 					if (selected) {
-						draw circle(shape.width / 10) wireframe: true width: line_width color: #white at: {left + gap * index, y};
+						draw circle(shape.width / 10) wireframe: true width: line_width color: #white at: {left + gap * index_, y};
 					}
 
-					action_locations[s] <- {left + gap * index, y};
-					index <- index + 1;
+					action_locations[s] <- {left + gap * index_, y};
+					index_ <- index_ + 1;
 				}
 
 			}
@@ -645,7 +645,7 @@ experiment Open {
 					draw "" + (int(villages_order[index_player]) + 1) color: #black font: base_font anchor: #center;
 				}
 
-			}
+			} 
 
 			graphics "Next" transparency: ((stage = PLAYER_DISCUSSION_TURN or stage = PLAYER_ACTION_TURN) and turn <= end_of_game) ? 0 : 0.6 {
 				next_location <- {location.x + shape.width / 2, location.y};

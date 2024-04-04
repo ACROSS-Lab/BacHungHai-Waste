@@ -26,7 +26,7 @@ import "Entities/Agricultural Space.gaml"
 import "Entities/Urban Space.gaml" 
 
 import "Entities/Village.gaml" 
-
+ 
 import "Parameters.gaml"
  
 
@@ -149,8 +149,8 @@ global {
 		}
 		
 		if save_log {
-			save "turn,player,productivity,solid_pollution,water_pollution,days_with_ecolabel"  to: systeme_evolution_log_path format: text rewrite: true;
-			save "turn,player,budget,exra_turn,action" to: village_action_log_path format: text rewrite: true;
+			save "turn,player,productivity,solid_pollution,water_pollution,days_with_ecolabel"  to: systeme_evolution_log_path format: "text" rewrite: true;
+			save "turn,player,budget,exra_turn,action" to: village_action_log_path format: "text" rewrite: true;
 		}
 	}
 	action generate_info_action {
@@ -685,11 +685,11 @@ global {
 			}
 			
 			if save_log {
-				save ("" + turn  + ",0," + total_production + ","+ total_solid_pollution + "," + total_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
-				save ("" + turn  + ",1," + village1_production + ","+ village1_solid_pollution + "," + village1_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
-				save ("" + turn  + ",2," + village2_production + ","+ village2_solid_pollution + "," + village2_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
-				save ("" + turn  + ",3," + village3_production + ","+ village3_solid_pollution + "," + village3_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
-				save ("" + turn  + ",4," + village4_production + ","+ village4_solid_pollution + "," + village4_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path format: text rewrite: false;
+				save ("" + turn  + ",0," + total_production + ","+ total_solid_pollution + "," + total_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path format: "text" rewrite: false;
+				save ("" + turn  + ",1," + village1_production + ","+ village1_solid_pollution + "," + village1_water_pollution + "," + days_with_ecolabel)  to: systeme_evolution_log_path format: "text" rewrite: false;
+				save ("" + turn  + ",2," + village2_production + ","+ village2_solid_pollution + "," + village2_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path format: "text" rewrite: false;
+				save ("" + turn  + ",3," + village3_production + ","+ village3_solid_pollution + "," + village3_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path format: "text" rewrite: false;
+				save ("" + turn  + ",4," + village4_production + ","+ village4_solid_pollution + "," + village4_water_pollution+ "," + days_with_ecolabel)  to: systeme_evolution_log_path format: "text" rewrite: false;
 			}
 		}
 	}
@@ -854,9 +854,9 @@ global {
 			}
 
 			map result <- user_input_dialog(SELECT_A_VILLAGE_TO_RECEIVE_COMMUNE_BUDGET, [choose(PLAYER_SELECTED, string, one_of(players_names), players_names)]);
-			int index <- index_of(players_names, result[PLAYER_SELECTED]);
-			villages_order << village[index];
-			ask village[index] {
+			int index_ <- index_of(players_names, result[PLAYER_SELECTED]);
+			villages_order << village[index_];
+			ask village[index_] {
 				budget <- commune_money;
 			}
 

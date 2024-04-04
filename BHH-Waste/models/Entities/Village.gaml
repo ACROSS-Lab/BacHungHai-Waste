@@ -502,7 +502,7 @@ species village {
 			}
 					
 			string to_save <- "" + turn + "," + (int(self) +1) + "," + budget +"," + extra_turn + "," + act;
-			save to_save to: village_action_log_path format: text rewrite: false;
+			save to_save to: village_action_log_path format: "text" rewrite: false;
 		}	
 	}
 	

@@ -21,7 +21,7 @@ global  {
 	
 
 	
-	webcam cam <- webcam(0);
+	webcam cam <- webcam(1);
 	float delay_between_actions<- 1#s;
 	int image_width <- 640;
 	int image_height <- 480;

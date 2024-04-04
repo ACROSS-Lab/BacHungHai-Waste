@@ -15,7 +15,7 @@ model UI1
 import "../Global.gaml"
  
 global {
-	
+	 
 	bool dark_theme;
 	
 	
@@ -475,19 +475,19 @@ experiment Open {
 				float left <- location.x - w_width/2;
 				float right <- location.x + w_width/2;
 				float gap <- (right - left) /4;
-				float index <- 0.5;
+				float index_ <- 0.5;
 				// Used as a mask for the position of the mouse
 				draw rectangle(right-left,w_width / 8) color: legend_background at: {location.x, y};
 				loop s over: numbers { 
-					int village_index <- int(index - 0.5);
-					bool selected <- village_selected = village_index;
-					draw s size: w_width / 10 at: {left + gap * index, y};
-					village_buttons[village_index] <- circle(w_width / 10) at_location {left + gap * index, y};
+					int village_index_ <- int(index_ - 0.5);
+					bool selected <- village_selected = village_index_;
+					draw s size: w_width / 10 at: {left + gap * index_, y};
+					village_buttons[village_index_] <- circle(w_width / 10) at_location {left + gap * index_, y};
 					if (selected) {
-						draw village_buttons[village_index] wireframe: true width: 2 color: dark_theme ? #white : #black;
+						draw village_buttons[village_index_] wireframe: true width: 2 color: dark_theme ? #white : #black;
 					}
 
-					index <- index + 1;
+					index_ <- index_ + 1;
 				}
 
 			}		
@@ -498,20 +498,20 @@ experiment Open {
 				float left <- location.x - w_width + w_width / 5;
 				float right <- location.x + w_width - w_width / 5;
 				float gap <- (right - left) / length(actions_name_without_end);
-				float index <- 0.5;
+				float index_ <- 0.5;
 				// Used as a mask for the position of the mouse
 				draw rectangle(right-left,w_width / 8) color: legend_background at: {location.x, y};
 				
 				loop s over: (sort(actions_name_without_end, each)) {
 
 					bool selected <- village_actions[v] != nil and village_actions[v] contains s;
-					draw s color:  s = over_action or selected ? (dark_theme ? #white : #black) : (dark_theme ? rgb(255, 255, 255, 130) : rgb(0, 0, 0, 130)) font: ui_font anchor: #center at: {left + gap * index, y} depth: 1;
+					draw s color:  s = over_action or selected ? (dark_theme ? #white : #black) : (dark_theme ? rgb(255, 255, 255, 130) : rgb(0, 0, 0, 130)) font: ui_font anchor: #center at: {left + gap * index_, y} depth: 1;
 					if (selected) {
-						draw circle(w_width / 10) wireframe: true width: 2 color: dark_theme ? #white : #black at: {left + gap * index, y, 0.1};
+						draw circle(w_width / 10) wireframe: true width: 2 color: dark_theme ? #white : #black at: {left + gap * index_, y, 0.1};
 					}
 
-					action_locations[s] <- {left + gap * index, y};
-					index <- index + 1;
+					action_locations[s] <- {left + gap * index_, y};
+					index_ <- index_ + 1;
 				}
 
 			}
