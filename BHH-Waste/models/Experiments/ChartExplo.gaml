@@ -47,21 +47,21 @@ global {
 experiment chartExplo type: gui {
 	/** Insert here the definition of the input and output of the model */
 	output {
-		display chart_solid_waste_pollution {
+		display chart_solid_waste_pollution type:2d {
 			chart "Solid Waste" {
 				loop i from:0 to: length(solid_waste) - 1 {
 					data "" + i value: solid_waste[i][cycle] color: #gray;
 				}
 			}
 		}
-		display chart_water_waste_pollution {
+		display chart_water_waste_pollution type:2d{
 			chart "Water Waste" {
 				loop i from:0 to: length(water_waste) - 1 {
 					data "" + i value: water_waste[i][cycle] color: #gray;
 				}
 			}
 		}
-		display chart_production {
+		display chart_production type:2d{
 			chart "Agricultural Production" {
 				loop i from:0 to: length(production) - 1 {
 					data "" + i value: production[i][cycle] color: #green;
@@ -70,7 +70,7 @@ experiment chartExplo type: gui {
 			}
 		}
 		
-		display chart_pollution {
+		display chart_pollution type:2d{
 			chart "Total pollution" {
 				loop i from:0 to: length(water_waste) - 1 {
 					data "" + i value: water_waste[i][cycle] + solid_waste[i][cycle] color: #gray;

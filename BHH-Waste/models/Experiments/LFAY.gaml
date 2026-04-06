@@ -309,7 +309,7 @@ global {
 	}
 	
 	reflex end_of_discussion_turn when:  stage = PLAYER_DISCUSSION_TURN {
-		remaining_time <- int(time_for_discussion - machine_time/1000.0  +start_discussion_turn_time/1000.0); 
+		remaining_time <- int(time_for_discussion - gama.machine_time/1000.0  +start_discussion_turn_time/1000.0); 
 		if remaining_time <= 0 {
 			do end_of_discussion_phase;		
 		}

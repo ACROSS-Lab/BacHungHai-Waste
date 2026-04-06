@@ -16,7 +16,7 @@ import "Abstract experiments.gaml"
 
 experiment simulation_without_players  type: gui {
 	action _init_ {
-		create simulation with:(without_player:true, without_actions:true);
+		create simulation with:(without_player:true, without_actions:false);
 	}
 }
 

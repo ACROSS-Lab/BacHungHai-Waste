@@ -25,7 +25,7 @@ experiment simulation_without_players parent: base_debug type: gui {
 	action _init_ {
 		create simulation with:(
 			without_player : true,
-			without_actions : true,
+			without_actions : false,
 			
 			
 	//POSSIBLE ACTIONS : ACTION_COLLECTIVE_ACTION, ACT_DRAIN_DREDGE, ACT_FACILITY_TREATMENT, ACT_IMPLEMENT_FALLOW, ACT_INSTALL_DUMPHOLES, ACT_PESTICIDE_REDUCTION, ACT_SENSIBILIZATION, ACT_SUPPORT_MANURE
@@ -290,7 +290,7 @@ experiment base_debug parent: abstract_debug virtual: true {
 		
 		}
 		
-		display "Global indicators" background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){
+		display "Global indicators" type:2d background: #black refresh: stage = COMPUTE_INDICATORS and every(data_frequency#cycle){
 			chart WASTE_POLLUTION  size:{1.0, 0.5} type: xy background: #black color: #white{
 				data SOLID_WASTE_POLLUTION value:rows_list(matrix([time_step,total_solid_pollution_values])) color: #gray marker: false thickness: 2.0 ;
 				data WATER_WASTE_POLLUTION value: rows_list(matrix([time_step,total_water_pollution_values])) color: #orange marker: false thickness: 2.0 ;

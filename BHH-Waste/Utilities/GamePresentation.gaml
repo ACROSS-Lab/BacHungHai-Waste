@@ -10,8 +10,8 @@ model GamePresentation
 import "../models/Global.gaml"  
 
 global {
-	bool display_water_flow <- false  parameter:"Display water flow" category: "Display" ;
-	bool draw_territory <- false  parameter:"Display village" category: "Display" ;
+	bool display_water_flow <- false  ;
+	bool draw_territory <- false   ;
 	
 	graph canal_network_<- nil;
 	int number_to_add <- 10;
