@@ -140,7 +140,7 @@ global {
 	
 	
 	reflex end_of_choosing_village when: CHOOSING_VILLAGE_FOR_POOL {
-		remaining_time_for_choosing_village <- int(time_for_choosing_village - machine_time/1000.0  +start_choosing_village_time/1000.0); 
+		remaining_time_for_choosing_village <- int(time_for_choosing_village - gama.machine_time/1000.0  +start_choosing_village_time/1000.0); 
 		if remaining_time_for_choosing_village <= 0 or chosen_village > -1 or PASS_CHOOSING_VILLAGE{
 			if (chosen_village > -1){
 				villages_order << village[chosen_village];
@@ -315,7 +315,7 @@ global {
 	}
 	
 	reflex end_of_discussion_turn when:  stage = PLAYER_DISCUSSION_TURN {
-		remaining_time <- int(time_for_discussion - machine_time/1000.0  +start_discussion_turn_time/1000.0); 
+		remaining_time <- int(time_for_discussion - gama.machine_time/1000.0  +start_discussion_turn_time/1000.0); 
 		if remaining_time <= 0 {
 			do end_of_discussion_phase;		
 		}

@@ -20,7 +20,7 @@ import "Entities/Landfill.gaml"
 import "Entities/Hydrology.gaml"
 
 import "Entities/People.gaml"
-
+ 
 import "Entities/Agricultural Space.gaml"
 
 import "Entities/Urban Space.gaml" 
@@ -46,11 +46,11 @@ global {
 	
 	bool create_facility_treatment <- false;
 	
-	bool display_productivity_waste <- false parameter:"Display field productivity" category: "Display" ;
+	bool display_productivity_waste <- false ;//parameter:"Display field productivity" category: "Display" ;
 	
-	bool display_solid_waste <- false parameter:"Display solid waste" category: "Display" ;
-	bool display_water_waste <- false parameter:"Display water waste" category: "Display" ;
-	bool display_total_waste <- false parameter:"Display total waste" category: "Display" ;
+	bool display_solid_waste <- false ;//parameter:"Display solid waste" category: "Display" ;
+	bool display_water_waste <- false ;//parameter:"Display water waste" category: "Display" ;
+	bool display_total_waste <- false ;//parameter:"Display total waste" category: "Display" ;
 	bool display_water_flow <- true;
 	bool draw_territory <- false;
 	bool extra_turn <- false;
@@ -129,6 +129,15 @@ global {
 	bool is_pollution_ok <- true;
 	/********************** INITIALIZATION OF THE GAME ****************************/
 
+
+reflex save_results when: current_date.day = 1 and current_date.month = 1 {
+	save ""+ self.seed+ ","+ cycle +","+ round(self.total_solid_pollution)+","+round(self.total_water_pollution)+","+round(self.total_production)+"\n" rewrite: false to: "exploration_result.csv" format:"text";
+	if (current_date.year = 10) {
+		do pause;
+	}
+}
+		
+		
 	init {
 		if not without_player or (players_actions_to_load != nil){do load_language;}
 		do generate_info_action;
@@ -675,7 +684,7 @@ global {
 				}
 				do tell(mess);
 				do tell(DISCUSSION_PHASE);
-				start_discussion_turn_time <- machine_time;
+				start_discussion_turn_time <- gama.machine_time;
 				ask world {
 					do update_display;
 					do resume;
@@ -898,15 +907,15 @@ global {
 		}
 	}
 	
-	reflex end_of_discussion_turn when: use_timer_for_discussion and stage = PLAYER_DISCUSSION_TURN {
-		remaining_time <- int(time_for_discussion - machine_time/1000.0  +start_discussion_turn_time/1000.0); 
+	reflex end_of_discussion_turn when: not without_player and use_timer_for_discussion and stage = PLAYER_DISCUSSION_TURN {
+		remaining_time <- int(time_for_discussion - gama.machine_time/1000.0  +start_discussion_turn_time/1000.0); 
 		if remaining_time <= 0 {
 			do tell(TIME_DISCUSSION_FINISHED);
 			do pause;
 		}
 	}
 	reflex end_of_player_turn when: not without_player and  use_timer_player_turn and stage = PLAYER_ACTION_TURN {
-		remaining_time <- int(time_for_player_turn - machine_time/1000.0  + villages_order[index_player].start_turn_time/1000.0);
+		remaining_time <- int(time_for_player_turn - gama.machine_time/1000.0  + villages_order[index_player].start_turn_time/1000.0);
  
 		if remaining_time <= 0 {
 			do tell(TIME_PLAYER + " " + (int(villages_order[index_player]) + 1) +" " + FINISHED);

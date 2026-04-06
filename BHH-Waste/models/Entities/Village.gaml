@@ -580,7 +580,7 @@ species village {
 		ask world {
 			do before_start_turn;
 		}
-		start_turn_time <- machine_time;
+		start_turn_time <- gama.machine_time;
 		if no_starting_actions {
 			ask collection_teams {
 				collection_days <- days_collects_default;
